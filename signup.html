@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Account | Nexoria</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            background: #f8fafc;
+            font-family: system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .auth-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.7rem;
+            margin-bottom: 1.2rem;
+            border-radius: 6px;
+            border: 1px solid #cbd5f5;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.8rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="auth-card">
+    <a href="index.html" class="back-link">← Back to Home</a>
+    <h1>Create Account</h1>
+
+    <form>
+        <label for="username">Username</label>
+        <input type="text" id="username" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" required>
+
+        <label for="confirm-password">Confirm Password</label>
+        <input type="password" id="confirm-password" required>
+
+        <button type="submit">Create Account</button>
+    </form>
+
+    <div class="link">
+        Already have an account?
+        <a href="login.html">Sign in</a>
+    </div>
+</div>
+
+</body>
+</html>
