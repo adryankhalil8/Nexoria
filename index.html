@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nexoria — Smart Digital Systems</title>
+  <title>Nexoria – Smart Digital Systems</title>
 
   <style>
     :root {
-      --primary: #0f172a;
-      --accent: #2563eb;
+      --primary: #3b82f6;
+      --accent: #f97316;
       --bg: #f8fafc;
-      --text: #1e293b;
+      --text: #0f172a;
       --muted: #64748b;
       --card: #ffffff;
     }
@@ -21,29 +21,23 @@
       padding: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-
-    .navbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-bottom: 2rem;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .login-btn {
-        padding: 0.45rem 1rem;
-        border: 1.5px solid var(--accent);
-        border-radius: 6px;
-        color: var(--accent);
-        font-weight: 600;
-        text-decoration: none;
-         transition: 0.15s ease, color 0.15s ease;
+    .brand img {
+      height: 34px;
+      width: 34px;
     }
 
-    .login-btn:hover {
-        background: var(--accent);
-        color: white;
+    .brand img {
+      height: 34px;
+      width: 34px;
+      border-radius: 50%;
+      object-fit: cover;
     }
-
 
     body {
       background: var(--bg);
@@ -55,6 +49,28 @@
       max-width: 1100px;
       margin: 0 auto;
       padding: 4rem 1.5rem;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 2rem;
+    }
+
+    .login-btn {
+      padding: 0.45rem 1rem;
+      border: 1.5px solid var(--accent);
+      border-radius: 6px;
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .login-btn:hover {
+      background: var(--accent);
+      color: white;
     }
 
     header {
@@ -104,6 +120,12 @@
       font-weight: 600;
     }
 
+    .hero-image img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+    }
+
     .benefits {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -148,7 +170,6 @@
       gap: 2rem;
       flex-wrap: wrap;
       margin-top: 2rem;
-      opacity: 0.6;
       font-weight: 600;
     }
 
@@ -169,89 +190,207 @@
       font-size: 0.85rem;
       color: var(--muted);
     }
+
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      animation: fadeOut 0.8s ease forwards;
+      animation-delay: 2.2s;
+    }
+
+    .loader-logo {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loader-logo::before,
+    .loader-logo::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 6px solid transparent;
+    }
+
+    .loader-logo::before {
+      border-top-color: var(--accent);
+      animation: spin 1.6s linear infinite;
+    }
+
+    .loader-logo::after {
+      border-bottom-color: var(--primary);
+      animation: spinReverse 2.2s linear infinite;
+    }
+
+    .loader-logo img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes spinReverse {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+    .logo-card {
+      background: #e0edff;
+      padding: 1.25rem;
+      border-radius: 12px;
+      width: 140px;
+      height: 90px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .logo-card img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .logo-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    .clients {
+      background: #3b82f6; /* your blue */
+      padding: 3rem 1.5rem;
+      border-radius: 16px;
+      text-align: center;
+    }
+
+    .clients-quote {
+      color: white;
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    .clients-quote span {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
   </style>
 </head>
 
 <body>
+<div id="loader">
+  <div class="loader-logo">
+    <img src="logo.PNG" alt="Nexoria Logo">
+  </div>
+</div>
 
-  <!-- HERO -->
-  <header>
-    <div class="container">
-          <div class="navbar">
-          <img src="logo.PNG" alt="Nexoria Logo" style= "height: 36px;">
-          <a href="login.html" class="login-btn">Login</a>
-          </div>
+<header>
+  <div class="container">
+    <div class="navbar">
+      <a href="index.html" class="brand">
+        <img src="logo.png" alt="Nexoria Logo">
+        <span class="brand-name">Nexoria</span>
+      </a>
 
-      <h1>Automate and scale your business with smart digital systems</h1>
+      <a href="login.html" class="login-btn">Login</a>
+    </div>
 
+    <h1 id="hero-title">Automate and scale your business with smart digital systems</h1>
+
+    <p id="hero-subtext">
+      Nexoria helps small businesses streamline operations, marketing,
+      and growth using modern automation tools.
+    </p>
+
+    <a href="#get-started" class="cta-btn">Get Started</a>
+
+    <div class="hero-image">
+      <img src="social.proof.png" alt="Customer testimonial and social proof">
+    </div>
+  </div>
+</header>
+
+<section class="container">
+  <div class="benefits">
+    <div class="benefit-card">
+      <h3>Automate repetitive tasks</h3>
       <p>
-        Nexoria helps small businesses streamline operations, marketing,
-        and growth using modern automation tools.
+        Remove manual work from your business so you can focus on
+        high-leverage decisions instead of busywork.
       </p>
-
-      <a href="#get-started" class="cta-btn">Get Started</a>
-
-      <div class="hero-image">
-        <img src="social.proof.png" alt="Customer testimonial and social proof">
-      </div>
     </div>
-  </header>
 
-  <!-- BENEFITS -->
-  <section class="container">
-    <div class="benefits">
-      <div class="benefit-card">
-        <h3>Automate repetitive tasks</h3>
-        <p>
-          Remove manual work from your business so you can focus on
-          high-leverage decisions instead of busywork.
-        </p>
-      </div>
-
-      <div class="benefit-card">
-        <h3>Improve acquisition & retention</h3>
-        <p>
-          Build smarter funnels and follow-ups that convert leads into
-          customers — automatically.
-        </p>
-      </div>
-
-      <div class="benefit-card">
-        <h3>Scale without hiring</h3>
-        <p>
-          Grow revenue and output without increasing payroll or operational
-          complexity.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- TESTIMONIAL -->
-  <section class="container">
-    <div class="testimonial">
+    <div class="benefit-card">
+      <h3>Improve acquisition & retention</h3>
       <p>
-        “Nexoria helped us save hours every week and finally get our systems
-        under control.”
+        Build smarter funnels and follow-ups that convert leads into
+        customers – automatically.
       </p>
-      <span>— Small Business Owner</span>
-
-      <div class="logos">
-        [CLIENT LOGO]
-        [CLIENT LOGO]
-        [CLIENT LOGO]
-      </div>
     </div>
-  </section>
 
-  <!-- FINAL CTA -->
-  <section id="get-started" class="final-cta">
-    <h2>Ready to simplify your business?</h2>
-    <a href="#" class="cta-btn">Get Started</a>
-  </section>
+    <div class="benefit-card">
+      <h3>Scale without hiring</h3>
+      <p>
+        Grow revenue and output without increasing payroll or operational
+        complexity.
+      </p>
+    </div>
+  </div>
+</section>
 
-  <footer>
-    © 2026 Nexoria. All rights reserved.
-  </footer>
+<section class="clients">
+  <p class="clients-quote">
+    “Nexoria helped us save hours every week and finally get our systems under control.”
+    <br>
+    <span>— Small Business Owner</span>
+  </p>
 
+  <div class="logos">
+    <div class="logo-card">
+      <img src="accenture.logo.png" alt="Accenture">
+    </div>
+    <div class="logo-card">
+      <img src="npower.logo.jpg" alt="nPower">
+    </div>
+    <div class="logo-card">
+      <img src="peopleshores.logo.png" alt="PeopleShores">
+    </div>
+  </div>
+</section>
+
+<section id="get-started" class="final-cta">
+  <h2>Ready to simplify your business?</h2>
+  <a href="#get-started" class="cta-btn">Get Started</a>
+</section>
+
+<footer>
+  © 2026 Nexoria. All rights reserved.
+</footer>
 </body>
 </html>

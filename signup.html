@@ -12,7 +12,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
         }
 
         .auth-card {
@@ -22,6 +24,28 @@
             width: 100%;
             max-width: 420px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #2563eb;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.7rem;
+            margin-bottom: 1.2rem;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            font-size: 1rem;
+            background: white;
         }
 
         h1 {
@@ -40,7 +64,7 @@
             padding: 0.7rem;
             margin-bottom: 1.2rem;
             border-radius: 6px;
-            border: 1px solid #cbd5f5;
+            border: 1px solid #cbd5e1;
         }
 
         button {
@@ -52,6 +76,11 @@
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        button:hover {
+            background: #1d4ed8;
         }
 
         .link {
@@ -65,6 +94,18 @@
             text-decoration: none;
             font-weight: 600;
         }
+
+        .link a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: -0.8rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
     </style>
 </head>
 
@@ -74,7 +115,14 @@
     <a href="index.html" class="back-link">← Back to Home</a>
     <h1>Create Account</h1>
 
-    <form>
+    <form id="signup-form">
+        <label for="role">Account Type</label>
+        <select id="role" required>
+            <option value="">Select a role</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+        </select>
+
         <label for="username">Username</label>
         <input type="text" id="username" required>
 
@@ -86,6 +134,7 @@
 
         <label for="confirm-password">Confirm Password</label>
         <input type="password" id="confirm-password" required>
+        <div class="error" id="password-error">Passwords do not match</div>
 
         <button type="submit">Create Account</button>
     </form>
@@ -95,6 +144,27 @@
         <a href="login.html">Sign in</a>
     </div>
 </div>
+
+<script>
+    document.getElementById('signup-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const errorDiv = document.getElementById('password-error');
+
+        if (password !== confirmPassword) {
+            errorDiv.style.display = 'block';
+            return;
+        }
+
+        errorDiv.style.display = 'none';
+
+        // Simulate account creation
+        alert('Account created successfully!');
+        window.location.href = 'login.html';
+    });
+</script>
 
 </body>
 </html>

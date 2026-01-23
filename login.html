@@ -13,14 +13,28 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0;
         }
 
         .auth-card {
+            background: white;
             padding: 2.5rem;
             border-radius: 12px;
             width: 100%;
             max-width: 420px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #2563eb;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
         }
 
         h1 {
@@ -39,7 +53,7 @@
             padding: 0.7rem;
             margin-bottom: 1.2rem;
             border-radius: 6px;
-            border: 1px solid #cbd5f5;
+            border: 1px solid #cbd5e1;
         }
 
         button {
@@ -51,6 +65,11 @@
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        button:hover {
+            background: #1d4ed8;
         }
 
         .link {
@@ -64,6 +83,10 @@
             text-decoration: none;
             font-weight: 600;
         }
+
+        .link a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -73,8 +96,8 @@
     <a href="index.html" class="back-link">← Back to Home</a>
     <h1>Sign In</h1>
 
-    <form action="admin.html">
-    <label for="email">Email</label>
+    <form id="login-form">
+        <label for="email">Email</label>
         <input type="email" id="email" placeholder="you@example.com" required>
 
         <label for="password">Password</label>
@@ -84,10 +107,18 @@
     </form>
 
     <div class="link">
-        Don’t have an account?
+        Don't have an account?
         <a href="signup.html">Create one</a>
     </div>
 </div>
+
+<script>
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Simulate login - in production, this would validate credentials
+        window.location.href = 'admin.html';
+    });
+</script>
 
 </body>
 </html>
