@@ -111,6 +111,123 @@
         </tr>
       </template>
     </section>
+    <!-- <---------------------------- End of User Manager panel ------------------ --> 
+    <!-- Start of Client Intake Tracker  -->
+     <section class="panel intake" id="intakePanel" aria-labelledby="intakeTitle">
+  <header class="panel-head">
+    <div>
+      <h2 id="intakeTitle">Client Intake Tracker</h2>
+      <p>Create leads, search them, manage status, and open their website.</p>
+    </div>
+    <div class="intake-meta">
+      <span class="limit-pill" id="leadLimitPill">0 / 100</span>
+      <button class="small-btn" id="refreshLeadsBtn" type="button">Refresh</button>
+    </div>
+  </header>
+
+  <div class="intake-grid">
+    <!-- Left: New Lead -->
+    <div class="intake-left">
+      <h3>New Lead</h3>
+      <form id="leadForm" class="form-grid">
+        <input id="lCompany" placeholder="Company Name" required />
+        <input id="lContact" placeholder="Contact Name" required />
+        <input id="lEmail" type="email" placeholder="Email" required />
+        <input id="lWebsite" placeholder="Website (optional)" />
+        <input id="lIndustry" placeholder="Industry (optional)" />
+        <textarea id="lNotes" placeholder="Notes (optional)"></textarea>
+
+        <div class="row">
+          <label for="lStatus">Status</label>
+          <select id="lStatus">
+            <option>New</option>
+            <option>Contacted</option>
+            <option>Qualified</option>
+            <option>Closed</option>
+          </select>
+        </div>
+
+        <button type="submit" class="primary-btn">Save Lead</button>
+        <div class="limit-alert" id="limitAlert" style="display:none;"></div>
+      </form>
+
+      <div class="enrich">
+        <h3>Enrichment / External API</h3>
+        <p>For now: website is stored + clickable. (Clearbit later.)</p>
+      </div>
+    </div>
+
+    <!-- Right: Leads List -->
+    <div class="intake-right">
+      <div class="toolbar">
+        <input id="searchLeads" placeholder="Search company, contact, email…" />
+        <select id="filterStatus">
+          <option value="All">All</option>
+          <option value="New">New</option>
+          <option value="Contacted">Contacted</option>
+          <option value="Qualified">Qualified</option>
+          <option value="Closed">Closed</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Contact</th>
+              <th>Status</th>
+              <th>Website</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="leadsTbody"></tbody>
+        </table>
+      </div>
+
+      <div class="pager">
+        <button id="prevPageBtn" type="button">Prev</button>
+        <span id="pageInfo">Page 1</span>
+        <button id="nextPageBtn" type="button">Next</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal: View/Edit -->
+<div class="modal" id="leadModal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h3 id="modalTitle">Lead Details</h3>
+      <button id="closeModalBtn" class="small-btn" type="button">Close</button>
+    </div>
+
+    <form id="editForm" class="form-grid">
+      <input id="eCompany" placeholder="Company Name" required />
+      <input id="eContact" placeholder="Contact Name" required />
+      <input id="eEmail" type="email" placeholder="Email" required />
+      <input id="eWebsite" placeholder="Website" />
+      <input id="eIndustry" placeholder="Industry" />
+      <textarea id="eNotes" placeholder="Notes"></textarea>
+
+      <div class="row">
+        <label for="eStatus">Status</label>
+        <select id="eStatus">
+          <option>New</option>
+          <option>Contacted</option>
+          <option>Qualified</option>
+          <option>Closed</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="primary-btn">Save Changes</button>
+        <a id="openWebsiteBtn" class="small-btn" href="#" target="_blank" rel="noopener">Open Website</a>
+      </div>
+    </form>
+  </div>
+</div>
+
   </section>
 </main>
 

@@ -327,3 +327,191 @@ button.mini.danger{ background: var(--danger); }
     .sidebar{ width:100%; flex-direction:row; align-items:center; justify-content:space-between; }
     .nav{ flex-direction:row; gap:1rem; flex-wrap:wrap; }
 }
+/* ───────────── Intake Tracker ───────────── */
+.panel.intake { margin-bottom: 22px; }
+
+.panel-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:14px;
+}
+.panel-head h2{ margin:0; }
+.panel-head p{ margin:6px 0 0; opacity:.75; }
+
+.intake-meta{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.limit-pill{
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.12);
+  background: rgba(0,0,0,.04);
+  font-weight:800;
+}
+.small-btn{
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,.15);
+  background:#fff;
+  cursor:pointer;
+  font-weight:700;
+}
+.primary-btn{
+  padding:10px 12px;
+  border-radius:12px;
+  border:0;
+  background:#2563eb;
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+}
+.intake-grid{
+  display:grid;
+  grid-template-columns: 420px 1fr;
+  gap:16px;
+}
+.intake-left{
+  padding:14px;
+  border-radius:16px;
+  border:1px solid rgba(0,0,0,.08);
+  background: rgba(255,255,255,.55);
+}
+.intake-left h3{ margin:0 0 10px; }
+.form-grid{
+  display:grid;
+  gap:10px;
+}
+.form-grid input, .form-grid textarea, .form-grid select{
+  width:100%;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,.12);
+  background:#fff;
+}
+.form-grid textarea{ min-height:92px; resize:vertical; }
+
+.row label{ font-size:.85rem; font-weight:800; opacity:.7; display:block; margin-bottom:6px; }
+
+.enrich{
+  margin-top:14px;
+  padding:12px;
+  border-radius:14px;
+  border:1px dashed rgba(0,0,0,.2);
+  background: rgba(255,255,255,.6);
+}
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-bottom:10px;
+}
+.toolbar input, .toolbar select{
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,.12);
+  background:#fff;
+}
+.table-wrap{
+  overflow:auto;
+  border-radius:16px;
+  border:1px solid rgba(0,0,0,.08);
+  background:#fff;
+}
+.table{
+  width:100%;
+  border-collapse:collapse;
+}
+.table th, .table td{
+  text-align:left;
+  padding:12px 12px;
+  border-bottom:1px solid rgba(0,0,0,.06);
+  font-weight:700;
+}
+.table th{ background: rgba(0,0,0,.03); }
+.badge{
+  padding:6px 10px;
+  border-radius:999px;
+  font-weight:900;
+  display:inline-block;
+}
+.badge.new{ background: rgba(59,130,246,.12); color:#1d4ed8; }
+.badge.contacted{ background: rgba(245,158,11,.14); color:#92400e; }
+.badge.qualified{ background: rgba(34,197,94,.14); color:#166534; }
+.badge.closed{ background: rgba(239,68,68,.14); color:#991b1b; }
+
+.actions{
+  display:flex;
+  gap:8px;
+}
+.action-btn{
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,.12);
+  background:#fff;
+  cursor:pointer;
+  font-weight:900;
+}
+.action-btn.danger{ background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.25); }
+
+.pager{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:10px;
+  margin-top:10px;
+}
+.pager button{
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,.12);
+  background:#fff;
+  cursor:pointer;
+  font-weight:800;
+}
+.limit-alert{
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(239,68,68,.35);
+  background: rgba(239,68,68,.10);
+  color:#991b1b;
+  font-weight:900;
+}
+
+/* Modal */
+.modal{
+  position:fixed;
+  inset:0;
+  background: rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+.modal.show{ display:flex; }
+.modal-card{
+  width: min(640px, 100%);
+  background:#fff;
+  border-radius:18px;
+  padding:14px;
+}
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+.modal-actions{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+}
+
+@media (max-width: 980px){
+  .intake-grid{ grid-template-columns: 1fr; }
+}

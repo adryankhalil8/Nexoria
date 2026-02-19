@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nexoria • Discovery</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --card:#000000;
+      --stroke:#3b82f6;
+      --text:#000000;
+      --muted:#000000;
+      --blue:#3b82f6;
+      --danger:#ef4444;
+      --ok:#22c55e;
+
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 700px at 30% 20%, #3b82f6 0%, rgba(21,42,102,0) 60%),
+                  radial-gradient(900px 600px at 80% 40%, #3b82f6 0%, rgba(26,43,107,0) 55%),
+                  var(--bg);
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+    .wrap{
+      width:min(520px, 100%);
+      background: #f8fafc;
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      padding:18px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+    }
+    h1{
+      margin:0 0 10px;
+      font-size: 1.4rem;
+      letter-spacing:-.02em;
+      background: rgba(255,255,255,.08);
+      padding:10px 12px;
+      border-radius:12px;
+    }
+    .grid{
+      display:grid;
+      gap:10px;
+      margin-top:10px;
+    }
+    label{font-size:.85rem;color:var(--muted)}
+    input, textarea, select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background: hsla(0, 20%, 96%, 0.08);
+      color:var(--text);
+      outline:none;
+    }
+    textarea{min-height:92px;resize:vertical}
+    input::placeholder, textarea::placeholder{color:#89919c}
+    .row{display:grid; gap:6px}
+    .btn{
+      width:100%;
+      padding:12px 14px;
+      border:0;
+      border-radius:12px;
+      font-weight:800;
+      letter-spacing:.02em;
+      background: var(--blue);
+      color:white;
+      cursor:pointer;
+    }
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .note{
+      margin-top:10px;
+      font-size:.9rem;
+      color:var(--card);
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+    }
+    .pill{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.2);
+      border-radius:999px;
+      padding:6px 10px;
+      font-weight:700;
+      color:rgba(255,255,255,.85);
+      white-space:nowrap;
+    }
+    .alert{
+      margin-top:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.2);
+      color:rgba(255,255,255,.9);
+      display:none;
+    }
+    .alert.ok{border-color: rgba(34,197,94,.45); background: rgba(34,197,94,.12)}
+    .alert.bad{border-color: rgba(239,68,68,.55); background: rgba(239,68,68,.12)}
+    a{color:rgba(255,255,255,.9)}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Discovery</h1>
+
+    <form id="discoveryForm" class="grid" novalidate>
+      <div class="row">
+        <label for="company">Company Name</label>
+        <input id="company" name="company" placeholder="Acme Remodeling" required />
+      </div>
+
+      <div class="row">
+        <label for="contact">Contact Name</label>
+        <input id="contact" name="contact" placeholder="Jordan Smith" required />
+      </div>
+
+      <div class="row">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" placeholder="jordan@acme.com" required />
+      </div>
+
+      <div class="row">
+        <label for="website">Website</label>
+        <input id="website" name="website" placeholder="acme.com" />
+      </div>
+
+      <div class="row">
+        <label for="industry">Industry</label>
+        <input id="industry" name="industry" placeholder="Remodeling" />
+      </div>
+
+      <div class="row">
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" placeholder="What do you want to automate?"></textarea>
+      </div>
+
+      <button class="btn" id="submitBtn" type="submit">DONE !</button>
+      <div class="alert" id="alert"></div>
+
+      <div class="note">
+        <span class="pill"><span id="used">0</span> / 100 captured</span>
+        <span class="pill"><a href="index.html">Back to home</a></span>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    const LEADS_KEY = "nexoria_leads_v1";
+    const LIMIT = 100;
+
+    const form = document.getElementById("discoveryForm");
+    const alertBox = document.getElementById("alert");
+    const usedEl = document.getElementById("used");
+    const submitBtn = document.getElementById("submitBtn");
+
+    const loadLeads = () => {
+      try {
+        const raw = localStorage.getItem(LEADS_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    };
+    const saveLeads = (leads) => localStorage.setItem(LEADS_KEY, JSON.stringify(leads));
+
+    const uid = () => (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2));
+
+    const normalizeUrl = (value) => {
+      const v = (value || "").trim();
+      if (!v) return "";
+      if (/^https?:\/\//i.test(v)) return v;
+      return "https://" + v;
+    };
+
+    const show = (msg, kind) => {
+      alertBox.textContent = msg;
+      alertBox.className = "alert " + kind;
+      alertBox.style.display = "block";
+    };
+
+    const refreshLimitUI = () => {
+      const leads = loadLeads();
+      usedEl.textContent = String(leads.length);
+      if (leads.length >= LIMIT){
+        submitBtn.disabled = true;
+        show("Intake limit reached (100/100). Please try again later.", "bad");
+      } else {
+        submitBtn.disabled = false;
+        alertBox.style.display = "none";
+      }
+    };
+
+    refreshLimitUI();
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const leads = loadLeads();
+      if (leads.length >= LIMIT){
+        refreshLimitUI();
+        return;
+      }
+
+      const company = form.company.value.trim();
+      const contact = form.contact.value.trim();
+      const email = form.email.value.trim();
+
+      if (!company || !contact || !email){
+        show("Missing required fields: Company, Contact, Email.", "bad");
+        return;
+      }
+
+      const lead = {
+        id: uid(),
+        companyName: company,
+        contactName: contact,
+        email,
+        website: normalizeUrl(form.website.value),
+        industry: form.industry.value.trim(),
+        notes: form.notes.value.trim(),
+        status: "New",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      leads.unshift(lead);
+      saveLeads(leads);
+
+      form.reset();
+      show("DONE! Your info was submitted.", "ok");
+      refreshLimitUI();
+    });
+  </script>
+</body>
+</html>
