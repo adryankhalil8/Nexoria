@@ -594,6 +594,8 @@ leadForm?.addEventListener("submit", (e) => {
   renderLeads();
 });
 
+
+
 // Initial
 renderLeads();
 
