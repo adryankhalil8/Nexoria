@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blueprint Detail | Nexoria</title>
+  <style>
+    :root{--primary:#3b82f6;--accent:#f97316;--bg:#f8fafc;--text:#0f172a;--muted:#64748b;--card:#fff;}
+    *{box-sizing:border-box;margin:0;padding:0;
+      font-family:system-ui,-apple-system,'Segoe UI',sans-serif;}
+    body{background:var(--bg);color:var(--text);min-height:100vh;}
+
+    .page-header{
+      background:linear-gradient(135deg,#0f172a,#1e3a8a);
+      padding:2rem 2.5rem;display:flex;align-items:center;
+      justify-content:space-between;gap:1rem;flex-wrap:wrap;
+    }
+    .page-header h1{color:#fff;font-size:1.4rem;font-weight:900;letter-spacing:-.02em;}
+    .page-header a{color:rgba(255,255,255,.8);font-weight:700;text-decoration:none;}
+    .page-header a:hover{color:#fff;}
+
+    .page-body{max-width:860px;margin:3rem auto;padding:0 1.5rem 5rem;}
+
+    /* Score ring */
+    .res-header{
+      display:flex;align-items:flex-start;gap:2rem;
+      background:var(--card);border-radius:20px;
+      padding:2rem;box-shadow:0 10px 30px rgba(0,0,0,.07);
+      margin-bottom:2rem;flex-wrap:wrap;
+    }
+    .score-ring{position:relative;width:120px;height:120px;flex-shrink:0;}
+    .ring-svg{width:120px;height:120px;transform:rotate(-90deg);}
+    .ring-bg{fill:none;stroke:#e2e8f0;stroke-width:10;}
+    .ring-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dasharray .6s ease;}
+    .score-val{
+      position:absolute;inset:0;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      font-size:1.8rem;font-weight:900;letter-spacing:-.03em;
+    }
+    .score-val span{font-size:.75rem;font-weight:700;opacity:.55;}
+
+    .res-meta{flex:1;min-width:200px;}
+    .res-company{font-size:1.3rem;font-weight:900;margin-bottom:.6rem;word-break:break-all;}
+    .res-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem;}
+    .res-tag{background:#eef2ff;color:#3730a3;border-radius:999px;padding:.3rem .75rem;font-size:.82rem;font-weight:800;}
+    .res-tag.goal{background:#fff7ed;color:#9a3412;}
+    .retainer-badge{
+      display:inline-block;background:#dcfce7;color:#166534;
+      border-radius:10px;padding:.45rem .85rem;font-weight:800;font-size:.88rem;margin-bottom:.6rem;
+    }
+    .retainer-badge.not-ready{background:#f1f5f9;color:#64748b;}
+
+    .fixes-heading{font-size:1.3rem;font-weight:900;margin-bottom:1.25rem;}
+    .fixes-list{display:flex;flex-direction:column;gap:.9rem;margin-bottom:2.5rem;}
+    .fix-card{
+      display:flex;gap:1rem;background:var(--card);border-radius:16px;
+      padding:1.25rem;box-shadow:0 4px 14px rgba(0,0,0,.05);
+      border:1px solid #eef2f7;
+      animation:slideIn .35s ease both;
+    }
+    @keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+    .fix-num{
+      width:32px;height:32px;border-radius:50%;background:#eef2ff;
+      color:#3730a3;font-weight:900;font-size:.9rem;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .fix-body{flex:1;}
+    .fix-title{font-weight:900;margin-bottom:.35rem;}
+    .fix-why{color:var(--muted);font-size:.9rem;margin-bottom:.6rem;line-height:1.5;}
+    .fix-badges{display:flex;flex-wrap:wrap;gap:.4rem;}
+    .fix-badge{padding:.25rem .6rem;border-radius:6px;font-weight:800;font-size:.8rem;}
+
+    /* Edit panel */
+    .detail-edit-panel{
+      background:var(--card);border-radius:20px;
+      border:2px solid #e0edff;padding:2rem;
+      box-shadow:0 6px 20px rgba(59,130,246,.08);
+    }
+    .detail-edit-panel h3{font-size:1.15rem;font-weight:900;margin-bottom:1.25rem;}
+    .edit-form{}
+    .edit-row{
+      display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;
+    }
+    .edit-row label{
+      display:flex;flex-direction:column;gap:.4rem;
+      font-weight:700;font-size:.9rem;color:var(--muted);
+    }
+    .edit-row select{
+      padding:.8rem;border-radius:10px;border:1px solid #e2e8f0;
+      font-size:.95rem;background:#fff;
+    }
+    .edit-goals-label{font-weight:700;font-size:.9rem;color:var(--muted);margin-bottom:.6rem;}
+    .edit-goals{
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+      gap:.5rem;margin-bottom:1.5rem;
+    }
+    .goal-check{
+      display:flex;align-items:center;gap:.5rem;
+      background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;
+      padding:.6rem .8rem;cursor:pointer;font-weight:600;font-size:.88rem;
+    }
+    .goal-check input{accent-color:var(--primary);width:15px;height:15px;}
+
+    .edit-actions{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;}
+    .primary-action-btn{
+      padding:.9rem 1.6rem;background:var(--accent);color:#fff;
+      border:none;border-radius:12px;font-weight:800;font-size:1rem;
+      cursor:pointer;transition:opacity .15s,transform .1s;
+    }
+    .primary-action-btn:hover{opacity:.9;transform:translateY(-1px);}
+    .primary-action-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+    .secondary-action-btn{
+      padding:.9rem 1.4rem;background:#e2e8f0;color:#0f172a;
+      border-radius:12px;font-weight:700;text-decoration:none;font-size:.95rem;
+    }
+    .secondary-action-btn:hover{background:#cbd5e1;}
+
+    .res-save-msg{margin-top:.75rem;font-weight:700;color:var(--muted);}
+    .res-save-msg.error{color:#ef4444;}
+    .res-error{color:#ef4444;font-weight:700;padding:2rem;}
+    .res-error a{color:var(--primary);}
+
+    /* Toast */
+    .toast{
+      position:fixed;right:18px;bottom:18px;background:#0f172a;color:#fff;
+      padding:.85rem 1.25rem;border-radius:12px;
+      opacity:0;transform:translateY(10px);
+      transition:opacity .2s,transform .2s;pointer-events:none;z-index:999;
+      font-weight:700;
+    }
+    .toast.show{opacity:1;transform:translateY(0);}
+
+    @media(max-width:600px){
+      .edit-row{grid-template-columns:1fr;}
+      .res-header{flex-direction:column;align-items:center;text-align:center;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>📄 Blueprint Detail</h1>
+  <div style="display:flex;gap:1.5rem;">
+    <a href="blueprints.html">← Gallery</a>
+    <a href="index.html">Home</a>
+  </div>
+</div>
+
+<main class="page-body">
+  <div id="detailContent">
+    <p style="color:#64748b;padding:2rem;">Loading blueprint…</p>
+  </div>
+</main>
+
+<div class="toast" id="detailToast" role="status" aria-live="polite" aria-hidden="true"></div>
+
+<script src="../JS/config.js"></script>
+<script src="../JS/api.js"></script>
+<script src="../JS/blueprint_detail.js"></script>
+</body>
+</html>
