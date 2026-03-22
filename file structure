@@ -1,0 +1,138 @@
+Nexoria/
+  .gitignore
+  README.md
+
+  legacy-static/                 # your current project moved here (reference only)
+    CSS/
+      admin.css
+    HTML/
+      index.html
+      discovery.html
+      results.html
+      blueprints.html
+      blueprint.html
+      login.html
+      signup.html
+      admin.html
+    JS/
+      api.js
+      config.js
+      diagnostic.js
+      results.js
+      blueprints.js
+      blueprint_detail.js
+      admin.js
+      script.js
+    Images/
+      accenture.logo.png
+      logo.png                  # normalize naming (fix logo.PNG issue)
+      npower.logo.jpg
+      peopleshores.logo.png
+      social.proof.png
+
+  backend/                        # Spring Boot REST API
+    pom.xml
+    src/
+      main/
+        java/
+          com/nexoria/api/
+            NexoriaApiApplication.java
+
+            common/
+              ApiError.java
+              GlobalExceptionHandler.java
+
+            security/
+              SecurityConfig.java
+              JwtAuthFilter.java
+
+            auth/
+              AuthController.java
+              AuthService.java
+              AuthRequest.java
+              AuthResponse.java
+              JwtService.java
+
+            user/
+              Role.java
+              User.java
+              UserRepository.java
+
+            blueprint/
+              Blueprint.java
+              BlueprintRepository.java
+              BlueprintService.java
+              BlueprintController.java
+              BlueprintCreateRequest.java
+              BlueprintResponse.java
+
+              # capstone-strength relationship (add next)
+              BlueprintItem.java
+              BlueprintItemRepository.java
+              BlueprintItemService.java
+              BlueprintItemController.java
+              BlueprintItemRequest.java
+              BlueprintItemResponse.java
+
+        resources/
+          application.yml
+          db/
+            schema.sql
+            seed.sql
+      test/
+        java/
+          com/nexoria/api/
+            auth/
+              AuthControllerTest.java
+            blueprint/
+              BlueprintControllerTest.java
+
+  frontend/                       # React (Vite) UI
+    package.json
+    vite.config.ts
+    index.html
+    src/
+      main.tsx
+      App.tsx
+      routes/
+        Router.tsx
+        ProtectedRoute.tsx
+      pages/
+        Home.tsx                 # replaces legacy index.html
+        Discovery.tsx
+        Results.tsx
+        Blueprints.tsx
+        BlueprintDetail.tsx
+        Login.tsx
+        Signup.tsx
+        Admin.tsx
+      components/
+        Navbar.tsx
+        Footer.tsx
+        BlueprintCard.tsx
+        ScoreBadge.tsx
+      api/
+        client.ts                # axios/fetch wrapper, base URL env
+        auth.ts
+        blueprints.ts
+      styles/
+        global.css
+        admin.css                # port from legacy-static/CSS/admin.css
+      assets/
+        logo.png
+        accenture.logo.png
+        npower.logo.jpg
+        peopleshores.logo.png
+        social.proof.png
+    .env.example                 # VITE_API_URL=...
+
+  infra/                          # AWS + CI/CD scripts/docs
+    terraform/ or cloudformation/
+    docs/
+      architecture-diagram.png
+      erd.png
+      api-design.md
+      deployment-guide.md
+      adr/
+        0001-tech-stack.md
+        0002-auth-jwt.md
