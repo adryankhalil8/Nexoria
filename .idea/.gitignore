@@ -8,3 +8,23 @@
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+# IDE
+.idea/
+*.iml
+
+# Logs
+derby.log
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Java build
+target/
+*.class
+
+# Node build
+node_modules/
+dist/
+.vite/
