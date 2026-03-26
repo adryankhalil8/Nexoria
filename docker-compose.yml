@@ -1,15 +1,21 @@
 version: '3.8'
 services:
-  postgres:
-    image: postgres:15
+  mysql:
+    image: mysql:8.4
     environment:
-      POSTGRES_USER: nexoria
-      POSTGRES_PASSWORD: nexoria
-      POSTGRES_DB: nexoria
+      MYSQL_DATABASE: ${DB_NAME:nexoria}
+      MYSQL_USER: ${DB_USERNAME:nexoria}
+      MYSQL_PASSWORD: ${DB_PASSWORD:change-me}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:change-root-password}
     ports:
-      - '5432:5432'
+      - '3306:3306'
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   backend:
     build:
@@ -18,21 +24,27 @@ services:
     ports:
       - '8080:8080'
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/nexoria
-      SPRING_DATASOURCE_USERNAME: nexoria
-      SPRING_DATASOURCE_PASSWORD: nexoria
-      JWT_SECRET: change-me-please
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:dev}
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:nexoria}
+      DB_USERNAME: ${DB_USERNAME:nexoria}
+      DB_PASSWORD: ${DB_PASSWORD:change-me}
+      JWT_SECRET: ${JWT_SECRET}
+      APP_CORS_ALLOWED_ORIGIN_1: ${APP_CORS_ALLOWED_ORIGIN_1:http://localhost:3000}
+      APP_CORS_ALLOWED_ORIGIN_2: ${APP_CORS_ALLOWED_ORIGIN_2:http://localhost:8080}
     depends_on:
-      - postgres
+      mysql:
+        condition: service_healthy
 
   frontend:
     build:
       context: frontend
       dockerfile: Dockerfile
     ports:
-      - '3000:3000'
+      - '3000:80'
     depends_on:
       - backend
 
 volumes:
-  postgres_data:
+  mysql_data:

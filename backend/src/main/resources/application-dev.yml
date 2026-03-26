@@ -1,0 +1,14 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+app:
+  security:
+    headers:
+      hsts-enabled: false

@@ -1,5 +1,7 @@
 package com.nexoria.api.blueprint;
 
+import com.nexoria.api.user.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,11 +11,16 @@ import java.util.List;
 
 @Entity
 @Table(name = "blueprints")
+@Schema(name = "Blueprint", description = "Computed diagnostic blueprint persisted for a user.")
 public class Blueprint {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @NotBlank
     @Column(nullable = false)
@@ -90,4 +97,6 @@ public class Blueprint {
     public void setFixes(List<FixRecommendation> fixes) { this.fixes = fixes; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 }

@@ -1,5 +1,6 @@
 package com.nexoria.api.blueprint;
 
+import com.nexoria.api.user.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,8 +51,16 @@ public class BlueprintService {
         repository.deleteById(id);
     }
 
-    public Blueprint computeAndSave(BlueprintRequest request) {
-        Blueprint blueprint = mapRequest(request);
+    public List<Blueprint> findAllByUser(User user) {
+        return repository.findByUser(user);
+    }
+
+    public Optional<Blueprint> findByIdAndUser(Long id, User user) {
+        return repository.findByIdAndUser(id, user);
+    }
+
+    public Blueprint computeAndSave(BlueprintRequest request, User user) {
+        Blueprint blueprint = mapRequest(request, user);
         int score = computeScore(blueprint.getIndustry(), blueprint.getRevenueRange(), blueprint.getGoals(), blueprint.getExternalSignal());
         blueprint.setScore(score);
         blueprint.setReadyForRetainer(isReadyForRetainer(score, blueprint.getRevenueRange()));
@@ -63,8 +72,9 @@ public class BlueprintService {
         return score <= retainerMinScore && retainerRevenueTiers.contains(revenueRange);
     }
 
-    private Blueprint mapRequest(BlueprintRequest request) {
+    private Blueprint mapRequest(BlueprintRequest request, User user) {
         Blueprint b = new Blueprint();
+        b.setUser(user);
         b.setUrl(request.getUrl());
         b.setIndustry(request.getIndustry());
         b.setRevenueRange(request.getRevenueRange());

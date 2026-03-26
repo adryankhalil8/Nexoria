@@ -1,5 +1,8 @@
-﻿package com.nexoria.api.blueprint;
+package com.nexoria.api.blueprint;
 
+import com.nexoria.api.user.Role;
+import com.nexoria.api.user.User;
+import com.nexoria.api.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -14,21 +17,27 @@ class BlueprintRepositoryTest {
     @Autowired
     private BlueprintRepository repository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     void whenSave_thenFindById() {
-        Blueprint b = new Blueprint();
-        b.setUrl("https://example.com");
-        b.setIndustry("Tech / SaaS");
-        b.setRevenueRange("$50k–$200k/mo");
-        b.setGoals(List.of("More leads"));
-        b.setExternalSignal(new ExternalSignal(12.0, 1, 15.0));
-        b.setScore(66);
-        b.setReadyForRetainer(false);
+        User user = userRepository.save(new User("owner@example.com", "encodedPassword", Role.USER));
 
-        Blueprint saved = repository.save(b);
+        Blueprint blueprint = new Blueprint();
+        blueprint.setUser(user);
+        blueprint.setUrl("https://example.com");
+        blueprint.setIndustry("Tech / SaaS");
+        blueprint.setRevenueRange("$50k-$200k/mo");
+        blueprint.setGoals(List.of("More leads"));
+        blueprint.setExternalSignal(new ExternalSignal(12.0, 1, 15.0));
+        blueprint.setScore(66);
+        blueprint.setReadyForRetainer(false);
+
+        Blueprint saved = repository.save(blueprint);
+
         assertThat(saved.getId()).isNotNull();
-
-        Blueprint loaded = repository.findById(saved.getId()).orElseThrow();
-        assertThat(loaded.getUrl()).isEqualTo("https://example.com");
+        assertThat(saved.getUrl()).isEqualTo("https://example.com");
+        assertThat(repository.findByIdAndUser(saved.getId(), user)).isPresent();
     }
 }

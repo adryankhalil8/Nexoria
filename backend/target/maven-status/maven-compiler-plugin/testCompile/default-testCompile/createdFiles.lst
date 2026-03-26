@@ -1,0 +1,6 @@
+com\nexoria\api\blueprint\BlueprintControllerTest.class
+com\nexoria\api\auth\AuthControllerIntegrationTest.class
+com\nexoria\api\auth\AuthServiceTest.class
+com\nexoria\api\blueprint\BlueprintRepositoryTest.class
+com\nexoria\api\auth\JwtServiceTest.class
+com\nexoria\api\auth\AuthControllerTest.class

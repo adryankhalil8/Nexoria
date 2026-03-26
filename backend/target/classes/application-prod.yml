@@ -1,0 +1,24 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+server:
+  forward-headers-strategy: framework
+
+management:
+  endpoint:
+    health:
+      show-details: never
+
+app:
+  security:
+    cors:
+      allowed-origin-patterns:
+        - ${APP_CORS_ALLOWED_ORIGIN:https://app.nexoria.example}
+    headers:
+      content-security-policy: ${APP_SECURITY_CSP:default-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; img-src 'self' data: https:; script-src 'self'; style-src 'self' 'unsafe-inline' https:; connect-src 'self' https://app.nexoria.example;}
+  rate-limit:
+    auth:
+      capacity: ${APP_RATE_LIMIT_AUTH_CAPACITY:5}
+      window: ${APP_RATE_LIMIT_AUTH_WINDOW:PT1M}
