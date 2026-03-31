@@ -2,6 +2,38 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authApi } from '../api/auth';
 
+function getRegistrationError(err: unknown): string {
+  const responseData = (err as any)?.response?.data;
+
+  if (typeof responseData?.error === 'string') {
+    return responseData.error;
+  }
+
+  if (typeof responseData?.details === 'string') {
+    return responseData.details;
+  }
+
+  if (responseData?.errors && typeof responseData.errors === 'object') {
+    const messages = Object.values(responseData.errors).filter(
+      (value): value is string => typeof value === 'string' && value.length > 0
+    );
+
+    if (messages.length > 0) {
+      return messages.join(', ');
+    }
+  }
+
+  if ((err as any)?.message === 'Network Error') {
+    return 'Cannot reach the API. Make sure the backend is running on http://localhost:8080.';
+  }
+
+  if (typeof (err as any)?.message === 'string' && (err as any).message.length > 0) {
+    return (err as any).message;
+  }
+
+  return 'Registration failed';
+}
+
 export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,8 +69,8 @@ export default function Register() {
       localStorage.setItem('nexoria-token', response.token);
       localStorage.setItem('nexoria-refresh-token', response.refreshToken);
       window.location.href = '/';
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Registration failed');
+    } catch (err) {
+      setError(getRegistrationError(err));
     } finally {
       setIsLoading(false);
     }

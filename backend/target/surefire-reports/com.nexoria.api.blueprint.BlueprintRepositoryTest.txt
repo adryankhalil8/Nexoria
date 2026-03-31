@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.nexoria.api.blueprint.BlueprintRepositoryTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.083 s -- in com.nexoria.api.blueprint.BlueprintRepositoryTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.273 s -- in com.nexoria.api.blueprint.BlueprintRepositoryTest

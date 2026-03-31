@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const apiClient = axios.create({ baseURL: '/api' });
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || '/api';
+
+const apiClient = axios.create({ baseURL: apiBaseUrl });
 
 // Request interceptor to add auth token
 apiClient.interceptors.request.use(
@@ -26,7 +28,7 @@ apiClient.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem('nexoria-refresh-token');
         if (refreshToken) {
-          const response = await axios.post('/api/auth/refresh', { refreshToken });
+          const response = await axios.post(`${apiBaseUrl}/auth/refresh`, { refreshToken });
           const { token } = response.data;
 
           localStorage.setItem('nexoria-token', token);
