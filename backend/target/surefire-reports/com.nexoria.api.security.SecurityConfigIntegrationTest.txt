@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.nexoria.api.security.SecurityConfigIntegrationTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.705 s -- in com.nexoria.api.security.SecurityConfigIntegrationTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.910 s -- in com.nexoria.api.security.SecurityConfigIntegrationTest

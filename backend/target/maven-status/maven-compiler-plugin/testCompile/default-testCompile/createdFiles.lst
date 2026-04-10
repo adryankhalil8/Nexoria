@@ -4,3 +4,4 @@ com\nexoria\api\auth\AuthServiceTest.class
 com\nexoria\api\blueprint\BlueprintRepositoryTest.class
 com\nexoria\api\auth\JwtServiceTest.class
 com\nexoria\api\auth\AuthControllerTest.class
+com\nexoria\api\security\SecurityConfigIntegrationTest.class
