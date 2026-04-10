@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.nexoria.api.blueprint.BlueprintControllerTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.607 s -- in com.nexoria.api.blueprint.BlueprintControllerTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.743 s -- in com.nexoria.api.blueprint.BlueprintControllerTest
