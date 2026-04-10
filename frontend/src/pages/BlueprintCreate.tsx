@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchExternalSignal } from '../api/external';
 import { blueprintApi, BlueprintRequest } from '../api/blueprint';
 import ScoreBadge from '../components/ScoreBadge';
+import { HOMEPAGE_BLUEPRINT_DRAFT_KEY } from './HomePage';
 import {
   computeBlueprintPreview,
   GOAL_OPTIONS,
@@ -27,6 +28,18 @@ export default function BlueprintCreate() {
 
   useEffect(() => {
     void refreshSignal();
+    const seededDraft = sessionStorage.getItem(HOMEPAGE_BLUEPRINT_DRAFT_KEY);
+
+    if (seededDraft) {
+      try {
+        const parsed = JSON.parse(seededDraft) as BlueprintRequest;
+        setForm((current) => ({ ...current, ...parsed }));
+      } catch {
+        // Ignore invalid homepage draft payloads.
+      } finally {
+        sessionStorage.removeItem(HOMEPAGE_BLUEPRINT_DRAFT_KEY);
+      }
+    }
   }, []);
 
   const preview = computeBlueprintPreview({ ...form, externalSignal: signal ?? undefined });
@@ -67,7 +80,7 @@ export default function BlueprintCreate() {
         ...form,
         externalSignal: signal ?? undefined,
       });
-      navigate(`/blueprints/${blueprint.id}`);
+      navigate(`/admin/blueprints/${blueprint.id}`);
     } catch (err: any) {
       setError(err?.message ?? 'Create failed');
       setIsSubmitting(false);
@@ -78,10 +91,10 @@ export default function BlueprintCreate() {
     <main className="page">
       <section className="hero-card">
         <p className="eyebrow">Blueprint Generator</p>
-        <h1>Create a blueprint in React</h1>
+        <h1>Create a blueprint inside the admin workflow</h1>
         <p className="muted">
-          This flow replaces the old diagnostic and results pages. Select the company profile, goals,
-          and market context, then save the scored blueprint directly into the authenticated app.
+          This replaces the old disconnected diagnostic flow. Select the company profile, goals, and
+          market context, then save the scored blueprint directly into the protected admin workspace.
         </p>
       </section>
 
@@ -90,7 +103,7 @@ export default function BlueprintCreate() {
           <label>
             Target URL
             <input
-              onChange={(e) => setForm({ ...form, url: e.target.value })}
+              onChange={(event) => setForm({ ...form, url: event.target.value })}
               placeholder="https://example.com"
               required
               value={form.url}
@@ -99,7 +112,7 @@ export default function BlueprintCreate() {
 
           <label>
             Industry
-            <select onChange={(e) => setForm({ ...form, industry: e.target.value })} value={form.industry}>
+            <select onChange={(event) => setForm({ ...form, industry: event.target.value })} value={form.industry}>
               {INDUSTRY_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -110,7 +123,7 @@ export default function BlueprintCreate() {
 
           <label>
             Revenue range
-            <select onChange={(e) => setForm({ ...form, revenueRange: e.target.value })} value={form.revenueRange}>
+            <select onChange={(event) => setForm({ ...form, revenueRange: event.target.value })} value={form.revenueRange}>
               {REVENUE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -138,7 +151,7 @@ export default function BlueprintCreate() {
               <p className="eyebrow">External Signal</p>
               <p className="muted">
                 {signal
-                  ? `${signal.windspeed} km/h wind · ${signal.temperature}°C · code ${signal.weathercode}`
+                  ? `${signal.windspeed} km/h wind | ${signal.temperature}°C | code ${signal.weathercode}`
                   : 'Loading market signal...'}
               </p>
             </div>
@@ -174,9 +187,7 @@ export default function BlueprintCreate() {
           <div className="stack">
             <h3>Goals</h3>
             <p className="muted">
-              {form.goals.length
-                ? form.goals.join(', ')
-                : 'Select one or more goals to see recommendations.'}
+              {form.goals.length ? form.goals.join(', ') : 'Select one or more goals to see recommendations.'}
             </p>
           </div>
 
@@ -187,7 +198,7 @@ export default function BlueprintCreate() {
                 <li key={fix.title}>
                   <strong>{fix.title}</strong>
                   <span className="muted">
-                    {fix.impact} impact · {fix.effort} effort
+                    {fix.impact} impact | {fix.effort} effort
                   </span>
                 </li>
               ))}

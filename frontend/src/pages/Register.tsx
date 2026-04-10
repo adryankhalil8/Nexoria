@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { authApi } from '../api/auth';
 
 function getRegistrationError(err: unknown): string {
@@ -35,11 +35,13 @@ function getRegistrationError(err: unknown): string {
 }
 
 export default function Register() {
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const redirectTarget = new URLSearchParams(location.search).get('next') ?? '/admin';
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,7 +70,7 @@ export default function Register() {
       const response = await authApi.register({ email, password });
       localStorage.setItem('nexoria-token', response.token);
       localStorage.setItem('nexoria-refresh-token', response.refreshToken);
-      window.location.href = '/';
+      window.location.href = redirectTarget;
     } catch (err) {
       setError(getRegistrationError(err));
     } finally {
@@ -119,7 +121,7 @@ export default function Register() {
         </form>
         {error && <div className="error-text">{error}</div>}
         <p className="muted">
-          Already have an account? <Link to="/login">Login here</Link>
+          Already have an account? <Link to={`/login?next=${encodeURIComponent(redirectTarget)}`}>Login here</Link>
         </p>
       </section>
     </main>

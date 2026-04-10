@@ -1,0 +1,43 @@
+export type ManagedUser = {
+  id: number;
+  email: string;
+  username: string;
+  role: 'ADMIN' | 'USER' | 'VIEWER';
+  status: 'ACTIVE' | 'PENDING';
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CreateManagedUserInput = {
+  email: string;
+  username: string;
+  role: ManagedUser['role'];
+};
+
+export type LeadStatus = 'NEW' | 'CONTACTED' | 'QUALIFIED' | 'CLOSED';
+
+export type Lead = {
+  id: number;
+  company: string;
+  contactName: string;
+  email: string;
+  website?: string;
+  industry?: string;
+  notes?: string;
+  status: LeadStatus;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type LeadDraft = {
+  company: string;
+  contactName: string;
+  email: string;
+  website: string;
+  industry: string;
+  notes: string;
+  status: LeadStatus;
+};
+
+export const USER_ROLE_OPTIONS: ManagedUser['role'][] = ['ADMIN', 'USER', 'VIEWER'];
+export const LEAD_STATUS_OPTIONS: LeadStatus[] = ['NEW', 'CONTACTED', 'QUALIFIED', 'CLOSED'];

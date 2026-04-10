@@ -17,7 +17,7 @@ export default function BlueprintDetail() {
     blueprintApi
       .getById(parseInt(id, 10))
       .then(setItem)
-      .catch((e) => setError(e.message));
+      .catch((event) => setError(event.message));
   }, [id]);
 
   if (error) {
@@ -43,7 +43,7 @@ export default function BlueprintDetail() {
           <p className="eyebrow">Blueprint Detail</p>
           <h1>{item.url}</h1>
           <p className="muted">
-            {getOptionLabel(INDUSTRY_OPTIONS, item.industry)} · {getOptionLabel(REVENUE_OPTIONS, item.revenueRange)}
+            {getOptionLabel(INDUSTRY_OPTIONS, item.industry)} | {getOptionLabel(REVENUE_OPTIONS, item.revenueRange)}
           </p>
         </div>
         <ScoreBadge score={item.score} />
@@ -66,7 +66,7 @@ export default function BlueprintDetail() {
             <h2>External signal</h2>
             <p className="muted">
               {item.externalSignal
-                ? `${item.externalSignal.windspeed} km/h wind · ${item.externalSignal.temperature}°C · code ${item.externalSignal.weathercode}`
+                ? `${item.externalSignal.windspeed} km/h wind | ${item.externalSignal.temperature}°C | code ${item.externalSignal.weathercode}`
                 : 'No external signal data was stored for this blueprint.'}
             </p>
           </div>
@@ -77,7 +77,7 @@ export default function BlueprintDetail() {
             <p className="muted">Updated: {new Date(item.updatedAt ?? item.createdAt).toLocaleString()}</p>
           </div>
 
-          <Link className="text-link" to="/blueprints">
+          <Link className="text-link" to="/admin/blueprints">
             Back to gallery
           </Link>
         </article>
@@ -90,7 +90,7 @@ export default function BlueprintDetail() {
                 <div className="fix-list__header">
                   <strong>{fix.title}</strong>
                   <span className="muted">
-                    {fix.impact} impact · {fix.effort} effort
+                    {fix.impact} impact | {fix.effort} effort
                   </span>
                 </div>
                 <p className="muted">{fix.why}</p>

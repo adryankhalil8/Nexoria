@@ -9,7 +9,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const token = localStorage.getItem('nexoria-token');
 
   if (!token) {
-    return <Navigate replace state={{ from: location.pathname }} to="/login" />;
+    return <Navigate replace state={{ from: `${location.pathname}${location.search}` }} to="/login" />;
   }
 
   return <>{children}</>;
