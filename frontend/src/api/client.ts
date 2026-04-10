@@ -51,7 +51,7 @@ apiClient.interceptors.response.use(
 export const logout = () => {
   localStorage.removeItem('nexoria-token');
   localStorage.removeItem('nexoria-refresh-token');
-  window.location.href = '/login';
+  window.location.href = '/';
 };
 
 export default apiClient;

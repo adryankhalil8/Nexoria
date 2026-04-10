@@ -36,10 +36,10 @@ export default function BlueprintsGallery() {
     <main className="page">
       <section className="hero-card">
         <p className="eyebrow">Blueprint Library</p>
-        <h1>All scored blueprints in one React gallery</h1>
+        <h1>Blueprints now live inside the admin workspace</h1>
         <p className="muted">
-          The old gallery flow has been moved into the authenticated app. Filter by industry, search by URL,
-          and drill directly into recommendations.
+          Filter by industry, search by URL, and jump from the admin dashboard into detailed recommendations
+          without leaving the protected workspace.
         </p>
       </section>
 
@@ -73,7 +73,7 @@ export default function BlueprintsGallery() {
         ) : (
           <article className="card empty-state">
             <h2>No blueprints match</h2>
-            <p className="muted">Adjust the filters or generate a new blueprint from the create flow.</p>
+            <p className="muted">Adjust the filters or generate a new blueprint from the admin create flow.</p>
           </article>
         )}
       </section>

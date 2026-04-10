@@ -37,6 +37,7 @@ public class AuthService {
             passwordEncoder.encode(request.getPassword()),
             Role.USER
         );
+        user.setUsernameValue(generateUniqueUsername(request.getEmail()));
 
         userRepository.save(user);
 
@@ -81,5 +82,31 @@ public class AuthService {
         } else {
             throw new IllegalArgumentException("Invalid refresh token");
         }
+    }
+
+    private String generateUniqueUsername(String email) {
+        String base = email
+                .trim()
+                .replace("@", "_at_")
+                .replaceAll("[^a-zA-Z0-9_]", "_");
+
+        if (base.isBlank()) {
+            base = "user";
+        }
+
+        base = base.length() > 28 ? base.substring(0, 28) : base;
+
+        String candidate = base;
+        int suffix = 1;
+
+        while (userRepository.existsByUsername(candidate)) {
+            candidate = base + "_" + suffix;
+            if (candidate.length() > 32) {
+                candidate = candidate.substring(0, 32);
+            }
+            suffix++;
+        }
+
+        return candidate;
     }
 }

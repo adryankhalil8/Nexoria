@@ -26,11 +26,19 @@ public class User implements UserDetails {
     private String email;
 
     @NotBlank
+    @Size(min = 3, max = 32)
+    @Column(unique = true)
+    private String username;
+
+    @NotBlank
     @Size(min = 8)
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus status = UserStatus.ACTIVE;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -42,8 +50,18 @@ public class User implements UserDetails {
     // Constructor for registration
     public User(String email, String passwordHash, Role role) {
         this.email = email;
+        this.username = deriveUsername(email);
         this.passwordHash = passwordHash;
         this.role = role;
+        this.status = UserStatus.ACTIVE;
+    }
+
+    public User(String email, String username, String passwordHash, Role role, UserStatus status) {
+        this.email = email;
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.role = role;
+        this.status = status;
     }
 
     // Getters and Setters
@@ -63,6 +81,14 @@ public class User implements UserDetails {
         this.email = email;
     }
 
+    public String getUsernameValue() {
+        return username;
+    }
+
+    public void setUsernameValue(String username) {
+        this.username = username;
+    }
+
     public String getPasswordHash() {
         return passwordHash;
     }
@@ -77,6 +103,14 @@ public class User implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -134,5 +168,22 @@ public class User implements UserDetails {
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    private String deriveUsername(String email) {
+        if (email == null || email.isBlank()) {
+            return "user";
+        }
+
+        String base = email
+                .trim()
+                .replace("@", "_at_")
+                .replaceAll("[^a-zA-Z0-9_]", "_");
+
+        if (base.isBlank()) {
+            return "user";
+        }
+
+        return base.length() > 32 ? base.substring(0, 32) : base;
     }
 }

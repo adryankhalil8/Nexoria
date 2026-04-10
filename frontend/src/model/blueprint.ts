@@ -60,9 +60,9 @@ export const INDUSTRY_OPTIONS: Option[] = [
 
 export const REVENUE_OPTIONS: Option[] = [
   { label: 'Under $5k/mo', value: 'Under $5k/mo' },
-  { label: '$5k-$10k/mo', value: '$5kâ€“$10k/mo' },
-  { label: '$10k-$50k/mo', value: '$10kâ€“$50k/mo' },
-  { label: '$50k-$200k/mo', value: '$50kâ€“$200k/mo' },
+  { label: '$5k-$10k/mo', value: '$5k-$10k/mo' },
+  { label: '$10k-$50k/mo', value: '$10k-$50k/mo' },
+  { label: '$50k-$200k/mo', value: '$50k-$200k/mo' },
   { label: '$200k+/mo', value: '$200k+/mo' },
 ];
 
@@ -164,14 +164,14 @@ const INDUSTRY_SCORES: Record<string, number> = {
 
 const REVENUE_SCORES: Record<string, number> = {
   'Under $5k/mo': 30,
-  '$5kâ€“$10k/mo': 45,
-  '$10kâ€“$50k/mo': 60,
-  '$50kâ€“$200k/mo': 75,
+  '$5k-$10k/mo': 45,
+  '$10k-$50k/mo': 60,
+  '$50k-$200k/mo': 75,
   '$200k+/mo': 90,
 };
 
 const RETAINER_THRESHOLD = 45;
-const RETAINER_REVENUE_OPTIONS = new Set(['$10kâ€“$50k/mo', '$50kâ€“$200k/mo', '$200k+/mo']);
+const RETAINER_REVENUE_OPTIONS = new Set(['$10k-$50k/mo', '$50k-$200k/mo', '$200k+/mo']);
 
 export function getOptionLabel(options: Option[], value: string): string {
   return options.find((option) => option.value === value)?.label ?? value;
