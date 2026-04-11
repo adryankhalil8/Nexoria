@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:nexoria}
     username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:yourpassword}
+    password: ${DB_PASSWORD:peopleaccent#1}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
