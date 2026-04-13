@@ -1,6 +1,7 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
+
 import {
   GOAL_OPTIONS,
   INDUSTRY_OPTIONS,
