@@ -31,3 +31,5 @@ CREATE TABLE IF NOT EXISTS scheduled_calls (
     updated_at TIMESTAMP NOT NULL,
     CONSTRAINT fk_scheduled_calls_lead FOREIGN KEY (lead_id) REFERENCES leads(id)
 );
+
+
