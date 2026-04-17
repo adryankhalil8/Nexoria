@@ -3,6 +3,7 @@ package com.nexoria.api.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nexoria.api.config.RateLimitProperties;
 import com.nexoria.api.config.SecurityProperties;
+import com.nexoria.api.user.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -52,13 +53,14 @@ class AuthControllerTest {
     void register_ShouldReturnCreated() throws Exception {
         AuthRequest request = new AuthRequest("test@example.com", "password123");
         given(authService.register(any(AuthRequest.class)))
-                .willReturn(new AuthResponse("access-token", "refresh-token"));
+                .willReturn(new AuthResponse("access-token", "refresh-token", Role.USER));
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.token").value("access-token"))
-                .andExpect(jsonPath("$.refreshToken").value("refresh-token"));
+                .andExpect(jsonPath("$.refreshToken").value("refresh-token"))
+                .andExpect(jsonPath("$.role").value("USER"));
     }
 }

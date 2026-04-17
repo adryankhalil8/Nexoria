@@ -26,6 +26,12 @@ public class BlueprintRequest {
 
     private ExternalSignal externalSignal;
 
+    @Schema(example = "APPROVED")
+    private BlueprintStatus status;
+
+    @Schema(example = "BOOKED_JOB")
+    private PurchaseEventType purchaseEventType;
+
     // Getters and Setters
     public String getUrl() {
         return url;
@@ -65,5 +71,21 @@ public class BlueprintRequest {
 
     public void setExternalSignal(ExternalSignal externalSignal) {
         this.externalSignal = externalSignal;
+    }
+
+    public BlueprintStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BlueprintStatus status) {
+        this.status = status;
+    }
+
+    public PurchaseEventType getPurchaseEventType() {
+        return purchaseEventType;
+    }
+
+    public void setPurchaseEventType(PurchaseEventType purchaseEventType) {
+        this.purchaseEventType = purchaseEventType;
     }
 }

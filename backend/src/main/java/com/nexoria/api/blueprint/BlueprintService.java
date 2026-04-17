@@ -87,7 +87,41 @@ public class BlueprintService {
         blueprint.setRevenueRange(request.getRevenueRange());
         blueprint.setGoals(request.getGoals());
         blueprint.setExternalSignal(request.getExternalSignal() != null ? request.getExternalSignal() : new ExternalSignal(10.0, 0, 15.0));
+        blueprint.setStatus(request.getStatus() != null ? request.getStatus() : BlueprintStatus.APPROVED);
+        blueprint.setPurchaseEventType(resolvePurchaseEventType(request));
         return blueprint;
+    }
+
+    public BlueprintStatus resolveStatus(BlueprintRequest request, Blueprint existing) {
+        if (request.getStatus() != null) {
+            return request.getStatus();
+        }
+
+        if (existing != null && existing.getStatus() != null) {
+            return existing.getStatus();
+        }
+
+        return BlueprintStatus.APPROVED;
+    }
+
+    public PurchaseEventType resolvePurchaseEventType(BlueprintRequest request) {
+        if (request.getPurchaseEventType() != null) {
+            return request.getPurchaseEventType();
+        }
+
+        return purchaseEventTypeForIndustry(request.getIndustry());
+    }
+
+    public PurchaseEventType resolvePurchaseEventType(BlueprintRequest request, Blueprint existing) {
+        if (request.getPurchaseEventType() != null) {
+            return request.getPurchaseEventType();
+        }
+
+        if (existing != null && existing.getPurchaseEventType() != null) {
+            return existing.getPurchaseEventType();
+        }
+
+        return purchaseEventTypeForIndustry(request.getIndustry());
     }
 
     public int computeScore(String industry, String revenueRange, List<String> goals, ExternalSignal externalSignal) {
@@ -126,6 +160,14 @@ public class BlueprintService {
             case "$50k-$200k/mo" -> 75;
             case "$200k+/mo" -> 90;
             default -> 50;
+        };
+    }
+
+    private PurchaseEventType purchaseEventTypeForIndustry(String industry) {
+        return switch (industry) {
+            case "Remodeling", "Real Estate" -> PurchaseEventType.BOOKED_JOB;
+            case "E-commerce" -> PurchaseEventType.PURCHASE;
+            default -> PurchaseEventType.DEPOSIT;
         };
     }
 
@@ -173,6 +215,30 @@ public class BlueprintService {
             }
         }
         return result;
+    }
+
+    public List<FixRecommendation> mergeFixes(List<FixRecommendation> existingFixes, List<FixRecommendation> generatedFixes) {
+        Map<String, FixRecommendation> existingByTitle = new LinkedHashMap<>();
+        if (existingFixes != null) {
+            for (FixRecommendation fix : existingFixes) {
+                if (fix != null && fix.getTitle() != null) {
+                    existingByTitle.put(fix.getTitle(), fix);
+                }
+            }
+        }
+
+        List<FixRecommendation> merged = new ArrayList<>();
+        for (FixRecommendation generated : generatedFixes) {
+            FixRecommendation existing = existingByTitle.get(generated.getTitle());
+            if (existing != null) {
+                generated.setOwner(existing.getOwner());
+                generated.setStatus(existing.getStatus());
+                generated.setClientVisible(existing.getClientVisible());
+            }
+            merged.add(generated);
+        }
+
+        return merged;
     }
 
     private void selectKeys(Set<String> selected, List<String> keys, int limit) {

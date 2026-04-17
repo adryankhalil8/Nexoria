@@ -1,7 +1,5 @@
-com\nexoria\api\blueprint\BlueprintService.class
 com\nexoria\api\blueprint\BlueprintRequest.class
 com\nexoria\api\user\UserRepository.class
-com\nexoria\api\blueprint\FixRecommendation.class
 com\nexoria\api\config\OpenApiConfig.class
 com\nexoria\api\config\SecurityProperties.class
 com\nexoria\api\auth\AuthService.class
@@ -15,13 +13,10 @@ com\nexoria\api\auth\AuthResponse.class
 com\nexoria\api\config\SecurityProperties$Headers.class
 com\nexoria\api\blueprint\BlueprintItemRequest.class
 com\nexoria\api\blueprint\ExternalSignal.class
-com\nexoria\api\blueprint\Blueprint.class
 com\nexoria\api\blueprint\BlueprintResponse.class
 com\nexoria\api\auth\JwtService.class
 com\nexoria\api\common\GlobalExceptionHandler.class
-com\nexoria\api\blueprint\BlueprintRepository.class
 com\nexoria\api\NexoriaApiApplication.class
-com\nexoria\api\blueprint\BlueprintController.class
 com\nexoria\api\blueprint\BlueprintCreateRequest.class
 com\nexoria\api\auth\AuthController$RefreshTokenRequest.class
 com\nexoria\api\blueprint\BlueprintItemResponse.class
