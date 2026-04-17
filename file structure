@@ -1,138 +1,162 @@
 Nexoria/
-  .gitignore
-  README.md
-
-  legacy-static/                 # your current project moved here (reference only)
-    CSS/
-      admin.css
-    HTML/
-      index.html
-      discovery.html
-      results.html
-      blueprints.html
-      blueprint.html
-      login.html
-      signup.html
-      admin.html
-    JS/
-      api.js
-      config.js
-      diagnostic.js
-      results.js
-      blueprints.js
-      blueprint_detail.js
-      admin.js
-      script.js
-    Images/
-      accenture.logo.png
-      logo.png                  # normalize naming (fix logo.PNG issue)
-      npower.logo.jpg
-      peopleshores.logo.png
-      social.proof.png
-
-  backend/                        # Spring Boot REST API
+  .github/                         # CI workflows and project automation
+  .idea/                           # IDE settings
+  .vscode/                         # Workspace settings
+  backend/                         # Spring Boot REST API
+    .env.example                   # stale backend env example; needs refresh
     pom.xml
     src/
       main/
         java/
           com/nexoria/api/
             NexoriaApiApplication.java
-
-            common/
-              ApiError.java
-              GlobalExceptionHandler.java
-
-            security/
-              SecurityConfig.java
-              JwtAuthFilter.java
-
             auth/
+              AppUserDetailsService.java
               AuthController.java
-              AuthService.java
               AuthRequest.java
               AuthResponse.java
+              AuthService.java
               JwtService.java
-
-            user/
-              Role.java
-              User.java
-              UserRepository.java
-
             blueprint/
               Blueprint.java
-              BlueprintRepository.java
-              BlueprintService.java
               BlueprintController.java
               BlueprintCreateRequest.java
-              BlueprintResponse.java
-
-              # capstone-strength relationship (add next)
               BlueprintItem.java
-              BlueprintItemRepository.java
-              BlueprintItemService.java
               BlueprintItemController.java
+              BlueprintItemRepository.java
               BlueprintItemRequest.java
               BlueprintItemResponse.java
-
+              BlueprintItemService.java
+              BlueprintRepository.java
+              BlueprintRequest.java
+              BlueprintResponse.java
+              BlueprintService.java
+              ExternalSignal.java
+              FixRecommendation.java
+            common/
+              ApiError.java
+              GlobalExceptHandler.java
+              GlobalExceptionHandler.java
+            config/
+              OpenApiConfig.java
+              RateLimitProperties.java
+              SecurityProperties.java
+            lead/
+              Lead.java
+              LeadController.java
+              LeadRepository.java
+              LeadRequest.java
+              LeadResponse.java
+              LeadService.java
+              LeadStatus.java
+            security/
+              AuthRateLimitFilter.java
+              JwtAuthFilter.java
+              SecurityConfig.java
+            user/
+              CreateUserRequest.java
+              Role.java
+              UpdateUserRequest.java
+              User.java
+              UserController.java
+              UserRepository.java
+              UserService.java
+              UserStatus.java
+              UserSummaryResponse.java
         resources/
           application.yml
+          application-dev.yml
+          application-local.yml    # local H2 profile
+          application-prod.yml
           db/
-            schema.sql
-            seed.sql
+            migration/
+              V1__init_schema.sql
+              V2__add_user_ownership.sql
+              V3__admin_portal_schema.sql
       test/
-        java/
-          com/nexoria/api/
-            auth/
-              AuthControllerTest.java
-            blueprint/
-              BlueprintControllerTest.java
-
-  frontend/                       # React (Vite) UI
+        java/                      # backend unit/integration tests
+        resources/
+          application.yml
+  frontend/                        # React + Vite UI
     package.json
     vite.config.ts
+    vitest.config.ts
     index.html
     src/
-      main.tsx
       App.tsx
-      routes/
-        Router.tsx
-        ProtectedRoute.tsx
-      pages/
-        Home.tsx                 # replaces legacy index.html
-        Discovery.tsx
-        Results.tsx
-        Blueprints.tsx
-        BlueprintDetail.tsx
-        Login.tsx
-        Signup.tsx
-        Admin.tsx
-      components/
-        Navbar.tsx
-        Footer.tsx
-        BlueprintCard.tsx
-        ScoreBadge.tsx
+      main.tsx
+      vite-env.d.ts
       api/
-        client.ts                # axios/fetch wrapper, base URL env
         auth.ts
-        blueprints.ts
+        blueprint.ts
+        client.ts
+        external.ts
+        leads.ts
+        users.ts
+      assets/
+        Images/
+          accenture.logo.png
+          logo.PNG
+          npower.logo.jpg
+          peopleshores.logo.png
+          social.proof.png
+      components/
+        AdminLayout.tsx
+        BlueprintCard.tsx
+        Footer.tsx
+        Navbar.tsx
+        ScoreBadge.tsx
+      model/
+        admin.ts
+        blueprint.ts
+      pages/
+        AdminClients.tsx
+        AdminOverview.tsx
+        AdminUsers.tsx
+        BlueprintCreate.tsx
+        BlueprintDetail.tsx
+        BlueprintsGallery.tsx
+        HomePage.tsx
+        Login.tsx
+        Register.tsx
+      routes/
+        ProtectedRoute.tsx
       styles/
         global.css
-        admin.css                # port from legacy-static/CSS/admin.css
-      assets/
-        logo.png
-        accenture.logo.png
-        npower.logo.jpg
-        peopleshores.logo.png
-        social.proof.png
-    .env.example                 # VITE_API_URL=...
-
-  infra/                          # AWS + CI/CD scripts/docs
-    terraform/ or cloudformation/
+      test/
+        Login.test.tsx
+        Navbar.test.tsx
+        setup.ts
+      main/
+        java/
+          org/example/
+            Main.java              # stray Java file inside frontend tree
+  infra/                           # docs and architecture artifacts
     docs/
-      architecture-diagram.png
-      erd.png
-      api-design.md
-      deployment-guide.md
+      Audit_Reports/
+        AUDIT_REPORT.md
+        AUDIT_REPORT(2).md
+        AUDIT_REPORT(3).md
+        AUDIT_REPORT(4).md
       adr/
         0001-tech-stack.md
         0002-auth-jwt.md
+        0003-production-hardening.md
+      api-design.md
+      architecture-diagram.png
+      deployment-guide.md
+      erd.png                      # currently empty
+  .env.example                     # root env for Docker/local setup
+  admin.css                        # standalone legacy-style admin stylesheet
+  BlueprintRequest.java            # stray root-level Java file
+  docker-compose.yml
+  docker-compose.prod.yml
+  Dockerfile
+  file structure                   # this document
+  TODO_LIST.md
+
+Current active app flow:
+  - Frontend entry: frontend/src/main.tsx
+  - App routes: frontend/src/App.tsx
+  - Backend entry: backend/src/main/java/com/nexoria/api/NexoriaApiApplication.java
+  - Database migrations: backend/src/main/resources/db/migration/

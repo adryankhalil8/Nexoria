@@ -49,6 +49,14 @@ public class Blueprint {
     @Column(nullable = false)
     private Boolean readyForRetainer;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BlueprintStatus status = BlueprintStatus.DRAFT;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PurchaseEventType purchaseEventType = PurchaseEventType.DEPOSIT;
+
     @Embedded
     private ExternalSignal externalSignal;
 
@@ -93,6 +101,10 @@ public class Blueprint {
     public void setScore(Integer score) { this.score = score; }
     public Boolean getReadyForRetainer() { return readyForRetainer; }
     public void setReadyForRetainer(Boolean readyForRetainer) { this.readyForRetainer = readyForRetainer; }
+    public BlueprintStatus getStatus() { return status; }
+    public void setStatus(BlueprintStatus status) { this.status = status; }
+    public PurchaseEventType getPurchaseEventType() { return purchaseEventType; }
+    public void setPurchaseEventType(PurchaseEventType purchaseEventType) { this.purchaseEventType = purchaseEventType; }
     public ExternalSignal getExternalSignal() { return externalSignal; }
     public void setExternalSignal(ExternalSignal externalSignal) { this.externalSignal = externalSignal; }
     public List<FixRecommendation> getFixes() { return fixes; }

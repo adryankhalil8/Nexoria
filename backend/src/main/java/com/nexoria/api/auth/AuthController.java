@@ -34,6 +34,13 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/bootstrap-admin")
+    @Operation(summary = "Bootstrap the first admin account", security = {})
+    public ResponseEntity<AuthResponse> bootstrapAdmin(@Valid @RequestBody AdminBootstrapRequest request) {
+        AuthResponse response = authService.bootstrapAdmin(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
     @PostMapping("/refresh")
     @Operation(summary = "Refresh an access token", security = {})
     public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
