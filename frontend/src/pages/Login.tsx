@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { authApi } from '../api/auth';
+import { persistAuthSession } from '../auth/session';
 
 export default function Login() {
   const location = useLocation();
@@ -10,7 +11,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   const redirectTarget =
-    new URLSearchParams(location.search).get('next') ?? (location.state as { from?: string } | null)?.from ?? '/admin';
+    new URLSearchParams(location.search).get('next') ?? (location.state as { from?: string } | null)?.from ?? '/portal';
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,8 +26,7 @@ export default function Login() {
 
     try {
       const response = await authApi.login({ email, password });
-      localStorage.setItem('nexoria-token', response.token);
-      localStorage.setItem('nexoria-refresh-token', response.refreshToken);
+      persistAuthSession(response);
       window.location.href = redirectTarget;
     } catch (err: any) {
       setError(err.response?.data?.error || 'Login failed');
@@ -68,6 +68,9 @@ export default function Login() {
         {error && <div className="error-text">{error}</div>}
         <p className="muted">
           Don't have an account? <Link to={`/register?next=${encodeURIComponent(redirectTarget)}`}>Register here</Link>
+        </p>
+        <p className="muted">
+          Need first-time admin access? <Link to="/admin-access">Set up admin</Link>
         </p>
       </section>
     </main>

@@ -6,11 +6,11 @@
   --panel-border: rgba(55, 38, 18, 0.12);
   --text: #20170f;
   --muted: #6b5b4d;
-  --accent: #0f766e;
-  --accent-strong: #0d5c56;
-  --secondary: #b56921;
-  --secondary-soft: rgba(181, 105, 33, 0.12);
-  --success: #1f7a54;
+  --accent: #67b8e4;
+  --accent-strong: #2d6ea9;
+  --secondary: #ee8e2a;
+  --secondary-soft: rgba(238, 142, 42, 0.14);
+  --success: #4a97cd;
   --danger: #b5442f;
   --shadow: 0 28px 72px rgba(69, 46, 18, 0.12);
   font-family: Georgia, 'Times New Roman', serif;
@@ -24,8 +24,8 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(15, 118, 110, 0.16), transparent 24%),
-    radial-gradient(circle at top right, rgba(181, 105, 33, 0.2), transparent 26%),
+    radial-gradient(circle at top left, rgba(103, 184, 228, 0.24), transparent 24%),
+    radial-gradient(circle at top right, rgba(238, 142, 42, 0.24), transparent 26%),
     linear-gradient(180deg, #fcf7f0 0%, var(--bg) 100%);
   color: var(--text);
 }
@@ -164,8 +164,8 @@ textarea {
 }
 
 .choice--active {
-  border-color: rgba(15, 118, 110, 0.45);
-  background: rgba(15, 118, 110, 0.08);
+  border-color: rgba(103, 184, 228, 0.5);
+  background: rgba(103, 184, 228, 0.12);
 }
 
 .signal-panel,
@@ -222,8 +222,8 @@ textarea {
 }
 
 .chip--active {
-  background: rgba(15, 118, 110, 0.1);
-  border-color: rgba(15, 118, 110, 0.35);
+  background: rgba(103, 184, 228, 0.14);
+  border-color: rgba(103, 184, 228, 0.4);
 }
 
 .text-link {
@@ -232,6 +232,10 @@ textarea {
 
 .error-text {
   color: var(--danger);
+}
+
+.success-text {
+  color: #1f6b4a;
 }
 
 .pill-row,
@@ -380,10 +384,10 @@ textarea {
   z-index: 10;
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.85rem;
   align-items: center;
   margin-bottom: 1.5rem;
-  padding: 0.9rem 1.2rem;
+  padding: 0.9rem 1rem;
   border-radius: 999px;
   backdrop-filter: blur(18px);
   background: rgba(255, 251, 246, 0.78);
@@ -410,8 +414,8 @@ textarea {
 
 .install-hero__content {
   display: grid;
-  gap: 1.5rem;
-  grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.85fr);
+  gap: 1.1rem;
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
 }
 
@@ -420,16 +424,43 @@ textarea {
   min-width: 0;
 }
 
+.install-hero__copy {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
 .install-hero__copy h1 {
-  max-width: 11ch;
+  max-width: 13ch;
   margin: 0;
-  font-size: clamp(2.8rem, 5vw, 5.4rem);
-  line-height: 0.95;
+  font-size: clamp(2.9rem, 5vw, 5.5rem);
+  line-height: 0.92;
 }
 
 .install-hero__lede {
-  max-width: 60ch;
-  font-size: 1.06rem;
+  max-width: 65ch;
+  font-size: 1.02rem;
+}
+
+.install-hero__points {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 0.9rem;
+  font-weight: 600;
+}
+
+.install-hero__points span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.install-hero__points span:not(:last-child)::after {
+  content: "|";
+  color: rgba(45, 110, 169, 0.45);
+  font-weight: 400;
 }
 
 .install-pillars,
@@ -442,7 +473,8 @@ textarea {
 
 .install-pillars {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin-top: 1.25rem;
+  margin-top: 1rem;
+  width: 100%;
 }
 
 .install-pillar p:last-child {
@@ -457,6 +489,7 @@ textarea {
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.48);
   border: 1px solid rgba(55, 38, 18, 0.08);
+  width: min(100%, 1180px);
 }
 
 .included-strip__label {
@@ -606,7 +639,7 @@ textarea {
 
 .pricing-card--primary {
   background:
-    linear-gradient(180deg, rgba(17, 94, 89, 0.95), rgba(14, 68, 64, 0.95));
+    linear-gradient(180deg, rgba(45, 110, 169, 0.95), rgba(24, 70, 120, 0.95));
   color: white;
 }
 
@@ -648,7 +681,7 @@ textarea {
   margin-bottom: 2rem;
   padding: 2rem;
   background:
-    radial-gradient(circle at right top, rgba(15, 118, 110, 0.18), transparent 28%),
+    radial-gradient(circle at right top, rgba(103, 184, 228, 0.24), transparent 28%),
     linear-gradient(180deg, rgba(255, 250, 243, 0.94), rgba(246, 237, 226, 0.92));
 }
 
@@ -673,9 +706,11 @@ textarea {
 .brand-lockup {
   display: inline-flex;
   align-items: center;
-  gap: 0.9rem;
+  gap: 0.75rem;
   text-decoration: none;
   color: inherit;
+  flex: 0 0 auto;
+  min-width: 0;
 }
 
 .brand-lockup img,
@@ -701,6 +736,15 @@ textarea {
 .brand-lockup p {
   margin: 0.2rem 0 0;
   color: var(--muted);
+}
+
+.brand-lockup strong {
+  display: block;
+  font-size: 1.05rem;
+}
+
+.brand-lockup > div {
+  min-width: 0;
 }
 
 .hero-copy,
@@ -759,7 +803,15 @@ textarea {
 .admin-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: minmax(280px, 300px) minmax(0, 1fr);
+  overflow-x: clip;
+}
+
+.client-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(270px, 290px) minmax(0, 1fr);
+  overflow-x: clip;
 }
 
 .admin-sidebar {
@@ -767,10 +819,29 @@ textarea {
   gap: 1.5rem;
   align-content: start;
   padding: 1.25rem;
+  position: sticky;
+  top: 0;
+  min-height: 100vh;
+  overflow-y: auto;
   background:
     radial-gradient(circle at top, rgba(194, 109, 20, 0.18), transparent 28%),
     linear-gradient(180deg, #1d150f 0%, #21160c 100%);
   color: rgba(255, 248, 240, 0.92);
+}
+
+.client-sidebar {
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+  padding: 1.25rem;
+  position: sticky;
+  top: 0;
+  min-height: 100vh;
+  overflow-y: auto;
+  background:
+    radial-gradient(circle at top, rgba(103, 184, 228, 0.16), transparent 28%),
+    linear-gradient(180deg, #19140f 0%, #20170f 100%);
+  color: rgba(255, 248, 240, 0.94);
 }
 
 .admin-profile,
@@ -781,8 +852,40 @@ textarea {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.client-blueprint-summary,
+.client-nav a,
+.client-sidebar__footer,
+.client-brand {
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.client-brand,
+.client-blueprint-summary {
+  padding: 1rem;
+}
+
+.client-brand {
+  display: flex;
+  gap: 0.85rem;
+  align-items: center;
+}
+
 .admin-profile {
   padding: 1rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.admin-profile strong,
+.admin-profile .muted,
+.client-blueprint-summary strong,
+.client-blueprint-summary .muted {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .admin-nav {
@@ -790,7 +893,20 @@ textarea {
   gap: 0.6rem;
 }
 
+.client-nav {
+  display: grid;
+  gap: 0.6rem;
+}
+
 .admin-nav a {
+  padding: 0.95rem 1rem;
+  color: inherit;
+  text-decoration: none;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.client-nav a {
   padding: 0.95rem 1rem;
   color: inherit;
   text-decoration: none;
@@ -801,7 +917,17 @@ textarea {
   background: rgba(255, 255, 255, 0.14);
 }
 
+.client-nav a.active {
+  background: rgba(255, 255, 255, 0.14);
+}
+
 .admin-sidebar__footer {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.client-sidebar__footer {
   display: grid;
   gap: 0.75rem;
   padding: 1rem;
@@ -812,7 +938,27 @@ textarea {
   color: white;
 }
 
+.admin-sidebar__footer .text-link,
+.admin-sidebar__footer .ghost-button,
+.client-sidebar__footer .text-link,
+.client-sidebar__footer .ghost-button {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+}
+
+.client-sidebar .text-link,
+.client-sidebar .ghost-button {
+  color: white;
+}
+
 .admin-main {
+  min-width: 0;
+  padding: 1.5rem 0 2rem;
+}
+
+.client-main {
+  min-width: 0;
   padding: 1.5rem 0 2rem;
 }
 
@@ -821,8 +967,79 @@ textarea {
   margin: 0 auto 1.5rem;
 }
 
+.client-topbar {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
 .admin-content {
   padding-bottom: 2rem;
+}
+
+.client-content {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding-bottom: 2rem;
+}
+
+.client-blueprint-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.client-home-grid {
+  align-items: start;
+}
+
+.client-task-list {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.client-task-list li,
+.client-kanban-card {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(34, 24, 15, 0.08);
+}
+
+.client-owner-pill--client {
+  background: rgba(238, 142, 42, 0.14);
+  color: #a85c15;
+}
+
+.client-owner-pill--nexoria {
+  background: rgba(103, 184, 228, 0.16);
+  color: #1f5e95;
+}
+
+.client-owner-pill--shared {
+  background: rgba(94, 87, 219, 0.12);
+  color: #4c46a8;
+}
+
+.client-fix-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.client-kanban {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .table-wrap {
@@ -866,13 +1083,73 @@ textarea {
   box-shadow: var(--shadow);
 }
 
+.schedule-grid {
+  align-items: start;
+}
+
+.schedule-page h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 4vw, 3.8rem);
+}
+
+.schedule-panel__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.schedule-day-list,
+.schedule-slot-list,
+.schedule-settings-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.schedule-day-card {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(34, 24, 15, 0.08);
+}
+
+.schedule-slot-list {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.schedule-window-card {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.schedule-window-row {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+}
+
 @media (max-width: 980px) {
   .admin-shell {
     grid-template-columns: 1fr;
   }
 
+  .client-shell {
+    grid-template-columns: 1fr;
+  }
+
   .admin-sidebar {
     position: static;
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .client-sidebar {
+    position: static;
+    min-height: auto;
+    overflow: visible;
   }
 }
 
@@ -893,7 +1170,10 @@ textarea {
 
   .home-nav__actions,
   .table-actions,
-  .modal-actions {
+  .modal-actions,
+  .client-topbar,
+  .client-blueprint-card,
+  .schedule-panel__header {
     width: 100%;
   }
 
@@ -907,7 +1187,10 @@ textarea {
   .install-hero__content,
   .install-showcase__row,
   .final-cta,
-  .footer {
+  .footer,
+  .client-topbar,
+  .client-blueprint-card,
+  .schedule-panel__header {
     grid-template-columns: 1fr;
     flex-direction: column;
     align-items: flex-start;
@@ -941,8 +1224,20 @@ textarea {
     font-size: clamp(2.2rem, 11vw, 3.2rem);
   }
 
+  .install-hero__points {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .install-hero__points span:not(:last-child)::after {
+    content: "";
+  }
+
   .kpi-grid,
-  .system-table__row {
+  .system-table__row,
+  .client-kanban,
+  .schedule-window-row {
     grid-template-columns: 1fr;
   }
 }

@@ -8,6 +8,11 @@ export interface AuthRequest {
 export interface AuthResponse {
   token: string;
   refreshToken: string;
+  role: 'ADMIN' | 'USER' | 'VIEWER';
+}
+
+export interface AdminBootstrapRequest extends AuthRequest {
+  bootstrapSecret: string;
 }
 
 export const authApi = {
@@ -18,6 +23,11 @@ export const authApi = {
 
   register: async (credentials: AuthRequest): Promise<AuthResponse> => {
     const response = await apiClient.post<AuthResponse>('/auth/register', credentials);
+    return response.data;
+  },
+
+  bootstrapAdmin: async (payload: AdminBootstrapRequest): Promise<AuthResponse> => {
+    const response = await apiClient.post<AuthResponse>('/auth/bootstrap-admin', payload);
     return response.data;
   },
 
