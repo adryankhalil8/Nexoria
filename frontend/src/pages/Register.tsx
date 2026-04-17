@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { authApi } from '../api/auth';
+import { persistAuthSession } from '../auth/session';
 
 function getRegistrationError(err: unknown): string {
   const responseData = (err as any)?.response?.data;
@@ -41,7 +42,7 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const redirectTarget = new URLSearchParams(location.search).get('next') ?? '/admin';
+  const redirectTarget = new URLSearchParams(location.search).get('next') ?? '/portal';
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,8 +69,7 @@ export default function Register() {
 
     try {
       const response = await authApi.register({ email, password });
-      localStorage.setItem('nexoria-token', response.token);
-      localStorage.setItem('nexoria-refresh-token', response.refreshToken);
+      persistAuthSession(response);
       window.location.href = redirectTarget;
     } catch (err) {
       setError(getRegistrationError(err));

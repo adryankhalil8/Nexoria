@@ -24,8 +24,8 @@ export default function AdminLayout() {
 
         <div className="admin-profile">
           <p className="eyebrow">Signed in</p>
-          <strong>{currentUser?.username ?? 'Loading...'}</strong>
-          <span className="muted">{currentUser?.email ?? 'Fetching profile'}</span>
+          <strong>{currentUser?.email ?? 'Fetching profile'}</strong>
+          <span className="muted">{currentUser ? 'Admin account' : 'Loading...'}</span>
         </div>
 
         <nav className="admin-nav">
@@ -33,6 +33,8 @@ export default function AdminLayout() {
             Dashboard
           </NavLink>
           <NavLink to="/admin/clients">Client Tracker</NavLink>
+          <NavLink to="/admin/calls">Booked Calls</NavLink>
+          <NavLink to="/admin/schedule">Schedule Settings</NavLink>
           <NavLink to="/admin/users">User Manager</NavLink>
           <NavLink to="/admin/blueprints">Blueprints</NavLink>
           <NavLink to="/admin/blueprints/new">New Blueprint</NavLink>

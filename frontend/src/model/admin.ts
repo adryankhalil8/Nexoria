@@ -14,7 +14,7 @@ export type CreateManagedUserInput = {
   role: ManagedUser['role'];
 };
 
-export type LeadStatus = 'NEW' | 'CONTACTED' | 'QUALIFIED' | 'CLOSED';
+export type LeadStatus = 'NEW' | 'CONTACTED' | 'BOOKED' | 'QUALIFIED' | 'CLOSED';
 
 export type Lead = {
   id: number;
@@ -40,4 +40,4 @@ export type LeadDraft = {
 };
 
 export const USER_ROLE_OPTIONS: ManagedUser['role'][] = ['ADMIN', 'USER', 'VIEWER'];
-export const LEAD_STATUS_OPTIONS: LeadStatus[] = ['NEW', 'CONTACTED', 'QUALIFIED', 'CLOSED'];
+export const LEAD_STATUS_OPTIONS: LeadStatus[] = ['NEW', 'CONTACTED', 'BOOKED', 'QUALIFIED', 'CLOSED'];

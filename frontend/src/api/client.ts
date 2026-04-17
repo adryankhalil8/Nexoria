@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { clearAuthSession } from '../auth/session';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || '/api';
 
@@ -29,17 +30,19 @@ apiClient.interceptors.response.use(
         const refreshToken = localStorage.getItem('nexoria-refresh-token');
         if (refreshToken) {
           const response = await axios.post(`${apiBaseUrl}/auth/refresh`, { refreshToken });
-          const { token } = response.data;
+          const { token, role } = response.data;
 
           localStorage.setItem('nexoria-token', token);
+          if (role) {
+            localStorage.setItem('nexoria-role', role);
+          }
           originalRequest.headers.Authorization = `Bearer ${token}`;
 
           return apiClient(originalRequest);
         }
       } catch (refreshError) {
         // Refresh failed, redirect to login
-        localStorage.removeItem('nexoria-token');
-        localStorage.removeItem('nexoria-refresh-token');
+        clearAuthSession();
         window.location.href = '/login';
       }
     }
@@ -49,8 +52,7 @@ apiClient.interceptors.response.use(
 );
 
 export const logout = () => {
-  localStorage.removeItem('nexoria-token');
-  localStorage.removeItem('nexoria-refresh-token');
+  clearAuthSession();
   window.location.href = '/';
 };
 

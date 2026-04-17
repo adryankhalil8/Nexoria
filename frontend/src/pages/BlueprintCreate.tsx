@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchExternalSignal } from '../api/external';
 import { blueprintApi, BlueprintRequest } from '../api/blueprint';
 import ScoreBadge from '../components/ScoreBadge';
-import { HOMEPAGE_BLUEPRINT_DRAFT_KEY } from './HomePage';
+import { HOMEPAGE_BLUEPRINT_DRAFT_KEY } from './GetStarted';
 import {
   computeBlueprintPreview,
   GOAL_OPTIONS,

@@ -9,6 +9,9 @@ export type FixRecommendation = {
   impact: string;
   effort: string;
   why: string;
+  owner: TaskOwner;
+  status: TaskStatus;
+  clientVisible: boolean;
 };
 
 export type BlueprintDraft = {
@@ -26,6 +29,8 @@ export type BlueprintSummary = {
   revenueRange: string;
   score: number;
   readyForRetainer: boolean;
+  status: BlueprintPortalStatus;
+  purchaseEventType: PurchaseEventType;
   createdAt: string;
   updatedAt?: string;
 };
@@ -40,6 +45,47 @@ export type Blueprint = BlueprintSummary & {
   goals: string[];
   fixes: FixRecommendation[];
   externalSignal?: ExternalSignal;
+};
+
+export type BlueprintPortalStatus = 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'ARCHIVED';
+export type PurchaseEventType = 'PURCHASE' | 'DEPOSIT' | 'BOOKED_JOB';
+export type TaskOwner = 'CLIENT' | 'NEXORIA' | 'SHARED';
+export type TaskStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'BLOCKED' | 'DONE';
+
+export type BlueprintTask = {
+  id: string;
+  blueprintId: number;
+  title: string;
+  why: string;
+  impact: string;
+  effort: string;
+  owner: TaskOwner;
+  status: TaskStatus;
+  dueLabel: string;
+  steps: string[];
+  resources: { label: string; href: string }[];
+  comments: string[];
+};
+
+export type ClientBlueprintView = {
+  blueprintId: number;
+  name: string;
+  industry: string;
+  status: BlueprintPortalStatus;
+  purchaseEventType: PurchaseEventType;
+  score: number;
+  diagnosis: string;
+  installChecklist: string[];
+  tasks: BlueprintTask[];
+  weeklyNotes: string[];
+  metrics: {
+    leads7d: number;
+    purchases7d: number;
+    conversionRate: string;
+    revenue7d: string;
+    trackingConnected: boolean;
+    missingIntegrations: string[];
+  };
 };
 
 export type Option = {
@@ -75,73 +121,85 @@ export const GOAL_OPTIONS: Option[] = [
 ];
 
 const FIX_MAP: Record<string, FixRecommendation> = {
-  automation: {
-    title: 'Implement workflow automation',
-    impact: 'High',
-    effort: 'Medium',
-    why: 'Manual processes are your biggest time drain. Automating lead follow-up and invoicing alone saves 8-12 hrs/week.',
-  },
-  leads: {
-    title: 'Build a lead capture funnel',
-    impact: 'High',
-    effort: 'Medium',
-    why: 'No systematic funnel means you rely on referrals. A simple landing page and email sequence can multiply inbound leads.',
-  },
-  retention: {
-    title: 'Launch a client retention sequence',
-    impact: 'High',
-    effort: 'Low',
-    why: 'Retaining existing clients is cheaper than acquiring new ones. A nurture sequence is usually the fastest win.',
-  },
-  seo: {
-    title: 'Optimize on-page SEO',
-    impact: 'Medium',
-    effort: 'Low',
-    why: 'Missing metadata and slow load times suppress organic traffic. Quick wins are available in under a day.',
-  },
-  analytics: {
-    title: 'Set up conversion tracking',
-    impact: 'High',
-    effort: 'Low',
-    why: "You can't improve what you don't measure. A simple analytics setup unlocks data-driven decisions quickly.",
-  },
-  payments: {
-    title: 'Streamline payment and invoicing',
-    impact: 'Medium',
-    effort: 'Low',
-    why: 'Late payments hurt cash flow. Automated invoicing reduces collection time significantly.',
-  },
-  social: {
-    title: 'Systemize social content',
-    impact: 'Medium',
-    effort: 'Medium',
-    why: 'Inconsistent posting kills reach. A short content calendar and scheduler creates repeatability.',
-  },
-  crm: {
-    title: 'Deploy a lightweight CRM',
-    impact: 'High',
-    effort: 'Medium',
-    why: 'Spreadsheets lead to missed follow-ups. A CRM pipeline keeps revenue opportunities visible.',
-  },
-  reporting: {
-    title: 'Build an automated weekly report',
-    impact: 'Medium',
-    effort: 'Low',
-    why: 'Stakeholders need visibility. Automated reporting reduces status-call overhead and improves trust.',
-  },
-  lowRevenue: {
-    title: 'Introduce a recurring revenue offer',
-    impact: 'High',
-    effort: 'High',
-    why: 'Project-based income is unpredictable. A retainer or subscription offer stabilizes cash flow.',
-  },
-  externalSignal: {
-    title: 'Monitor external market conditions',
-    impact: 'Low',
-    effort: 'Low',
-    why: 'Macro and weather signals can affect demand. Even a lightweight alert view adds useful context.',
-  },
+  automation: createFix(
+    'Implement workflow automation',
+    'High',
+    'Medium',
+    'Manual processes are your biggest time drain. Automating lead follow-up and invoicing alone saves 8-12 hrs/week.'
+  ),
+  leads: createFix(
+    'Build a lead capture funnel',
+    'High',
+    'Medium',
+    'No systematic funnel means you rely on referrals. A simple landing page and email sequence can multiply inbound leads.'
+  ),
+  retention: createFix(
+    'Launch a client retention sequence',
+    'High',
+    'Low',
+    'Retaining existing clients is cheaper than acquiring new ones. A nurture sequence is usually the fastest win.'
+  ),
+  seo: createFix(
+    'Optimize on-page SEO',
+    'Medium',
+    'Low',
+    'Missing metadata and slow load times suppress organic traffic. Quick wins are available in under a day.'
+  ),
+  analytics: createFix(
+    'Set up conversion tracking',
+    'High',
+    'Low',
+    "You can't improve what you don't measure. A simple analytics setup unlocks data-driven decisions quickly."
+  ),
+  payments: createFix(
+    'Streamline payment and invoicing',
+    'Medium',
+    'Low',
+    'Late payments hurt cash flow. Automated invoicing reduces collection time significantly.'
+  ),
+  social: createFix(
+    'Systemize social content',
+    'Medium',
+    'Medium',
+    'Inconsistent posting kills reach. A short content calendar and scheduler creates repeatability.'
+  ),
+  crm: createFix(
+    'Deploy a lightweight CRM',
+    'High',
+    'Medium',
+    'Spreadsheets lead to missed follow-ups. A CRM pipeline keeps revenue opportunities visible.'
+  ),
+  reporting: createFix(
+    'Build an automated weekly report',
+    'Medium',
+    'Low',
+    'Stakeholders need visibility. Automated reporting reduces status-call overhead and improves trust.'
+  ),
+  lowRevenue: createFix(
+    'Introduce a recurring revenue offer',
+    'High',
+    'High',
+    'Project-based income is unpredictable. A retainer or subscription offer stabilizes cash flow.'
+  ),
+  externalSignal: createFix(
+    'Monitor external market conditions',
+    'Low',
+    'Low',
+    'Macro and weather signals can affect demand. Even a lightweight alert view adds useful context.'
+  ),
 };
+
+function createFix(title: string, impact: string, effort: string, why: string): FixRecommendation {
+  return {
+    title,
+    impact,
+    effort,
+    why,
+    owner: 'NEXORIA',
+    status: 'NOT_STARTED',
+    clientVisible: true,
+  };
+}
 
 const GOAL_TO_FIX: Record<string, string[]> = {
   'More leads': ['leads', 'seo', 'social'],
@@ -195,6 +253,74 @@ export function computeBlueprintPreview(draft: BlueprintDraft): BlueprintScoreRe
   const fixes = buildFixes(draft.goals);
 
   return { score, readyForRetainer, fixes };
+}
+
+export function buildClientBlueprintView(blueprint: Blueprint): ClientBlueprintView {
+  const visibleFixes = blueprint.fixes.filter((fix) => fix.clientVisible);
+  const tasks = visibleFixes.map((fix, index) => {
+    return {
+      id: `${blueprint.id}-${index + 1}`,
+      blueprintId: blueprint.id,
+      title: fix.title,
+      why: fix.why,
+      impact: fix.impact,
+      effort: fix.effort,
+      owner: fix.owner,
+      status: fix.status,
+      dueLabel: index === 0 ? 'This week' : index === 1 ? 'Next up' : `Week ${index + 1}`,
+      steps: [
+        fix.owner === 'CLIENT' ? 'Provide any needed access, copy, or approval.' : 'Review the current state and confirm the install scope.',
+        'Implement the recommended change in the live path.',
+        'Review the result and mark the task complete once verified.',
+      ],
+      resources: [
+        { label: 'Live website', href: blueprint.url },
+        { label: 'Blueprint detail', href: `/admin/blueprints/${blueprint.id}` },
+      ],
+      comments: [
+        fix.owner === 'CLIENT'
+          ? 'Waiting on client input before this can move forward.'
+          : fix.owner === 'SHARED'
+            ? 'Needs review from both sides before we close it out.'
+            : 'Work is underway on the Nexoria side.',
+      ],
+    };
+  });
+
+  const purchases7d = Math.max(1, Math.round(blueprint.score / 12));
+  const leads7d = Math.max(6, purchases7d * 5 + blueprint.goals.length * 2);
+  const conversionRate = `${Math.max(2, Math.min(35, Math.round((purchases7d / leads7d) * 100)))}%`;
+  const revenue7d = `$${(purchases7d * 1750).toLocaleString()}`;
+
+  return {
+    blueprintId: blueprint.id,
+    name: `${blueprint.industry} Growth Blueprint`,
+    industry: blueprint.industry,
+    status: blueprint.status,
+    purchaseEventType: blueprint.purchaseEventType,
+    score: blueprint.score,
+    diagnosis: `Your current path is creating interest, but the system still needs tighter follow-up, clearer handoff, and better visibility into what converts.`,
+    installChecklist: [
+      'Offer and CTA path approved',
+      'Lead capture and routing configured',
+      'Top priorities assigned with ownership',
+      'Reporting cadence established',
+    ],
+    tasks,
+    weeklyNotes: [
+      'Homepage and intake path are aligned around the current offer.',
+      'Next priority is moving the highest-impact task to complete and unblocking anything waiting on approval.',
+      'We will keep measuring progress against the purchase event rather than generic traffic alone.',
+    ],
+    metrics: {
+      leads7d,
+      purchases7d,
+      conversionRate,
+      revenue7d,
+      trackingConnected: Boolean(blueprint.externalSignal),
+      missingIntegrations: blueprint.externalSignal ? [] : ['Analytics access', 'Calendar or booking data'],
+    },
+  };
 }
 
 function buildFixes(goals: string[]): FixRecommendation[] {
