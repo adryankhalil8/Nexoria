@@ -1,6 +1,9 @@
 package com.nexoria.api.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nexoria.api.lead.Lead;
+import com.nexoria.api.lead.LeadRepository;
+import com.nexoria.api.lead.LeadStatus;
 import com.nexoria.api.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +30,23 @@ class AuthControllerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private LeadRepository leadRepository;
+
+    private void seedClosedLead(String email) {
+        Lead lead = new Lead();
+        lead.setCompany("Test Company");
+        lead.setContactName("Test Contact");
+        lead.setEmail(email);
+        lead.setStatus(LeadStatus.CLOSED);
+        leadRepository.save(lead);
+    }
+
     @Test
     void register_ValidRequest_ShouldReturnTokens() throws Exception {
         // Given
         AuthRequest request = new AuthRequest("integration@test.com", "password123");
+        seedClosedLead(request.getEmail());
 
         // When & Then
         mockMvc.perform(post("/api/auth/register")
@@ -45,6 +61,7 @@ class AuthControllerIntegrationTest {
     void register_DuplicateEmail_ShouldReturnBadRequest() throws Exception {
         // Given - First register a user
         AuthRequest firstRequest = new AuthRequest("duplicate@test.com", "password123");
+        seedClosedLead(firstRequest.getEmail());
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(firstRequest)))
@@ -64,6 +81,7 @@ class AuthControllerIntegrationTest {
     void login_ValidCredentials_ShouldReturnTokens() throws Exception {
         // Given - First register a user
         AuthRequest registerRequest = new AuthRequest("login@test.com", "password123");
+        seedClosedLead(registerRequest.getEmail());
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerRequest)))

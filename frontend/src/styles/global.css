@@ -238,6 +238,50 @@ textarea {
   color: #1f6b4a;
 }
 
+.booking-confirmation {
+  text-align: center;
+  align-items: center;
+}
+
+.booking-confirmation__badge {
+  position: relative;
+  width: 108px;
+  height: 108px;
+  display: grid;
+  place-items: center;
+}
+
+.booking-confirmation__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 5px solid rgba(46, 160, 96, 0.18);
+  border-top-color: #2ea060;
+  animation: booking-spin 1.15s linear infinite;
+}
+
+.booking-confirmation__check {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2ea060, #5fc989);
+  color: white;
+  font-size: 2.3rem;
+  font-weight: 700;
+  box-shadow: 0 18px 40px rgba(46, 160, 96, 0.24);
+}
+
+@keyframes booking-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .pill-row,
 .chip-row,
 .hero-metrics {
@@ -650,11 +694,29 @@ textarea {
 }
 
 .home-section--split .section-heading {
-  margin-bottom: 1.2rem;
+  margin-bottom: 0.6rem;
 }
 
 .install-comparison {
   align-items: stretch;
+}
+
+.home-section--split .comparison-list,
+.home-section--split .faq-list {
+  margin-top: 0.35rem;
+}
+
+.home-section--split .card.stack {
+  align-content: start;
+}
+
+.home-section--split .card.stack h3 {
+  margin: 0;
+}
+
+.home-section--split .comparison-list {
+  align-content: start;
+  gap: 0.5rem;
 }
 
 .faq-list {
@@ -683,6 +745,11 @@ textarea {
   background:
     radial-gradient(circle at right top, rgba(103, 184, 228, 0.24), transparent 28%),
     linear-gradient(180deg, rgba(255, 250, 243, 0.94), rgba(246, 237, 226, 0.92));
+}
+
+.final-cta .hero-actions {
+  justify-content: center;
+  align-items: center;
 }
 
 .final-cta h2 {
@@ -1238,6 +1305,77 @@ textarea {
   .system-table__row,
   .client-kanban,
   .schedule-window-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.booked-call-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.booked-call-card {
+  display: grid;
+  gap: 0.45rem;
+  min-height: 150px;
+}
+
+.support-console {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.support-thread {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.58);
+  color: inherit;
+  display: grid;
+  gap: 0.25rem;
+  padding: 1rem;
+  text-align: left;
+}
+
+.support-thread--active {
+  border-color: rgba(45, 137, 194, 0.52);
+  box-shadow: 0 16px 34px rgba(45, 137, 194, 0.16);
+}
+
+.support-thread span,
+.support-thread small {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.support-message-list {
+  display: grid;
+  gap: 0.85rem;
+  max-height: 520px;
+  overflow: auto;
+}
+
+.support-message {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.62);
+  padding: 1rem;
+}
+
+.support-message--admin {
+  border-color: rgba(45, 137, 194, 0.3);
+  background: rgba(232, 244, 252, 0.72);
+}
+
+.support-message--client {
+  border-color: rgba(230, 125, 36, 0.3);
+  background: rgba(255, 244, 230, 0.72);
+}
+
+@media (max-width: 900px) {
+  .support-console {
     grid-template-columns: 1fr;
   }
 }

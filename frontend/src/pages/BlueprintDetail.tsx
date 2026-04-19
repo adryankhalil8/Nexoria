@@ -45,6 +45,7 @@ export default function BlueprintDetail() {
           <p className="muted">
             {getOptionLabel(INDUSTRY_OPTIONS, item.industry)} | {getOptionLabel(REVENUE_OPTIONS, item.revenueRange)}
           </p>
+          {item.clientEmail && <p className="muted">Assigned client: {item.clientEmail}</p>}
         </div>
         <ScoreBadge score={item.score} />
       </section>
@@ -66,7 +67,7 @@ export default function BlueprintDetail() {
             <h2>External signal</h2>
             <p className="muted">
               {item.externalSignal
-                ? `${item.externalSignal.windspeed} km/h wind | ${item.externalSignal.temperature}°C | code ${item.externalSignal.weathercode}`
+                ? `${item.externalSignal.windspeed} km/h wind | ${item.externalSignal.temperature} deg C | code ${item.externalSignal.weathercode}`
                 : 'No external signal data was stored for this blueprint.'}
             </p>
           </div>

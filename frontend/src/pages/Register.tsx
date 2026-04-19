@@ -1,38 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { authApi } from '../api/auth';
+import { getApiErrorMessage } from '../api/errors';
 import { persistAuthSession } from '../auth/session';
 
 function getRegistrationError(err: unknown): string {
-  const responseData = (err as any)?.response?.data;
+  const maybeError = err as { message?: unknown };
 
-  if (typeof responseData?.error === 'string') {
-    return responseData.error;
-  }
-
-  if (typeof responseData?.details === 'string') {
-    return responseData.details;
-  }
-
-  if (responseData?.errors && typeof responseData.errors === 'object') {
-    const messages = Object.values(responseData.errors).filter(
-      (value): value is string => typeof value === 'string' && value.length > 0
-    );
-
-    if (messages.length > 0) {
-      return messages.join(', ');
-    }
-  }
-
-  if ((err as any)?.message === 'Network Error') {
+  if (maybeError.message === 'Network Error') {
     return 'Cannot reach the API. Make sure the backend is running on http://localhost:8080.';
   }
 
-  if (typeof (err as any)?.message === 'string' && (err as any).message.length > 0) {
-    return (err as any).message;
-  }
-
-  return 'Registration failed';
+  return getApiErrorMessage(err, 'Registration failed');
 }
 
 export default function Register() {
@@ -42,7 +21,15 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const redirectTarget = new URLSearchParams(location.search).get('next') ?? '/portal';
+  const searchParams = new URLSearchParams(location.search);
+  const redirectTarget = searchParams.get('next') ?? '/portal';
+  const initialEmail = searchParams.get('email') ?? '';
+
+  useEffect(() => {
+    if (initialEmail) {
+      setEmail(initialEmail);
+    }
+  }, [initialEmail]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,6 +70,9 @@ export default function Register() {
       <section className="auth-card">
         <p className="eyebrow">Create account</p>
         <h1>Register</h1>
+        <p className="muted">
+          Use the same email from your booked call or an email marked <strong>CLOSED</strong> in the admin portal.
+        </p>
         <form className="stack-form" onSubmit={submit}>
         <label>
           Email

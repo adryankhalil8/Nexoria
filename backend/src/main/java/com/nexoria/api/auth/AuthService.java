@@ -1,5 +1,6 @@
 package com.nexoria.api.auth;
 
+import com.nexoria.api.lead.LeadService;
 import com.nexoria.api.user.User;
 import com.nexoria.api.user.UserRepository;
 import com.nexoria.api.user.Role;
@@ -17,17 +18,20 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final LeadService leadService;
     private final String adminBootstrapSecret;
 
     public AuthService(UserRepository userRepository,
                       PasswordEncoder passwordEncoder,
                       JwtService jwtService,
                       AuthenticationManager authenticationManager,
+                      LeadService leadService,
                       @Value("${ADMIN_BOOTSTRAP_SECRET:}") String adminBootstrapSecret) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.leadService = leadService;
         this.adminBootstrapSecret = adminBootstrapSecret;
     }
 
@@ -35,6 +39,8 @@ public class AuthService {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("User already exists with email: " + request.getEmail());
         }
+
+        leadService.requireClosedLead(request.getEmail());
 
         User user = new User(
             request.getEmail(),
@@ -44,6 +50,7 @@ public class AuthService {
         user.setUsernameValue(generateUniqueUsername(request.getEmail()));
 
         userRepository.save(user);
+        leadService.syncClientAccount(user);
 
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
@@ -80,6 +87,7 @@ public class AuthService {
         user.setUsernameValue(generateUniqueUsername(request.getEmail()));
 
         userRepository.save(user);
+        leadService.syncClientAccount(user);
 
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);

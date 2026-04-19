@@ -13,7 +13,9 @@ C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\schedule\SchedulingController.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\NexoriaApiApplication.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\auth\AppUserDetailsService.java
+C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\support\SupportController.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\lead\LeadStatus.java
+C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\support\SupportMessageRequest.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\auth\AuthService.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\blueprint\BlueprintItemResponse.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\user\UserController.java
@@ -25,6 +27,7 @@ C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\auth\AuthRequest.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\schedule\PublicAvailabilityResponse.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\security\SecurityConfig.java
+C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\support\SupportService.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\blueprint\BlueprintItemRepository.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\user\UserService.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\lead\LeadService.java
@@ -42,8 +45,10 @@ C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\common\GlobalExceptHandler.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\schedule\AvailabilityWindowRequest.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\schedule\CreateBookingRequest.java
+C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\support\SupportMessageResponse.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\user\User.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\blueprint\BlueprintController.java
+C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\support\SupportMessageRepository.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\blueprint\BlueprintStatus.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\common\ApiError.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\auth\AdminBootstrapRequest.java
@@ -52,6 +57,7 @@ C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\common\GlobalExceptionHandler.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\config\OpenApiConfig.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\config\RateLimitProperties.java
+C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\support\SupportMessageSender.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\blueprint\PurchaseEventType.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\user\UpdateUserRequest.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\lead\LeadController.java
@@ -66,4 +72,5 @@ C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\schedule\AvailabilityWindowResponse.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\schedule\ScheduleSettings.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\schedule\ScheduledCallRepository.java
+C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\support\SupportMessage.java
 C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend\src\main\java\com\nexoria\api\user\CreateUserRequest.java

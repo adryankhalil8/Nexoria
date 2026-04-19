@@ -10,6 +10,9 @@ import java.util.Optional;
 @Repository
 public interface BlueprintRepository extends JpaRepository<Blueprint, Long> {
     List<Blueprint> findByUser(User user);
+    List<Blueprint> findByClientEmailIgnoreCase(String clientEmail);
+    List<Blueprint> findByUserOrClientEmailIgnoreCase(User user, String clientEmail);
     Optional<Blueprint> findByIdAndUser(Long id, User user);
+    Optional<Blueprint> findByIdAndClientEmailIgnoreCase(Long id, String clientEmail);
 }
 

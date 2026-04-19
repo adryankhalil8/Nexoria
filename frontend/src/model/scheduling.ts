@@ -44,6 +44,8 @@ export type BookingRequest = {
   email: string;
   website?: string;
   industry?: string;
+  revenueRange?: string;
+  goals?: string[];
   notes?: string;
   scheduledStart: string;
   source: BookingSource;

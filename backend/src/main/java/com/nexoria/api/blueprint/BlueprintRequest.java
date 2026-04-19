@@ -20,6 +20,9 @@ public class BlueprintRequest {
     @Schema(example = "$50k-$200k/mo")
     private String revenueRange;
 
+    @Schema(example = "client@example.com")
+    private String clientEmail;
+
     @NotNull
     @Schema(example = "[\"Increase qualified leads\", \"Improve SEO\"]")
     private List<String> goals;
@@ -55,6 +58,14 @@ public class BlueprintRequest {
 
     public void setRevenueRange(String revenueRange) {
         this.revenueRange = revenueRange;
+    }
+
+    public String getClientEmail() {
+        return clientEmail;
+    }
+
+    public void setClientEmail(String clientEmail) {
+        this.clientEmail = clientEmail;
     }
 
     public List<String> getGoals() {

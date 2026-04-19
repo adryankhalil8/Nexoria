@@ -1,12 +1,14 @@
 package com.nexoria.api.auth;
 
+import com.nexoria.api.lead.Lead;
+import com.nexoria.api.lead.LeadService;
+import com.nexoria.api.lead.LeadStatus;
 import com.nexoria.api.user.User;
 import com.nexoria.api.user.UserRepository;
 import com.nexoria.api.user.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,7 +38,9 @@ class AuthServiceTest {
     @Mock
     private AuthenticationManager authenticationManager;
 
-    @InjectMocks
+    @Mock
+    private LeadService leadService;
+
     private AuthService authService;
 
     private User testUser;
@@ -46,12 +50,17 @@ class AuthServiceTest {
     void setUp() {
         testUser = new User("test@example.com", "encodedPassword", Role.USER);
         authRequest = new AuthRequest("test@example.com", "password");
+        authService = new AuthService(userRepository, passwordEncoder, jwtService, authenticationManager, leadService, "test-secret");
     }
 
     @Test
     void register_Success_ShouldReturnAuthResponse() {
         // Given
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        Lead closedLead = new Lead();
+        closedLead.setEmail(authRequest.getEmail());
+        closedLead.setStatus(LeadStatus.CLOSED);
+        when(leadService.requireClosedLead(anyString())).thenReturn(closedLead);
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(testUser);
         when(jwtService.generateToken(any(User.class))).thenReturn("jwt-token");
@@ -65,6 +74,7 @@ class AuthServiceTest {
         assertEquals("jwt-token", response.getToken());
         assertEquals("refresh-token", response.getRefreshToken());
         verify(userRepository).save(any(User.class));
+        verify(leadService).syncClientAccount(any(User.class));
     }
 
     @Test

@@ -1,6 +1,6 @@
 // Nexoria ERD
 // Source of truth: backend/src/main/resources/db/migration
-// Updated: 2026-04-14
+// Updated: 2026-04-18
 
 Table users {
   id bigint [pk, increment]
@@ -19,6 +19,7 @@ Table blueprints {
   url varchar(2048) [not null]
   industry varchar(255) [not null]
   revenue_range varchar(255) [not null]
+  client_email varchar(320)
   score int [not null]
   ready_for_retainer boolean [not null]
   status varchar(50) [not null, default: 'DRAFT']
@@ -48,6 +49,7 @@ Table blueprint_fixes {
 
 Table leads {
   id bigint [pk, increment]
+  user_id bigint
   company varchar(255) [not null]
   contact_name varchar(255) [not null]
   email varchar(320) [not null]
@@ -59,6 +61,52 @@ Table leads {
   updated_at timestamp [not null]
 }
 
+Table schedule_settings {
+  id bigint [pk]
+  timezone varchar(64) [not null]
+  slot_duration_minutes int [not null]
+  booking_horizon_days int [not null]
+}
+
+Table availability_windows {
+  id bigint [pk, increment]
+  day_of_week varchar(20) [not null]
+  start_time time [not null]
+  end_time time [not null]
+  active boolean [not null, default: true]
+}
+
+Table scheduled_calls {
+  id bigint [pk, increment]
+  lead_id bigint
+  source varchar(50) [not null]
+  status varchar(50) [not null]
+  company varchar(255) [not null]
+  contact_name varchar(255) [not null]
+  email varchar(320) [not null]
+  website varchar(2048)
+  industry varchar(255)
+  notes varchar(4000)
+  scheduled_start timestamp [not null]
+  scheduled_end timestamp [not null]
+  timezone varchar(64) [not null]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table support_messages {
+  id bigint [pk, increment]
+  client_user_id bigint
+  client_email varchar(320) [not null]
+  business_name varchar(255)
+  sender varchar(50) [not null]
+  body varchar(4000) [not null]
+  created_at timestamp [not null]
+}
+
 Ref: blueprints.user_id > users.id
 Ref: blueprint_goals.blueprint_id > blueprints.id [delete: cascade]
 Ref: blueprint_fixes.blueprint_id > blueprints.id [delete: cascade]
+Ref: leads.user_id > users.id
+Ref: scheduled_calls.lead_id > leads.id
+Ref: support_messages.client_user_id > users.id

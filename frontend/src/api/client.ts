@@ -40,7 +40,7 @@ apiClient.interceptors.response.use(
 
           return apiClient(originalRequest);
         }
-      } catch (refreshError) {
+      } catch {
         // Refresh failed, redirect to login
         clearAuthSession();
         window.location.href = '/login';

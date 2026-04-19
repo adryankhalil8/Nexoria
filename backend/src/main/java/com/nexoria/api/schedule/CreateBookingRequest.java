@@ -2,6 +2,7 @@ package com.nexoria.api.schedule;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 
 public class CreateBookingRequest {
     @NotBlank
@@ -16,6 +17,8 @@ public class CreateBookingRequest {
 
     private String website;
     private String industry;
+    private String revenueRange;
+    private List<String> goals;
     private String notes;
 
     @NotBlank
@@ -62,6 +65,22 @@ public class CreateBookingRequest {
 
     public void setIndustry(String industry) {
         this.industry = industry;
+    }
+
+    public String getRevenueRange() {
+        return revenueRange;
+    }
+
+    public void setRevenueRange(String revenueRange) {
+        this.revenueRange = revenueRange;
+    }
+
+    public List<String> getGoals() {
+        return goals;
+    }
+
+    public void setGoals(List<String> goals) {
+        this.goals = goals;
     }
 
     public String getNotes() {

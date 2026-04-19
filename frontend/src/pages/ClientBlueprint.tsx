@@ -28,6 +28,16 @@ export default function ClientBlueprint() {
           </div>
           <p className="muted">{portal.diagnosis}</p>
           <div>
+            <p className="eyebrow">Selected goals</p>
+            <div className="pill-row">
+              {portal.goals.map((goal) => (
+                <span className="pill" key={goal}>
+                  {goal}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div>
             <p className="eyebrow">Purchase event</p>
             <strong>{portal.purchaseEventType.replace('_', ' ')}</strong>
           </div>
@@ -43,12 +53,17 @@ export default function ClientBlueprint() {
 
         <article className="card stack">
           <div>
-            <p className="eyebrow">Attachments and links</p>
-            <h3>Resources</h3>
+            <p className="eyebrow">Blueprint preview</p>
+            <h3>What this plan is built around</h3>
           </div>
-          <a href={portal.tasks[0]?.resources[0]?.href ?? '#'} rel="noreferrer" target="_blank">
+          <p className="muted">
+            Your blueprint preview is based on the goals selected during intake and the fixes Nexoria has
+            prioritized against them.
+          </p>
+          <a href={portal.url} rel="noreferrer" target="_blank">
             Visit live website
           </a>
+          <span className="pill pill--success">Score {portal.score}/100</span>
           <a href={`/admin/blueprints/${portal.blueprintId}`}>View admin blueprint reference</a>
         </article>
       </div>

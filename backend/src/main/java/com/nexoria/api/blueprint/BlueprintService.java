@@ -1,5 +1,6 @@
 package com.nexoria.api.blueprint;
 
+import com.nexoria.api.user.Role;
 import com.nexoria.api.user.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -59,11 +60,20 @@ public class BlueprintService {
     }
 
     public List<Blueprint> findAllByUser(User user) {
-        return repository.findByUser(user);
+        if (user.getRole() == Role.ADMIN) {
+            return repository.findAll();
+        }
+
+        return repository.findByUserOrClientEmailIgnoreCase(user, user.getEmail());
     }
 
     public Optional<Blueprint> findByIdAndUser(Long id, User user) {
-        return repository.findByIdAndUser(id, user);
+        if (user.getRole() == Role.ADMIN) {
+            return repository.findById(id);
+        }
+
+        return repository.findByIdAndUser(id, user)
+                .or(() -> repository.findByIdAndClientEmailIgnoreCase(id, user.getEmail()));
     }
 
     public Blueprint computeAndSave(BlueprintRequest request, User user) {
@@ -79,12 +89,17 @@ public class BlueprintService {
         return score <= retainerMinScore && retainerRevenueTiers.contains(revenueRange);
     }
 
+    public String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value.trim();
+    }
+
     private Blueprint mapRequest(BlueprintRequest request, User user) {
         Blueprint blueprint = new Blueprint();
         blueprint.setUser(user);
         blueprint.setUrl(request.getUrl());
         blueprint.setIndustry(request.getIndustry());
         blueprint.setRevenueRange(request.getRevenueRange());
+        blueprint.setClientEmail(blankToNull(request.getClientEmail()));
         blueprint.setGoals(request.getGoals());
         blueprint.setExternalSignal(request.getExternalSignal() != null ? request.getExternalSignal() : new ExternalSignal(10.0, 0, 15.0));
         blueprint.setStatus(request.getStatus() != null ? request.getStatus() : BlueprintStatus.APPROVED);

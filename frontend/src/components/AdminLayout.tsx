@@ -35,6 +35,7 @@ export default function AdminLayout() {
           <NavLink to="/admin/clients">Client Tracker</NavLink>
           <NavLink to="/admin/calls">Booked Calls</NavLink>
           <NavLink to="/admin/schedule">Schedule Settings</NavLink>
+          <NavLink to="/admin/support">Support Messages</NavLink>
           <NavLink to="/admin/users">User Manager</NavLink>
           <NavLink to="/admin/blueprints">Blueprints</NavLink>
           <NavLink to="/admin/blueprints/new">New Blueprint</NavLink>

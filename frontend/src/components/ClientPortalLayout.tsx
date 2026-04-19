@@ -2,32 +2,38 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { logout } from '../api/client';
 import { blueprintApi } from '../api/blueprint';
+import { schedulingApi } from '../api/scheduling';
 import { buildClientBlueprintView, type ClientBlueprintView } from '../model/blueprint';
+import type { ScheduledCall } from '../model/scheduling';
 
 export type ClientPortalOutletContext = {
   portal: ClientBlueprintView | null;
+  bookings: ScheduledCall[];
   isLoading: boolean;
 };
 
 export default function ClientPortalLayout() {
   const [portal, setPortal] = useState<ClientBlueprintView | null>(null);
+  const [bookings, setBookings] = useState<ScheduledCall[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    blueprintApi
-      .getAll()
-      .then((blueprints) => {
-        if (blueprints.length === 0) {
+    Promise.allSettled([blueprintApi.getAll(), schedulingApi.getMyBookings()])
+      .then(([blueprintsResult, bookingsResult]) => {
+        if (blueprintsResult.status === 'fulfilled') {
+          const blueprints = blueprintsResult.value;
+          const approvedBlueprint = blueprints.find((blueprint) => blueprint.status === 'APPROVED') ?? blueprints[0];
+          setPortal(approvedBlueprint ? buildClientBlueprintView(approvedBlueprint) : null);
+        } else {
           setPortal(null);
-          return;
         }
 
-        const approvedBlueprint =
-          blueprints.find((blueprint) => blueprint.status === 'APPROVED') ?? blueprints[0];
-
-        setPortal(buildClientBlueprintView(approvedBlueprint));
+        if (bookingsResult.status === 'fulfilled') {
+          setBookings(bookingsResult.value);
+        } else {
+          setBookings([]);
+        }
       })
-      .catch(() => setPortal(null))
       .finally(() => setIsLoading(false));
   }, []);
 
@@ -85,7 +91,7 @@ export default function ClientPortalLayout() {
         </header>
 
         <main className="client-content">
-          <Outlet context={{ portal, isLoading } satisfies ClientPortalOutletContext} />
+          <Outlet context={{ portal, bookings, isLoading } satisfies ClientPortalOutletContext} />
         </main>
       </div>
     </div>

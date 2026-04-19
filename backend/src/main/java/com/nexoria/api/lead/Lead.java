@@ -1,5 +1,6 @@
 package com.nexoria.api.lead;
 
+import com.nexoria.api.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -25,6 +26,10 @@ public class Lead {
     @NotBlank
     @Column(nullable = false)
     private String email;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private String website;
     private String industry;
@@ -83,6 +88,14 @@ public class Lead {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getWebsite() {
