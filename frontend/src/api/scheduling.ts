@@ -32,6 +32,11 @@ export const schedulingApi = {
     return response.data;
   },
 
+  getMyBookings: async (): Promise<ScheduledCall[]> => {
+    const response = await apiClient.get<ScheduledCall[]>('/scheduling/bookings/mine');
+    return response.data;
+  },
+
   clearBooking: async (id: number): Promise<ScheduledCall> => {
     const response = await apiClient.patch<ScheduledCall>(`/scheduling/bookings/${id}/clear`);
     return response.data;

@@ -18,6 +18,7 @@ export type LeadStatus = 'NEW' | 'CONTACTED' | 'BOOKED' | 'QUALIFIED' | 'CLOSED'
 
 export type Lead = {
   id: number;
+  userId?: number | null;
   company: string;
   contactName: string;
   email: string;
@@ -25,6 +26,7 @@ export type Lead = {
   industry?: string;
   notes?: string;
   status: LeadStatus;
+  hasAccount: boolean;
   createdAt: string;
   updatedAt: string;
 };

@@ -36,6 +36,9 @@ public class Blueprint {
     @Column(nullable = false)
     private String revenueRange;
 
+    @Column
+    private String clientEmail;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "blueprint_goals", joinColumns = @JoinColumn(name = "blueprint_id"))
     @Column(name = "goal")
@@ -95,6 +98,8 @@ public class Blueprint {
     public void setIndustry(String industry) { this.industry = industry; }
     public String getRevenueRange() { return revenueRange; }
     public void setRevenueRange(String revenueRange) { this.revenueRange = revenueRange; }
+    public String getClientEmail() { return clientEmail; }
+    public void setClientEmail(String clientEmail) { this.clientEmail = clientEmail; }
     public List<String> getGoals() { return goals; }
     public void setGoals(List<String> goals) { this.goals = goals; }
     public Integer getScore() { return score; }

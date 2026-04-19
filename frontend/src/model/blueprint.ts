@@ -18,6 +18,7 @@ export type BlueprintDraft = {
   url: string;
   industry: string;
   revenueRange: string;
+  clientEmail?: string;
   goals: string[];
   externalSignal?: ExternalSignal;
 };
@@ -27,6 +28,7 @@ export type BlueprintSummary = {
   url: string;
   industry: string;
   revenueRange: string;
+  clientEmail?: string;
   score: number;
   readyForRetainer: boolean;
   status: BlueprintPortalStatus;
@@ -71,6 +73,8 @@ export type ClientBlueprintView = {
   blueprintId: number;
   name: string;
   industry: string;
+  url: string;
+  goals: string[];
   status: BlueprintPortalStatus;
   purchaseEventType: PurchaseEventType;
   score: number;
@@ -296,6 +300,8 @@ export function buildClientBlueprintView(blueprint: Blueprint): ClientBlueprintV
     blueprintId: blueprint.id,
     name: `${blueprint.industry} Growth Blueprint`,
     industry: blueprint.industry,
+    url: blueprint.url,
+    goals: blueprint.goals,
     status: blueprint.status,
     purchaseEventType: blueprint.purchaseEventType,
     score: blueprint.score,

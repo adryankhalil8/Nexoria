@@ -9,7 +9,9 @@ import AdminBootstrap from './pages/AdminBootstrap';
 import AdminBookedCalls from './pages/AdminBookedCalls';
 import AdminOverview from './pages/AdminOverview';
 import AdminScheduleSettings from './pages/AdminScheduleSettings';
+import AdminSupportMessages from './pages/AdminSupportMessages';
 import AdminUsers from './pages/AdminUsers';
+import BookingConfirmation from './pages/BookingConfirmation';
 import ClientBlueprint from './pages/ClientBlueprint';
 import ClientHome from './pages/ClientHome';
 import ClientNextSteps from './pages/ClientNextSteps';
@@ -39,6 +41,7 @@ export default function App() {
         <Route element={<AdminClients />} path="clients" />
         <Route element={<AdminBookedCalls />} path="calls" />
         <Route element={<AdminScheduleSettings />} path="schedule" />
+        <Route element={<AdminSupportMessages />} path="support" />
         <Route element={<AdminUsers />} path="users" />
         <Route element={<BlueprintsGallery />} path="blueprints" />
         <Route element={<BlueprintCreate />} path="blueprints/new" />
@@ -62,6 +65,7 @@ export default function App() {
       <Route element={<Login />} path="/login" />
       <Route element={<Register />} path="/register" />
       <Route element={<ScheduleCall />} path="/schedule" />
+      <Route element={<BookingConfirmation />} path="/schedule/confirmation" />
       <Route element={<Navigate replace to="/admin/blueprints" />} path="/blueprints" />
       <Route element={<Navigate replace to="/admin/blueprints/new" />} path="/blueprints/new" />
       <Route element={<Navigate replace to="/" />} path="*" />

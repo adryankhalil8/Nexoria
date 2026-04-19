@@ -2,13 +2,13 @@ import { useOutletContext, Link } from 'react-router-dom';
 import type { ClientPortalOutletContext } from '../components/ClientPortalLayout';
 
 export default function ClientHome() {
-  const { portal, isLoading } = useOutletContext<ClientPortalOutletContext>();
+  const { portal, bookings, isLoading } = useOutletContext<ClientPortalOutletContext>();
 
   if (isLoading) {
     return <section className="card">Loading client portal...</section>;
   }
 
-  if (!portal) {
+  if (!portal && bookings.length === 0) {
     return (
       <section className="card stack">
         <h2>No approved blueprint yet</h2>
@@ -17,7 +17,16 @@ export default function ClientHome() {
     );
   }
 
-  const nextThree = portal.tasks.slice(0, 3);
+  const nextThree = portal?.tasks.slice(0, 3) ?? [];
+  const upcomingCall = bookings.find((booking) => booking.status === 'BOOKED');
+
+  function formatDateTime(value: string, timezone: string) {
+    return new Intl.DateTimeFormat('en-US', {
+      dateStyle: 'full',
+      timeStyle: 'short',
+      timeZone: timezone,
+    }).format(new Date(value));
+  }
 
   return (
     <section className="stack">
@@ -27,18 +36,37 @@ export default function ClientHome() {
         <p className="muted">This view keeps the plan simple: what is approved, what needs attention, and how progress is measured.</p>
       </div>
 
-      <article className="card client-blueprint-card">
-        <div>
-          <p className="eyebrow">Blueprint</p>
-          <h3>{portal.name}</h3>
-          <p className="muted">{portal.industry}</p>
-        </div>
-        <div className="pill-row">
-          <span className="pill">{portal.status}</span>
-          <span className="pill">{portal.purchaseEventType.replace('_', ' ')}</span>
-          <span className="pill pill--success">Score {portal.score}/100</span>
-        </div>
-      </article>
+      {portal && (
+        <article className="card client-blueprint-card">
+          <div>
+            <p className="eyebrow">Blueprint</p>
+            <h3>{portal.name}</h3>
+            <p className="muted">{portal.industry}</p>
+          </div>
+          <div className="pill-row">
+            <span className="pill">{portal.status}</span>
+            <span className="pill">{portal.purchaseEventType.replace('_', ' ')}</span>
+            <span className="pill pill--success">Score {portal.score}/100</span>
+          </div>
+        </article>
+      )}
+
+      {upcomingCall && (
+        <article className="card stack">
+          <div className="preview-header">
+            <div>
+              <p className="eyebrow">Scheduled call</p>
+              <h3>Your next call with Nexoria</h3>
+            </div>
+            <span className="pill pill--success">Booked</span>
+          </div>
+          <p className="muted">{formatDateTime(upcomingCall.scheduledStart, upcomingCall.timezone)}</p>
+          <p className="muted">
+            This is your first scheduled milestone. After the call, your action queue and blueprint tasks
+            continue here in the portal.
+          </p>
+        </article>
+      )}
 
       <div className="two-column client-home-grid">
         <article className="card stack">
@@ -68,6 +96,12 @@ export default function ClientHome() {
                 </div>
               </li>
             ))}
+            {!nextThree.length && (
+              <li>
+                <strong>No task queue yet</strong>
+                <p className="muted">Your booked call is the first milestone. Nexoria will add task priorities after onboarding.</p>
+              </li>
+            )}
           </ul>
         </article>
 
@@ -78,33 +112,39 @@ export default function ClientHome() {
               <h3>How progress is measured</h3>
             </div>
           </div>
-          <div className="stats-grid">
-            <div className="stat-card">
-              <span className="eyebrow">Leads (7d)</span>
-              <strong>{portal.metrics.leads7d}</strong>
-            </div>
-            <div className="stat-card">
-              <span className="eyebrow">Purchases (7d)</span>
-              <strong>{portal.metrics.purchases7d}</strong>
-            </div>
-            <div className="stat-card">
-              <span className="eyebrow">Conversion rate</span>
-              <strong>{portal.metrics.conversionRate}</strong>
-            </div>
-            <div className="stat-card">
-              <span className="eyebrow">Revenue (7d)</span>
-              <strong>{portal.metrics.revenue7d}</strong>
-            </div>
-          </div>
+          {portal ? (
+            <>
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <span className="eyebrow">Leads (7d)</span>
+                  <strong>{portal.metrics.leads7d}</strong>
+                </div>
+                <div className="stat-card">
+                  <span className="eyebrow">Purchases (7d)</span>
+                  <strong>{portal.metrics.purchases7d}</strong>
+                </div>
+                <div className="stat-card">
+                  <span className="eyebrow">Conversion rate</span>
+                  <strong>{portal.metrics.conversionRate}</strong>
+                </div>
+                <div className="stat-card">
+                  <span className="eyebrow">Revenue (7d)</span>
+                  <strong>{portal.metrics.revenue7d}</strong>
+                </div>
+              </div>
 
-          <div className="stack">
-            <p className="eyebrow">Notes from Nexoria</p>
-            {portal.weeklyNotes.map((note) => (
-              <p className="muted" key={note}>
-                {note}
-              </p>
-            ))}
-          </div>
+              <div className="stack">
+                <p className="eyebrow">Notes from Nexoria</p>
+                {portal.weeklyNotes.map((note) => (
+                  <p className="muted" key={note}>
+                    {note}
+                  </p>
+                ))}
+              </div>
+            </>
+          ) : (
+            <p className="muted">Results and blueprint metrics will appear here after your onboarding call and plan approval.</p>
+          )}
         </article>
       </div>
     </section>

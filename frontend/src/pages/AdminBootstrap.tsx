@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authApi } from '../api/auth';
+import { getApiErrorMessage } from '../api/errors';
 import { persistAuthSession } from '../auth/session';
 
 export default function AdminBootstrap() {
@@ -32,8 +33,8 @@ export default function AdminBootstrap() {
       const response = await authApi.bootstrapAdmin({ email, password, bootstrapSecret });
       persistAuthSession(response);
       window.location.href = '/admin';
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? err?.response?.data?.details ?? 'Admin setup failed');
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Admin setup failed'));
     } finally {
       setIsLoading(false);
     }

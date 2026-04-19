@@ -54,6 +54,7 @@ public class BlueprintController {
                     existing.setUrl(request.getUrl());
                     existing.setIndustry(request.getIndustry());
                     existing.setRevenueRange(request.getRevenueRange());
+                    existing.setClientEmail(service.blankToNull(request.getClientEmail()));
                     existing.setGoals(request.getGoals());
                     existing.setExternalSignal(request.getExternalSignal());
                     existing.setStatus(service.resolveStatus(request, existing));

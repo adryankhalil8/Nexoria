@@ -2,6 +2,9 @@ package com.nexoria.api.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nexoria.api.auth.AuthRequest;
+import com.nexoria.api.lead.Lead;
+import com.nexoria.api.lead.LeadRepository;
+import com.nexoria.api.lead.LeadStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,9 +32,22 @@ class SecurityConfigIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private LeadRepository leadRepository;
+
+    private void seedClosedLead(String email) {
+        Lead lead = new Lead();
+        lead.setCompany("Security Test Co");
+        lead.setContactName("Security Test");
+        lead.setEmail(email);
+        lead.setStatus(LeadStatus.CLOSED);
+        leadRepository.save(lead);
+    }
+
     @Test
     void shouldExposeSecurityHeadersOnPublicEndpoints() throws Exception {
         AuthRequest request = new AuthRequest("headers@example.com", "password123");
+        seedClosedLead(request.getEmail());
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -48,6 +64,7 @@ class SecurityConfigIntegrationTest {
     void shouldRateLimitAuthEndpoints() throws Exception {
         for (int i = 0; i < 2; i++) {
             AuthRequest request = new AuthRequest("limit-" + UUID.randomUUID() + "@example.com", "password123");
+            seedClosedLead(request.getEmail());
             mockMvc.perform(post("/api/auth/register")
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("X-Forwarded-For", "203.0.113.10")

@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { getApiErrorMessage } from '../api/errors';
 import { schedulingApi } from '../api/scheduling';
 import type { BookingRequest, BookingSource, SchedulingAvailability } from '../model/scheduling';
 import { HOMEPAGE_BLUEPRINT_DRAFT_KEY, SCHEDULE_INTAKE_DRAFT_KEY } from './GetStarted';
@@ -51,11 +52,11 @@ function formatTimeLabel(slot: string, timezone: string) {
 
 export default function ScheduleCall() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [availability, setAvailability] = useState<SchedulingAvailability | null>(null);
   const [selectedSlot, setSelectedSlot] = useState('');
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const source = useMemo<BookingSource>(() => {
@@ -82,7 +83,7 @@ export default function ScheduleCall() {
     schedulingApi
       .getAvailability()
       .then(setAvailability)
-      .catch((err: any) => setError(err?.response?.data?.error ?? 'Unable to load call availability'));
+      .catch((err: unknown) => setError(getApiErrorMessage(err, 'Unable to load call availability')));
   }, []);
 
   const slotsByDay = useMemo(() => {
@@ -102,7 +103,6 @@ export default function ScheduleCall() {
   async function submit(event: FormEvent) {
     event.preventDefault();
     setError(null);
-    setSuccess(null);
 
     if (!selectedSlot) {
       setError('Choose a time before you continue.');
@@ -118,6 +118,8 @@ export default function ScheduleCall() {
         email: form.email,
         website: form.website || undefined,
         industry: form.industry || undefined,
+        revenueRange: readIntakeDraft()?.revenueRange || undefined,
+        goals: readIntakeDraft()?.goals,
         notes: form.notes || undefined,
         scheduledStart: selectedSlot,
         source,
@@ -126,15 +128,9 @@ export default function ScheduleCall() {
       const booking = await schedulingApi.createBooking(payload);
       sessionStorage.removeItem(SCHEDULE_INTAKE_DRAFT_KEY);
       sessionStorage.removeItem(HOMEPAGE_BLUEPRINT_DRAFT_KEY);
-      setSuccess(
-        `Your call is booked for ${formatTimeLabel(booking.scheduledStart, booking.timezone)} on ${formatDayLabel(
-          booking.scheduledStart.slice(0, 10)
-        )}.`
-      );
-      setSelectedSlot('');
-      setAvailability(await schedulingApi.getAvailability());
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? 'Unable to reserve that time');
+      navigate('/schedule/confirmation', { state: { booking } });
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Unable to reserve that time'));
     } finally {
       setIsSubmitting(false);
     }
@@ -146,7 +142,7 @@ export default function ScheduleCall() {
         <p className="eyebrow">{source === 'GET_STARTED' ? 'Get Started' : 'Book a Call'}</p>
         <h1>Pick a time for your 45-minute call.</h1>
         <p className="muted">
-          Choose an available slot, share the contact details we need, and we’ll lock the time until it is
+          Choose an available slot, share the contact details we need, and we&apos;ll lock the time until it is
           cleared from the admin workspace.
         </p>
       </section>
@@ -224,8 +220,6 @@ export default function ScheduleCall() {
           )}
 
           {error && <p className="error-text">{error}</p>}
-          {success && <p className="success-text">{success}</p>}
-
           <button className="primary-button" disabled={isSubmitting} type="submit">
             {isSubmitting ? 'Reserving time...' : 'Reserve Call'}
           </button>

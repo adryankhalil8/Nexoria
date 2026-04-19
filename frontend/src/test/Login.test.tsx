@@ -41,6 +41,6 @@ describe('Login Component', () => {
     );
 
     const registerLink = screen.getByText(/register here/i);
-    expect(registerLink).toHaveAttribute('href', '/register');
+    expect(registerLink).toHaveAttribute('href', '/register?next=%2Fportal');
   });
 });

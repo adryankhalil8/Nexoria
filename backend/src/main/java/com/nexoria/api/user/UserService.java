@@ -1,5 +1,6 @@
 package com.nexoria.api.user;
 
+import com.nexoria.api.lead.LeadService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,11 +16,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final LeadService leadService;
     private final SecureRandom secureRandom = new SecureRandom();
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, LeadService leadService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.leadService = leadService;
     }
 
     public List<UserSummaryResponse> getAllUsers() {
@@ -50,7 +53,9 @@ public class UserService {
                 UserStatus.PENDING
         );
 
-        return UserSummaryResponse.from(userRepository.save(user));
+        User savedUser = userRepository.save(user);
+        leadService.syncClientAccount(savedUser);
+        return UserSummaryResponse.from(savedUser);
     }
 
     public UserSummaryResponse updateUser(Long id, UpdateUserRequest request) {
@@ -72,7 +77,9 @@ public class UserService {
             user.setStatus(request.getStatus());
         }
 
-        return UserSummaryResponse.from(userRepository.save(user));
+        User savedUser = userRepository.save(user);
+        leadService.syncClientAccount(savedUser);
+        return UserSummaryResponse.from(savedUser);
     }
 
     public UserSummaryResponse toggleStatus(Long id) {
@@ -80,7 +87,9 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         user.setStatus(user.getStatus() == UserStatus.ACTIVE ? UserStatus.PENDING : UserStatus.ACTIVE);
-        return UserSummaryResponse.from(userRepository.save(user));
+        User savedUser = userRepository.save(user);
+        leadService.syncClientAccount(savedUser);
+        return UserSummaryResponse.from(savedUser);
     }
 
     public void deleteUser(Long id, User currentUser) {

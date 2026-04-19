@@ -4,6 +4,7 @@ import java.time.Instant;
 
 public class LeadResponse {
     private Long id;
+    private Long userId;
     private String company;
     private String contactName;
     private String email;
@@ -11,12 +12,14 @@ public class LeadResponse {
     private String industry;
     private String notes;
     private LeadStatus status;
+    private boolean hasAccount;
     private Instant createdAt;
     private Instant updatedAt;
 
     public static LeadResponse from(Lead lead) {
         LeadResponse response = new LeadResponse();
         response.setId(lead.getId());
+        response.setUserId(lead.getUser() == null ? null : lead.getUser().getId());
         response.setCompany(lead.getCompany());
         response.setContactName(lead.getContactName());
         response.setEmail(lead.getEmail());
@@ -24,6 +27,7 @@ public class LeadResponse {
         response.setIndustry(lead.getIndustry());
         response.setNotes(lead.getNotes());
         response.setStatus(lead.getStatus());
+        response.setHasAccount(lead.getUser() != null);
         response.setCreatedAt(lead.getCreatedAt());
         response.setUpdatedAt(lead.getUpdatedAt());
         return response;
@@ -35,6 +39,14 @@ public class LeadResponse {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getCompany() {
@@ -91,6 +103,14 @@ public class LeadResponse {
 
     public void setStatus(LeadStatus status) {
         this.status = status;
+    }
+
+    public boolean isHasAccount() {
+        return hasAccount;
+    }
+
+    public void setHasAccount(boolean hasAccount) {
+        this.hasAccount = hasAccount;
     }
 
     public Instant getCreatedAt() {

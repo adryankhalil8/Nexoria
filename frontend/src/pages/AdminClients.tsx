@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { getApiErrorMessage } from '../api/errors';
 import { leadsApi } from '../api/leads';
-import type { Lead, LeadDraft, LeadStatus } from '../model/admin';
+import { usersApi } from '../api/users';
+import type { Lead, LeadDraft, LeadStatus, ManagedUser } from '../model/admin';
 import { LEAD_STATUS_OPTIONS } from '../model/admin';
 
 const EMPTY_LEAD: LeadDraft = {
@@ -20,6 +23,7 @@ export default function AdminClients() {
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'ALL'>('ALL');
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [editForm, setEditForm] = useState<LeadDraft>(EMPTY_LEAD);
+  const [users, setUsers] = useState<ManagedUser[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -28,9 +32,11 @@ export default function AdminClients() {
 
   async function loadLeads() {
     try {
-      setLeads(await leadsApi.getAll());
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? 'Failed to load leads');
+      const [leadData, userData] = await Promise.all([leadsApi.getAll(), usersApi.getAll()]);
+      setLeads(leadData);
+      setUsers(userData.filter((user) => user.role !== 'ADMIN'));
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Failed to load leads'));
     }
   }
 
@@ -42,8 +48,8 @@ export default function AdminClients() {
       const created = await leadsApi.create(form);
       setLeads((current) => [created, ...current]);
       setForm(EMPTY_LEAD);
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? 'Unable to save lead');
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Unable to save lead'));
     }
   }
 
@@ -58,8 +64,8 @@ export default function AdminClients() {
       const updated = await leadsApi.update(selectedLead.id, editForm);
       setLeads((current) => current.map((lead) => (lead.id === selectedLead.id ? updated : lead)));
       setSelectedLead(null);
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? 'Unable to update lead');
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Unable to update lead'));
     }
   }
 
@@ -67,8 +73,8 @@ export default function AdminClients() {
     try {
       await leadsApi.delete(id);
       setLeads((current) => current.filter((lead) => lead.id !== id));
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? 'Unable to delete lead');
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Unable to delete lead'));
     }
   }
 
@@ -96,11 +102,45 @@ export default function AdminClients() {
     [leads, search, statusFilter]
   );
 
+  const summary = useMemo(
+    () => ({
+      total: leads.length,
+      booked: leads.filter((lead) => lead.status === 'BOOKED').length,
+      closed: leads.filter((lead) => lead.status === 'CLOSED').length,
+      accountReady: leads.filter((lead) => ['BOOKED', 'CLOSED'].includes(lead.status) && !lead.hasAccount).length,
+      withAccounts: leads.filter((lead) => lead.hasAccount).length,
+    }),
+    [leads]
+  );
+
+  function findUserForLead(lead: Lead) {
+    return users.find((user) => user.email.toLowerCase() === lead.email.toLowerCase());
+  }
+
   return (
     <section className="stack">
       <div className="page-intro">
         <p className="eyebrow">Client Tracker</p>
-        <h2>Capture leads, search the pipeline, and keep details editable.</h2>
+        <h2>Track client readiness, account access, and closed accounts in one place.</h2>
+      </div>
+
+      <div className="stats-grid">
+        <article className="card stat-card">
+          <span className="eyebrow">Tracked clients</span>
+          <strong>{summary.total}</strong>
+        </article>
+        <article className="card stat-card">
+          <span className="eyebrow">Booked / closed</span>
+          <strong>{summary.booked + summary.closed}</strong>
+        </article>
+        <article className="card stat-card">
+          <span className="eyebrow">Ready for signup</span>
+          <strong>{summary.accountReady}</strong>
+        </article>
+        <article className="card stat-card">
+          <span className="eyebrow">Portal accounts</span>
+          <strong>{summary.withAccounts}</strong>
+        </article>
       </div>
 
       <div className="two-column">
@@ -183,6 +223,7 @@ export default function AdminClients() {
                   <th>Company</th>
                   <th>Contact</th>
                   <th>Status</th>
+                  <th>Portal Account</th>
                   <th>Website</th>
                   <th>Actions</th>
                 </tr>
@@ -191,8 +232,20 @@ export default function AdminClients() {
                 {filteredLeads.map((lead) => (
                   <tr key={lead.id}>
                     <td>{lead.company}</td>
-                    <td>{lead.contactName}</td>
+                    <td>
+                      <strong>{lead.contactName}</strong>
+                      <div className="muted">{lead.email}</div>
+                    </td>
                     <td>{lead.status}</td>
+                    <td>
+                      {lead.hasAccount ? (
+                        <span className="pill pill--success">{findUserForLead(lead)?.status ?? 'ACTIVE'}</span>
+                      ) : ['BOOKED', 'CLOSED'].includes(lead.status) ? (
+                        <span className="pill">Can register</span>
+                      ) : (
+                        <span className="muted">Not yet eligible</span>
+                      )}
+                    </td>
                     <td>
                       {lead.website ? (
                         <a href={lead.website} rel="noreferrer" target="_blank">
@@ -206,6 +259,14 @@ export default function AdminClients() {
                       <button className="ghost-button ghost-button--small" onClick={() => openLead(lead)} type="button">
                         View
                       </button>
+                      {['BOOKED', 'CLOSED'].includes(lead.status) && (
+                        <Link
+                          className="ghost-button ghost-button--small"
+                          to={`/admin/blueprints/new?clientEmail=${encodeURIComponent(lead.email)}`}
+                        >
+                          Blueprint
+                        </Link>
+                      )}
                       <button className="danger-button" onClick={() => void removeLead(lead.id)} type="button">
                         Delete
                       </button>
@@ -294,6 +355,9 @@ export default function AdminClients() {
                 <button className="primary-button" type="submit">
                   Save Changes
                 </button>
+                {['BOOKED', 'CLOSED'].includes(editForm.status) && !selectedLead.hasAccount && (
+                  <span className="pill">This email can now register for the client portal.</span>
+                )}
                 {editForm.website && (
                   <a className="ghost-button" href={editForm.website} rel="noreferrer" target="_blank">
                     Open Website

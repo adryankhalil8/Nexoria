@@ -1,5 +1,5 @@
 import { FormEvent, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   GOAL_OPTIONS,
   INDUSTRY_OPTIONS,
@@ -113,6 +113,10 @@ export default function GetStarted() {
             <button className="primary-button" type="submit">
               Continue to Scheduling
             </button>
+
+            <Link className="ghost-button" to="/">
+              Back to Homepage
+            </Link>
           </form>
 
           <div className="card stack">

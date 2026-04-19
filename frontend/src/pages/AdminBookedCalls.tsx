@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getApiErrorMessage } from '../api/errors';
 import { schedulingApi } from '../api/scheduling';
 import type { ScheduledCall } from '../model/scheduling';
 
@@ -18,15 +19,15 @@ export default function AdminBookedCalls() {
     schedulingApi
       .getBookedCalls()
       .then(setCalls)
-      .catch((err: any) => setError(err?.response?.data?.error ?? 'Unable to load booked calls'));
+      .catch((err: unknown) => setError(getApiErrorMessage(err, 'Unable to load booked calls')));
   }, []);
 
   async function clearCall(id: number) {
     try {
       const updated = await schedulingApi.clearBooking(id);
       setCalls((current) => current.map((call) => (call.id === id ? updated : call)));
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? 'Unable to clear booked call');
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Unable to clear booked call'));
     }
   }
 

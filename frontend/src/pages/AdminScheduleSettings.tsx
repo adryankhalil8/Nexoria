@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getApiErrorMessage } from '../api/errors';
 import { schedulingApi } from '../api/scheduling';
 import type { ScheduleSettings } from '../model/scheduling';
 
@@ -52,7 +53,7 @@ export default function AdminScheduleSettings() {
     schedulingApi
       .getSettings()
       .then(setSettings)
-      .catch((err: any) => setError(err?.response?.data?.error ?? 'Unable to load schedule settings'));
+      .catch((err: unknown) => setError(getApiErrorMessage(err, 'Unable to load schedule settings')));
   }, []);
 
   async function saveSettings(event: React.FormEvent) {
@@ -64,8 +65,8 @@ export default function AdminScheduleSettings() {
       const updated = await schedulingApi.updateSettings(settings);
       setSettings(updated);
       setSuccess('Schedule settings updated.');
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? 'Unable to update schedule settings');
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Unable to update schedule settings'));
     }
   }
 

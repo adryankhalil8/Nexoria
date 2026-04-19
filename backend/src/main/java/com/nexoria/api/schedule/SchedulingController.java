@@ -1,11 +1,13 @@
 package com.nexoria.api.schedule;
 
+import com.nexoria.api.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,6 +53,13 @@ public class SchedulingController {
     @SecurityRequirement(name = "bearerAuth")
     public List<ScheduledCallResponse> listBookings() {
         return schedulingService.listCalls();
+    }
+
+    @GetMapping("/bookings/mine")
+    @Operation(summary = "List scheduled calls for the current client")
+    @SecurityRequirement(name = "bearerAuth")
+    public List<ScheduledCallResponse> myBookings(@AuthenticationPrincipal User user) {
+        return schedulingService.getCurrentUserCalls(user);
     }
 
     @PatchMapping("/bookings/{id}/clear")

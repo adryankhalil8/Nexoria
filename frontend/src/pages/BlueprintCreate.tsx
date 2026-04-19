@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchExternalSignal } from '../api/external';
 import { blueprintApi, BlueprintRequest } from '../api/blueprint';
+import { getApiErrorMessage } from '../api/errors';
 import ScoreBadge from '../components/ScoreBadge';
 import { HOMEPAGE_BLUEPRINT_DRAFT_KEY } from './GetStarted';
 import {
@@ -18,6 +19,7 @@ export default function BlueprintCreate() {
     url: '',
     industry: INDUSTRY_OPTIONS[0].value,
     revenueRange: REVENUE_OPTIONS[2].value,
+    clientEmail: '',
     goals: [],
   });
   const [signal, setSignal] = useState<ExternalSignal | null>(null);
@@ -25,10 +27,17 @@ export default function BlueprintCreate() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     void refreshSignal();
+    const params = new URLSearchParams(location.search);
+    const clientEmail = params.get('clientEmail');
     const seededDraft = sessionStorage.getItem(HOMEPAGE_BLUEPRINT_DRAFT_KEY);
+
+    if (clientEmail) {
+      setForm((current) => ({ ...current, clientEmail }));
+    }
 
     if (seededDraft) {
       try {
@@ -40,7 +49,7 @@ export default function BlueprintCreate() {
         sessionStorage.removeItem(HOMEPAGE_BLUEPRINT_DRAFT_KEY);
       }
     }
-  }, []);
+  }, [location.search]);
 
   const preview = computeBlueprintPreview({ ...form, externalSignal: signal ?? undefined });
 
@@ -81,8 +90,8 @@ export default function BlueprintCreate() {
         externalSignal: signal ?? undefined,
       });
       navigate(`/admin/blueprints/${blueprint.id}`);
-    } catch (err: any) {
-      setError(err?.message ?? 'Create failed');
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Create failed'));
       setIsSubmitting(false);
     }
   };
@@ -132,6 +141,16 @@ export default function BlueprintCreate() {
             </select>
           </label>
 
+          <label>
+            Client email
+            <input
+              onChange={(event) => setForm({ ...form, clientEmail: event.target.value })}
+              placeholder="client@example.com"
+              type="email"
+              value={form.clientEmail ?? ''}
+            />
+          </label>
+
           <fieldset className="goal-grid">
             <legend>Goals</legend>
             {GOAL_OPTIONS.map((goal) => (
@@ -151,7 +170,7 @@ export default function BlueprintCreate() {
               <p className="eyebrow">External Signal</p>
               <p className="muted">
                 {signal
-                  ? `${signal.windspeed} km/h wind | ${signal.temperature}°C | code ${signal.weathercode}`
+                  ? `${signal.windspeed} km/h wind | ${signal.temperature} deg C | code ${signal.weathercode}`
                   : 'Loading market signal...'}
               </p>
             </div>

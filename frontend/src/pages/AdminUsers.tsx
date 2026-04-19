@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { getApiErrorMessage } from '../api/errors';
 import { usersApi } from '../api/users';
 import type { CreateManagedUserInput, ManagedUser } from '../model/admin';
 import { USER_ROLE_OPTIONS } from '../model/admin';
@@ -23,8 +24,8 @@ export default function AdminUsers() {
   async function loadUsers() {
     try {
       setUsers(await usersApi.getAll());
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? 'Failed to load users');
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Failed to load users'));
     }
   }
 
@@ -37,8 +38,8 @@ export default function AdminUsers() {
       const created = await usersApi.create(form);
       setUsers((current) => [created, ...current]);
       setForm(INITIAL_FORM);
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? 'Unable to create user');
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Unable to create user'));
     } finally {
       setIsSaving(false);
     }
@@ -53,8 +54,8 @@ export default function AdminUsers() {
     try {
       await usersApi.delete(id);
       setUsers((current) => current.filter((user) => user.id !== id));
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? 'Unable to remove user');
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Unable to remove user'));
     }
   }
 

@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { authApi } from '../api/auth';
+import { getApiErrorMessage } from '../api/errors';
 import { persistAuthSession } from '../auth/session';
 
 export default function Login() {
   const location = useLocation();
+  const requestedNext = new URLSearchParams(location.search).get('next');
+  const routeStateFrom = (location.state as { from?: string } | null)?.from;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const redirectTarget =
-    new URLSearchParams(location.search).get('next') ?? (location.state as { from?: string } | null)?.from ?? '/portal';
+  const redirectTarget = requestedNext ?? routeStateFrom;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,9 +29,9 @@ export default function Login() {
     try {
       const response = await authApi.login({ email, password });
       persistAuthSession(response);
-      window.location.href = redirectTarget;
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed');
+      window.location.href = redirectTarget ?? (response.role === 'ADMIN' ? '/admin' : '/portal');
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Login failed'));
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +69,7 @@ export default function Login() {
         </form>
         {error && <div className="error-text">{error}</div>}
         <p className="muted">
-          Don't have an account? <Link to={`/register?next=${encodeURIComponent(redirectTarget)}`}>Register here</Link>
+          Don&apos;t have an account? <Link to={`/register?next=${encodeURIComponent(redirectTarget ?? '/portal')}`}>Register here</Link>
         </p>
         <p className="muted">
           Need first-time admin access? <Link to="/admin-access">Set up admin</Link>

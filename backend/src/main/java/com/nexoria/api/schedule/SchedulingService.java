@@ -1,8 +1,14 @@
 package com.nexoria.api.schedule;
 
+import com.nexoria.api.blueprint.Blueprint;
+import com.nexoria.api.blueprint.BlueprintRequest;
+import com.nexoria.api.blueprint.BlueprintService;
+import com.nexoria.api.user.Role;
+import com.nexoria.api.user.UserRepository;
 import com.nexoria.api.lead.Lead;
 import com.nexoria.api.lead.LeadRepository;
 import com.nexoria.api.lead.LeadStatus;
+import com.nexoria.api.user.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,15 +32,21 @@ public class SchedulingService {
     private final AvailabilityWindowRepository availabilityWindowRepository;
     private final ScheduledCallRepository scheduledCallRepository;
     private final LeadRepository leadRepository;
+    private final UserRepository userRepository;
+    private final BlueprintService blueprintService;
 
     public SchedulingService(ScheduleSettingsRepository settingsRepository,
                              AvailabilityWindowRepository availabilityWindowRepository,
                              ScheduledCallRepository scheduledCallRepository,
-                             LeadRepository leadRepository) {
+                             LeadRepository leadRepository,
+                             UserRepository userRepository,
+                             BlueprintService blueprintService) {
         this.settingsRepository = settingsRepository;
         this.availabilityWindowRepository = availabilityWindowRepository;
         this.scheduledCallRepository = scheduledCallRepository;
         this.leadRepository = leadRepository;
+        this.userRepository = userRepository;
+        this.blueprintService = blueprintService;
     }
 
     public PublicAvailabilityResponse getPublicAvailability() {
@@ -57,7 +69,7 @@ public class SchedulingService {
             throw new IllegalArgumentException("That time is no longer available. Please pick another slot.");
         }
 
-        Lead lead = leadRepository.findFirstByEmailOrderByUpdatedAtDesc(request.getEmail().trim())
+        Lead lead = leadRepository.findFirstByEmailIgnoreCaseOrderByUpdatedAtDesc(request.getEmail().trim())
                 .orElseGet(Lead::new);
         lead.setCompany(request.getCompany().trim());
         lead.setContactName(request.getContactName().trim());
@@ -82,7 +94,9 @@ public class SchedulingService {
         call.setScheduledEnd(scheduledEnd);
         call.setTimezone(settings.getTimezone());
 
-        return ScheduledCallResponse.from(scheduledCallRepository.save(call));
+        ScheduledCall saved = scheduledCallRepository.save(call);
+        createIntakeBlueprintIfAvailable(request);
+        return ScheduledCallResponse.from(saved);
     }
 
     public List<ScheduledCallResponse> listCalls() {
@@ -96,6 +110,12 @@ public class SchedulingService {
                 .orElseThrow(() -> new IllegalArgumentException("Scheduled call not found"));
         call.setStatus(ScheduledCallStatus.CLEARED);
         return ScheduledCallResponse.from(scheduledCallRepository.save(call));
+    }
+
+    public List<ScheduledCallResponse> getCurrentUserCalls(User user) {
+        return scheduledCallRepository.findAllByLeadUserEmailIgnoreCaseOrderByScheduledStartAsc(user.getEmail()).stream()
+                .map(ScheduledCallResponse::from)
+                .toList();
     }
 
     public ScheduleSettingsResponse getSettings() {
@@ -282,6 +302,32 @@ public class SchedulingService {
                 .append(" ")
                 .append(zoneId);
         return builder.toString();
+    }
+
+    private void createIntakeBlueprintIfAvailable(CreateBookingRequest request) {
+        if (parseSource(request.getSource()) != CallSource.GET_STARTED) {
+            return;
+        }
+
+        if (request.getWebsite() == null || request.getWebsite().isBlank()
+                || request.getIndustry() == null || request.getIndustry().isBlank()
+                || request.getRevenueRange() == null || request.getRevenueRange().isBlank()
+                || request.getGoals() == null || request.getGoals().isEmpty()) {
+            return;
+        }
+
+        userRepository.findFirstByRoleOrderByIdAsc(Role.ADMIN).ifPresent(admin -> {
+            BlueprintRequest blueprintRequest = new BlueprintRequest();
+            blueprintRequest.setUrl(request.getWebsite().trim());
+            blueprintRequest.setIndustry(request.getIndustry().trim());
+            blueprintRequest.setRevenueRange(request.getRevenueRange().trim());
+            blueprintRequest.setGoals(request.getGoals());
+            blueprintRequest.setClientEmail(request.getEmail().trim());
+
+            Blueprint blueprint = blueprintService.computeAndSave(blueprintRequest, admin);
+            blueprint.setClientEmail(request.getEmail().trim());
+            blueprintService.save(blueprint);
+        });
     }
 
     private String blankToNull(String value) {

@@ -1,46 +1,99 @@
+import { FormEvent, useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
+import { getApiErrorMessage } from '../api/errors';
+import { supportApi } from '../api/support';
 import type { ClientPortalOutletContext } from '../components/ClientPortalLayout';
+import type { SupportMessage } from '../model/support';
+
+function formatMessageTime(value: string) {
+  return new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(value));
+}
 
 export default function ClientSupport() {
   const { portal, isLoading } = useOutletContext<ClientPortalOutletContext>();
+  const [messages, setMessages] = useState<SupportMessage[]>([]);
+  const [body, setBody] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  async function loadMessages() {
+    try {
+      setMessages(await supportApi.getMine());
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Unable to load support messages'));
+    }
+  }
+
+  useEffect(() => {
+    void loadMessages();
+    const interval = window.setInterval(() => void loadMessages(), 5000);
+    return () => window.clearInterval(interval);
+  }, []);
+
+  async function sendMessage(event: FormEvent) {
+    event.preventDefault();
+    if (!body.trim()) {
+      return;
+    }
+
+    try {
+      const saved = await supportApi.sendMine({ body });
+      setMessages((current) => [...current, saved]);
+      setBody('');
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Unable to send support message'));
+    }
+  }
 
   if (isLoading) {
     return <section className="card">Loading support feed...</section>;
-  }
-
-  if (!portal) {
-    return <section className="card">No approved blueprint is available yet.</section>;
   }
 
   return (
     <section className="stack">
       <div className="page-intro">
         <p className="eyebrow">Support</p>
-        <h2>Nexoria updates</h2>
-        <p className="muted">A simple update feed keeps the install moving without turning the portal into an email archive.</p>
+        <h2>Message Nexoria</h2>
+        <p className="muted">
+          Send updates, blockers, approvals, or questions from the portal. Replies from Nexoria appear here automatically.
+        </p>
       </div>
 
-      <div className="stack">
-        {portal.weeklyNotes.map((note, index) => (
-          <article className="card stack" key={`${index}-${note}`}>
-            <div className="preview-header">
-              <div>
-                <p className="eyebrow">Weekly update</p>
-                <h3>Week {index + 1}</h3>
-              </div>
-              <span className="pill">Nexoria</span>
+      {portal?.weeklyNotes.length ? (
+        <article className="card stack">
+          <p className="eyebrow">Latest install note</p>
+          <p className="muted">{portal.weeklyNotes[0]}</p>
+        </article>
+      ) : null}
+
+      <div className="support-message-list card">
+        {messages.map((message) => (
+          <article
+            className={message.sender === 'CLIENT' ? 'support-message support-message--client' : 'support-message support-message--admin'}
+            key={message.id}
+          >
+            <div className="fix-list__header">
+              <strong>{message.sender === 'CLIENT' ? 'You' : 'Nexoria'}</strong>
+              <span className="muted">{formatMessageTime(message.createdAt)}</span>
             </div>
-            <p className="muted">{note}</p>
-            <div className="stack">
-              <p className="eyebrow">What you may need to provide</p>
-              <p className="muted">
-                Access, approvals, and final review are the most common blockers. If something is marked
-                Client or Shared in Next Steps, start there.
-              </p>
-            </div>
+            <p>{message.body}</p>
           </article>
         ))}
+        {!messages.length && <p className="muted">No messages yet. Start the thread when you need help.</p>}
       </div>
+
+      <form className="card stack-form" onSubmit={sendMessage}>
+        <label>
+          New message
+          <textarea onChange={(event) => setBody(event.target.value)} rows={5} value={body} />
+        </label>
+        {error && <p className="error-text">{error}</p>}
+        <button className="primary-button" type="submit">
+          Send Message
+        </button>
+      </form>
     </section>
   );
 }
