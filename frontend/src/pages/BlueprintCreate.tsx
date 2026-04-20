@@ -33,10 +33,17 @@ export default function BlueprintCreate() {
     void refreshSignal();
     const params = new URLSearchParams(location.search);
     const clientEmail = params.get('clientEmail');
+    const url = params.get('url');
+    const industry = params.get('industry');
     const seededDraft = sessionStorage.getItem(HOMEPAGE_BLUEPRINT_DRAFT_KEY);
 
-    if (clientEmail) {
-      setForm((current) => ({ ...current, clientEmail }));
+    if (clientEmail || url || industry) {
+      setForm((current) => ({
+        ...current,
+        clientEmail: clientEmail ?? current.clientEmail,
+        url: url ?? current.url,
+        industry: industry ?? current.industry,
+      }));
     }
 
     if (seededDraft) {

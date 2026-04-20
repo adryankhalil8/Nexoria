@@ -1,0 +1,31 @@
+# Local environment files
+.env
+.env.*
+!.env.example
+!frontend/.env.example
+!backend/.env.example
+
+# Java / Maven build output
+backend/target/
+target/
+backend/package-lock.json
+
+# Node / Vite build output
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/node_modules/.vite/
+
+# Logs and runtime output
+*.log
+*.err.log
+
+# IDE and OS noise
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Test/cache artifacts
+.nyc_output/
+coverage/

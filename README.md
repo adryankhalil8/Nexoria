@@ -40,7 +40,7 @@ From PowerShell:
 cd C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend
 $env:SPRING_PROFILES_ACTIVE="local"
 $env:JWT_SECRET=[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }))
-$env:ADMIN_BOOTSTRAP_SECRET="peopleaccent#1"
+$env:ADMIN_BOOTSTRAP_SECRET="replace-with-your-private-admin-secret"
 mvn spring-boot:run
 ```
 
@@ -73,10 +73,13 @@ VITE_API_BASE_URL=http://localhost:8080/api
 #### 3. Open the app
 
 - Landing page: `http://127.0.0.1:3000`
+- Get Started intake: `http://127.0.0.1:3000/get-started`
+- Schedule call: `http://127.0.0.1:3000/schedule`
 - Register: `http://127.0.0.1:3000/register`
 - Login: `http://127.0.0.1:3000/login`
 - Admin setup: `http://127.0.0.1:3000/admin-access`
 - Admin overview: `http://127.0.0.1:3000/admin`
+- Client portal: `http://127.0.0.1:3000/portal`
 - Backend health: `http://localhost:8080/actuator/health`
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
 
@@ -127,6 +130,45 @@ Then open:
   - `V1__init_schema.sql`
   - `V2__add_user_ownership.sql`
   - `V3__admin_portal_schema.sql`
+  - `V4__client_portal_fields.sql`
+  - `V5__scheduling.sql`
+  - `V6__client_access_and_assignments.sql`
+  - `V7__support_messages.sql`
+
+## Product Route Map
+
+Public routes:
+
+- `/` - sales landing page
+- `/get-started` - intake and first-pass diagnostic preview
+- `/schedule` - book a 45-minute call from configured availability
+- `/schedule/confirmation` - booking success and next-step handoff
+- `/login`, `/register`, `/admin-access` - authentication and first-admin bootstrap
+
+Admin routes:
+
+- `/admin` - operations dashboard
+- `/admin/clients` - lead and client tracker
+- `/admin/calls` - booked call queue
+- `/admin/schedule` - configurable availability windows
+- `/admin/support` - client support messages and replies
+- `/admin/users` - account management
+- `/admin/blueprints`, `/admin/blueprints/new`, `/admin/blueprints/:id` - blueprint creation, assignment, approval, task ownership, task status, and client visibility controls
+
+Client portal routes:
+
+- `/portal` - scheduled call and current execution summary
+- `/portal/blueprint` - approved blueprint preview and visible fixes
+- `/portal/next-steps` - client-facing task board
+- `/portal/results` - KPI snapshot and tracking state
+- `/portal/support` - support thread with polling-based refresh
+
+## Workflow Notes
+
+- `Book a Call` and completed `Get Started` flows both route into scheduling.
+- A booked call creates the client handoff point and allows that email to register for client portal access.
+- Admins can mark leads closed, assign blueprints by client email, approve/archive blueprint status, choose the purchase event type, assign fix ownership, update fix status, and decide which fixes are visible to the client.
+- Support messaging is persistent and refreshes on a polling interval. It behaves like a lightweight live thread, but it is not currently WebSocket/SSE push.
 
 ## Useful Commands
 
@@ -164,8 +206,7 @@ npm run test -- --run
 
 Note:
 
-- the frontend build passes
-- there is currently one stale frontend test assertion in `frontend/src/test/Login.test.tsx` that still expects the old register link shape
+- the frontend build, lint, and test suite currently pass as of Audit Report 6
 
 ## Deployment Requirements
 
@@ -233,10 +274,10 @@ docker compose -f docker-compose.prod.yml up --build -d
 
 These do not stop local development, but they matter for maintenance and deployment quality:
 
-- `backend/.env.example` is stale and still points to PostgreSQL instead of the active MySQL/H2 setup
-- `infra/docs/erd.png` currently exists but is empty
+- `infra/docs/erd.png` may need to be regenerated from `infra/docs/erd.dbml` after schema changes
 - frontend test coverage is still fairly small
 - HTTPS is expected in deployment, but certificate management is not fully handled in-repo
+- stray non-runtime files still need a deliberate cleanup decision, including the root `BlueprintRequest.java` and the sample Java file under `frontend/src/main/java/`
 
 ## Docs
 

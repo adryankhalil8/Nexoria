@@ -37,12 +37,20 @@ export default function AdminSupportMessages() {
     messages.forEach((message) => {
       grouped.set(message.clientEmail, [...(grouped.get(message.clientEmail) ?? []), message]);
     });
-    return Array.from(grouped.entries()).map(([email, threadMessages]) => ({
-      email,
-      businessName: threadMessages[0]?.businessName ?? email,
-      latest: threadMessages[0],
-      messages: [...threadMessages].sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
-    }));
+    return Array.from(grouped.entries())
+      .map(([email, threadMessages]) => {
+        const sortedMessages = [...threadMessages].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+        const latest = sortedMessages[sortedMessages.length - 1];
+
+        return {
+          email,
+          businessName: threadMessages[0]?.businessName ?? email,
+          latest,
+          messages: sortedMessages,
+          needsReply: latest?.sender === 'CLIENT',
+        };
+      })
+      .sort((a, b) => (b.latest?.createdAt ?? '').localeCompare(a.latest?.createdAt ?? ''));
   }, [messages]);
 
   const selectedThread = threads.find((thread) => thread.email === selectedEmail) ?? threads[0];
@@ -82,7 +90,10 @@ export default function AdminSupportMessages() {
               onClick={() => setSelectedEmail(thread.email)}
               type="button"
             >
-              <strong>{thread.businessName}</strong>
+              <span className="support-thread__title">
+                <strong>{thread.businessName}</strong>
+                {thread.needsReply && <span className="pill pill--warning">Needs reply</span>}
+              </span>
               <span>{thread.email}</span>
               <small>{thread.latest?.body}</small>
             </button>
@@ -99,7 +110,10 @@ export default function AdminSupportMessages() {
                   <h3>{selectedThread.businessName}</h3>
                   <p className="muted">{selectedThread.email}</p>
                 </div>
-                <span className="pill">{selectedThread.messages.length} messages</span>
+                <div className="pill-row">
+                  {selectedThread.needsReply && <span className="pill pill--warning">Client waiting</span>}
+                  <span className="pill">{selectedThread.messages.length} messages</span>
+                </div>
               </div>
 
               <div className="support-message-list">

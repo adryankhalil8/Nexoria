@@ -64,16 +64,21 @@ public class SchedulingService {
         ZoneId zoneId = parseZone(settings.getTimezone());
         Instant scheduledStart = parseInstant(request.getScheduledStart());
         Instant scheduledEnd = scheduledStart.plusSeconds(settings.getSlotDurationMinutes() * 60L);
+        String email = request.getEmail().trim();
 
         if (!computeAvailableSlots(settings).contains(scheduledStart)) {
             throw new IllegalArgumentException("That time is no longer available. Please pick another slot.");
         }
 
-        Lead lead = leadRepository.findFirstByEmailIgnoreCaseOrderByUpdatedAtDesc(request.getEmail().trim())
+        if (scheduledCallRepository.existsByEmailIgnoreCaseAndStatus(email, ScheduledCallStatus.BOOKED)) {
+            throw new IllegalArgumentException("This email already has a booked call. Contact Nexoria if you need to reschedule.");
+        }
+
+        Lead lead = leadRepository.findFirstByEmailIgnoreCaseOrderByUpdatedAtDesc(email)
                 .orElseGet(Lead::new);
         lead.setCompany(request.getCompany().trim());
         lead.setContactName(request.getContactName().trim());
-        lead.setEmail(request.getEmail().trim());
+        lead.setEmail(email);
         lead.setWebsite(blankToNull(request.getWebsite()));
         lead.setIndustry(blankToNull(request.getIndustry()));
         lead.setNotes(buildLeadNotes(request, scheduledStart, zoneId));
@@ -86,7 +91,7 @@ public class SchedulingService {
         call.setStatus(ScheduledCallStatus.BOOKED);
         call.setCompany(request.getCompany().trim());
         call.setContactName(request.getContactName().trim());
-        call.setEmail(request.getEmail().trim());
+        call.setEmail(email);
         call.setWebsite(blankToNull(request.getWebsite()));
         call.setIndustry(blankToNull(request.getIndustry()));
         call.setNotes(blankToNull(request.getNotes()));
@@ -322,10 +327,18 @@ public class SchedulingService {
             blueprintRequest.setIndustry(request.getIndustry().trim());
             blueprintRequest.setRevenueRange(request.getRevenueRange().trim());
             blueprintRequest.setGoals(request.getGoals());
-            blueprintRequest.setClientEmail(request.getEmail().trim());
+            String email = request.getEmail().trim();
+
+            if (blueprintService.findAll().stream()
+                    .anyMatch(existing -> existing.getClientEmail() != null
+                            && existing.getClientEmail().equalsIgnoreCase(email))) {
+                return;
+            }
+
+            blueprintRequest.setClientEmail(email);
 
             Blueprint blueprint = blueprintService.computeAndSave(blueprintRequest, admin);
-            blueprint.setClientEmail(request.getEmail().trim());
+            blueprint.setClientEmail(email);
             blueprintService.save(blueprint);
         });
     }

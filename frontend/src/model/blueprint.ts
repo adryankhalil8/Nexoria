@@ -21,6 +21,9 @@ export type BlueprintDraft = {
   clientEmail?: string;
   goals: string[];
   externalSignal?: ExternalSignal;
+  status?: BlueprintPortalStatus;
+  purchaseEventType?: PurchaseEventType;
+  fixes?: FixRecommendation[];
 };
 
 export type BlueprintSummary = {
@@ -279,7 +282,7 @@ export function buildClientBlueprintView(blueprint: Blueprint): ClientBlueprintV
       ],
       resources: [
         { label: 'Live website', href: blueprint.url },
-        { label: 'Blueprint detail', href: `/admin/blueprints/${blueprint.id}` },
+        { label: 'Message Nexoria', href: '/portal/support' },
       ],
       comments: [
         fix.owner === 'CLIENT'

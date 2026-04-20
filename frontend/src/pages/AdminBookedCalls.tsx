@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getApiErrorMessage } from '../api/errors';
 import { schedulingApi } from '../api/scheduling';
 import type { ScheduledCall } from '../model/scheduling';
@@ -31,6 +32,30 @@ export default function AdminBookedCalls() {
     }
   }
 
+  const sortedCalls = [...calls].sort((a, b) => {
+    if (a.status !== b.status) {
+      return a.status === 'BOOKED' ? -1 : 1;
+    }
+
+    return new Date(a.scheduledStart).getTime() - new Date(b.scheduledStart).getTime();
+  });
+
+  function blueprintCreateUrl(call: ScheduledCall) {
+    const params = new URLSearchParams({
+      clientEmail: call.email,
+    });
+
+    if (call.website) {
+      params.set('url', call.website);
+    }
+
+    if (call.industry) {
+      params.set('industry', call.industry);
+    }
+
+    return `/admin/blueprints/new?${params.toString()}`;
+  }
+
   return (
     <section className="stack">
       <div className="page-intro">
@@ -54,7 +79,7 @@ export default function AdminBookedCalls() {
               </tr>
             </thead>
             <tbody>
-              {calls.map((call) => (
+              {sortedCalls.map((call) => (
                 <tr key={call.id}>
                   <td>{formatDateTime(call.scheduledStart, call.timezone)}</td>
                   <td>{call.company}</td>
@@ -65,6 +90,15 @@ export default function AdminBookedCalls() {
                   <td>{call.source === 'GET_STARTED' ? 'Get Started' : 'Book a Call'}</td>
                   <td>{call.status}</td>
                   <td className="table-actions">
+                    <Link
+                      className="ghost-button ghost-button--small"
+                      to={`/admin/clients?search=${encodeURIComponent(call.email)}`}
+                    >
+                      Client
+                    </Link>
+                    <Link className="ghost-button ghost-button--small" to={blueprintCreateUrl(call)}>
+                      Blueprint
+                    </Link>
                     {call.status === 'BOOKED' ? (
                       <button className="ghost-button ghost-button--small" onClick={() => void clearCall(call.id)} type="button">
                         Clear Slot

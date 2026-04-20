@@ -33,7 +33,7 @@ public class UserService {
     }
 
     public UserSummaryResponse getCurrentUser(User user) {
-        return UserSummaryResponse.from(user);
+        return UserSummaryResponse.from(user, leadService.resolveDisplayName(user));
     }
 
     public UserSummaryResponse createUser(CreateUserRequest request) {

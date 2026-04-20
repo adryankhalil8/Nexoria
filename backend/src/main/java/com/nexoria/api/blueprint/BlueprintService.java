@@ -64,7 +64,10 @@ public class BlueprintService {
             return repository.findAll();
         }
 
-        return repository.findByUserOrClientEmailIgnoreCase(user, user.getEmail());
+        return repository.findByUserOrClientEmailIgnoreCase(user, user.getEmail()).stream()
+                .filter(blueprint -> blueprint.getStatus() == BlueprintStatus.APPROVED)
+                .map(this::clientSafeCopy)
+                .toList();
     }
 
     public Optional<Blueprint> findByIdAndUser(Long id, User user) {
@@ -73,7 +76,9 @@ public class BlueprintService {
         }
 
         return repository.findByIdAndUser(id, user)
-                .or(() -> repository.findByIdAndClientEmailIgnoreCase(id, user.getEmail()));
+                .or(() -> repository.findByIdAndClientEmailIgnoreCase(id, user.getEmail()))
+                .filter(blueprint -> blueprint.getStatus() == BlueprintStatus.APPROVED)
+                .map(this::clientSafeCopy);
     }
 
     public Blueprint computeAndSave(BlueprintRequest request, User user) {
@@ -93,6 +98,10 @@ public class BlueprintService {
         return value == null || value.isBlank() ? null : value.trim();
     }
 
+    public List<String> copyGoals(List<String> goals) {
+        return goals == null ? new ArrayList<>() : new ArrayList<>(goals);
+    }
+
     private Blueprint mapRequest(BlueprintRequest request, User user) {
         Blueprint blueprint = new Blueprint();
         blueprint.setUser(user);
@@ -100,7 +109,7 @@ public class BlueprintService {
         blueprint.setIndustry(request.getIndustry());
         blueprint.setRevenueRange(request.getRevenueRange());
         blueprint.setClientEmail(blankToNull(request.getClientEmail()));
-        blueprint.setGoals(request.getGoals());
+        blueprint.setGoals(copyGoals(request.getGoals()));
         blueprint.setExternalSignal(request.getExternalSignal() != null ? request.getExternalSignal() : new ExternalSignal(10.0, 0, 15.0));
         blueprint.setStatus(request.getStatus() != null ? request.getStatus() : BlueprintStatus.APPROVED);
         blueprint.setPurchaseEventType(resolvePurchaseEventType(request));
@@ -254,6 +263,42 @@ public class BlueprintService {
         }
 
         return merged;
+    }
+
+    private Blueprint clientSafeCopy(Blueprint source) {
+        Blueprint copy = new Blueprint();
+        copy.setId(source.getId());
+        copy.setUrl(source.getUrl());
+        copy.setIndustry(source.getIndustry());
+        copy.setRevenueRange(source.getRevenueRange());
+        copy.setClientEmail(source.getClientEmail());
+        copy.setGoals(copyGoals(source.getGoals()));
+        copy.setScore(source.getScore());
+        copy.setReadyForRetainer(source.getReadyForRetainer());
+        copy.setStatus(source.getStatus());
+        copy.setPurchaseEventType(source.getPurchaseEventType());
+        copy.setExternalSignal(source.getExternalSignal());
+        copy.setFixes(clientVisibleFixes(source.getFixes()));
+        return copy;
+    }
+
+    private List<FixRecommendation> clientVisibleFixes(List<FixRecommendation> fixes) {
+        if (fixes == null) {
+            return new ArrayList<>();
+        }
+
+        return fixes.stream()
+                .filter(fix -> Boolean.TRUE.equals(fix.getClientVisible()))
+                .map(fix -> new FixRecommendation(
+                        fix.getTitle(),
+                        fix.getImpact(),
+                        fix.getEffort(),
+                        fix.getWhy(),
+                        fix.getOwner(),
+                        fix.getStatus(),
+                        true
+                ))
+                .toList();
     }
 
     private void selectKeys(Set<String> selected, List<String> keys, int limit) {
