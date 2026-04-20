@@ -17,7 +17,15 @@ export default function ProtectedRoute({ children, requireRole }: ProtectedRoute
   }
 
   if (requireRole && role !== requireRole) {
-    return <Navigate replace to="/portal" />;
+    if (role === 'ADMIN') {
+      return <Navigate replace to="/admin" />;
+    }
+
+    if (role === 'USER' || role === 'VIEWER') {
+      return <Navigate replace to="/portal" />;
+    }
+
+    return <Navigate replace to="/login" />;
   }
 
   return <>{children}</>;

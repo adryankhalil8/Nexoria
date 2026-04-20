@@ -1,4 +1,4 @@
-import { useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import type { ClientPortalOutletContext } from '../components/ClientPortalLayout';
 
 export default function ClientBlueprint() {
@@ -64,7 +64,9 @@ export default function ClientBlueprint() {
             Visit live website
           </a>
           <span className="pill pill--success">Score {portal.score}/100</span>
-          <a href={`/admin/blueprints/${portal.blueprintId}`}>View admin blueprint reference</a>
+          <Link className="text-link" to="/portal/support">
+            Ask Nexoria about this blueprint
+          </Link>
         </article>
       </div>
 

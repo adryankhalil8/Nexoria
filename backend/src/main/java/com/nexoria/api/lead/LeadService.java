@@ -73,6 +73,17 @@ public class LeadService {
         return lead;
     }
 
+    public String resolveDisplayName(User user) {
+        if (user == null) {
+            return "";
+        }
+
+        return leadRepository.findFirstByEmailIgnoreCaseOrderByUpdatedAtDesc(user.getEmail())
+                .map(Lead::getContactName)
+                .filter(name -> name != null && !name.isBlank())
+                .orElseGet(() -> resolveContactName(user));
+    }
+
     public LeadResponse update(Long id, LeadRequest request) {
         Lead lead = leadRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Lead not found"));

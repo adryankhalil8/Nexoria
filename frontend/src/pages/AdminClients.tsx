@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { blueprintApi } from '../api/blueprint';
 import { getApiErrorMessage } from '../api/errors';
 import { leadsApi } from '../api/leads';
 import { usersApi } from '../api/users';
 import type { Lead, LeadDraft, LeadStatus, ManagedUser } from '../model/admin';
 import { LEAD_STATUS_OPTIONS } from '../model/admin';
+import type { Blueprint } from '../model/blueprint';
 
 const EMPTY_LEAD: LeadDraft = {
   company: '',
@@ -24,17 +26,33 @@ export default function AdminClients() {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [editForm, setEditForm] = useState<LeadDraft>(EMPTY_LEAD);
   const [users, setUsers] = useState<ManagedUser[]>([]);
+  const [blueprints, setBlueprints] = useState<Blueprint[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const location = useLocation();
 
   useEffect(() => {
     void loadLeads();
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const initialSearch = params.get('search');
+
+    if (initialSearch) {
+      setSearch(initialSearch);
+    }
+  }, [location.search]);
+
   async function loadLeads() {
     try {
-      const [leadData, userData] = await Promise.all([leadsApi.getAll(), usersApi.getAll()]);
+      const [leadData, userData, blueprintData] = await Promise.all([
+        leadsApi.getAll(),
+        usersApi.getAll(),
+        blueprintApi.getAll(),
+      ]);
       setLeads(leadData);
       setUsers(userData.filter((user) => user.role !== 'ADMIN'));
+      setBlueprints(blueprintData);
     } catch (err: unknown) {
       setError(getApiErrorMessage(err, 'Failed to load leads'));
     }
@@ -115,6 +133,26 @@ export default function AdminClients() {
 
   function findUserForLead(lead: Lead) {
     return users.find((user) => user.email.toLowerCase() === lead.email.toLowerCase());
+  }
+
+  function findBlueprintForLead(lead: Lead) {
+    return blueprints.find((blueprint) => blueprint.clientEmail?.toLowerCase() === lead.email.toLowerCase());
+  }
+
+  function blueprintCreateUrl(lead: Lead) {
+    const params = new URLSearchParams({
+      clientEmail: lead.email,
+    });
+
+    if (lead.website) {
+      params.set('url', lead.website);
+    }
+
+    if (lead.industry) {
+      params.set('industry', lead.industry);
+    }
+
+    return `/admin/blueprints/new?${params.toString()}`;
   }
 
   return (
@@ -231,7 +269,10 @@ export default function AdminClients() {
               <tbody>
                 {filteredLeads.map((lead) => (
                   <tr key={lead.id}>
-                    <td>{lead.company}</td>
+                    <td>
+                      <strong>{lead.company}</strong>
+                      {findBlueprintForLead(lead) && <div className="muted">Blueprint assigned</div>}
+                    </td>
                     <td>
                       <strong>{lead.contactName}</strong>
                       <div className="muted">{lead.email}</div>
@@ -259,13 +300,19 @@ export default function AdminClients() {
                       <button className="ghost-button ghost-button--small" onClick={() => openLead(lead)} type="button">
                         View
                       </button>
-                      {['BOOKED', 'CLOSED'].includes(lead.status) && (
+                      {findBlueprintForLead(lead) ? (
                         <Link
                           className="ghost-button ghost-button--small"
-                          to={`/admin/blueprints/new?clientEmail=${encodeURIComponent(lead.email)}`}
+                          to={`/admin/blueprints/${findBlueprintForLead(lead)?.id}`}
                         >
-                          Blueprint
+                          View Blueprint
                         </Link>
+                      ) : (
+                        ['BOOKED', 'CLOSED'].includes(lead.status) && (
+                          <Link className="ghost-button ghost-button--small" to={blueprintCreateUrl(lead)}>
+                            Create Blueprint
+                          </Link>
+                        )
                       )}
                       <button className="danger-button" onClick={() => void removeLead(lead.id)} type="button">
                         Delete
@@ -355,6 +402,17 @@ export default function AdminClients() {
                 <button className="primary-button" type="submit">
                   Save Changes
                 </button>
+                {findBlueprintForLead(selectedLead) ? (
+                  <Link className="ghost-button" to={`/admin/blueprints/${findBlueprintForLead(selectedLead)?.id}`}>
+                    Open Assigned Blueprint
+                  </Link>
+                ) : (
+                  ['BOOKED', 'CLOSED'].includes(editForm.status) && (
+                    <Link className="ghost-button" to={blueprintCreateUrl({ ...selectedLead, ...editForm })}>
+                      Create Blueprint
+                    </Link>
+                  )
+                )}
                 {['BOOKED', 'CLOSED'].includes(editForm.status) && !selectedLead.hasAccount && (
                   <span className="pill">This email can now register for the client portal.</span>
                 )}

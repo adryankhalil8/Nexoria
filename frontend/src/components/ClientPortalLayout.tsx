@@ -3,7 +3,9 @@ import { useEffect, useState } from 'react';
 import { logout } from '../api/client';
 import { blueprintApi } from '../api/blueprint';
 import { schedulingApi } from '../api/scheduling';
+import { usersApi } from '../api/users';
 import { buildClientBlueprintView, type ClientBlueprintView } from '../model/blueprint';
+import type { ManagedUser } from '../model/admin';
 import type { ScheduledCall } from '../model/scheduling';
 
 export type ClientPortalOutletContext = {
@@ -15,11 +17,12 @@ export type ClientPortalOutletContext = {
 export default function ClientPortalLayout() {
   const [portal, setPortal] = useState<ClientBlueprintView | null>(null);
   const [bookings, setBookings] = useState<ScheduledCall[]>([]);
+  const [currentUser, setCurrentUser] = useState<ManagedUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    Promise.allSettled([blueprintApi.getAll(), schedulingApi.getMyBookings()])
-      .then(([blueprintsResult, bookingsResult]) => {
+    Promise.allSettled([blueprintApi.getAll(), schedulingApi.getMyBookings(), usersApi.getCurrent()])
+      .then(([blueprintsResult, bookingsResult, userResult]) => {
         if (blueprintsResult.status === 'fulfilled') {
           const blueprints = blueprintsResult.value;
           const approvedBlueprint = blueprints.find((blueprint) => blueprint.status === 'APPROVED') ?? blueprints[0];
@@ -33,9 +36,17 @@ export default function ClientPortalLayout() {
         } else {
           setBookings([]);
         }
+
+        if (userResult.status === 'fulfilled') {
+          setCurrentUser(userResult.value);
+        } else {
+          setCurrentUser(null);
+        }
       })
       .finally(() => setIsLoading(false));
   }, []);
+
+  const firstName = getFirstName(currentUser);
 
   return (
     <div className="client-shell">
@@ -44,7 +55,7 @@ export default function ClientPortalLayout() {
           <span className="brand-mark">N</span>
           <div>
             <strong>Nexoria</strong>
-            <p>Client portal</p>
+            <p>{firstName ?? 'Client portal'}</p>
           </div>
         </div>
 
@@ -96,4 +107,25 @@ export default function ClientPortalLayout() {
       </div>
     </div>
   );
+}
+
+function getFirstName(user: ManagedUser | null): string | null {
+  const preferredName = user?.displayName?.trim();
+  const fallback = user?.email?.split('@')[0] ?? user?.username ?? '';
+  const source = preferredName || prettifyName(fallback);
+  const firstName = source.split(/\s+/)[0]?.trim();
+
+  return firstName || null;
+}
+
+function prettifyName(value: string): string {
+  return value
+    .replace(/_at_.*/i, '')
+    .replace(/[._-]+/g, ' ')
+    .replace(/\d+/g, '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 }

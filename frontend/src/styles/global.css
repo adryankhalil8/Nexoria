@@ -304,6 +304,11 @@ textarea {
   color: var(--success);
 }
 
+.pill--warning {
+  background: rgba(230, 125, 36, 0.16);
+  color: #9a4f10;
+}
+
 .gallery-grid,
 .stats-grid,
 .benefit-grid,
@@ -1342,6 +1347,13 @@ textarea {
 .support-thread--active {
   border-color: rgba(45, 137, 194, 0.52);
   box-shadow: 0 16px 34px rgba(45, 137, 194, 0.16);
+}
+
+.support-thread__title {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .support-thread span,

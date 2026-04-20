@@ -1,6 +1,6 @@
 # Nexoria Project TODO List
-**Based on the current codebase state - March 26, 2026**  
-**Status:** ~75% Complete - React frontend unified, secure backend baseline in place, Phase 5 completed
+**Based on the current codebase state - April 20, 2026**  
+**Status:** ~90% complete excluding deployment - public funnel, admin portal, client portal, scheduling, and support messaging are connected
 
 ---
 
@@ -43,12 +43,14 @@
 *Priority: Medium*
 
 - [x] Set up backend testing framework
-- [ ] Expand backend unit coverage for scoring and token edge cases
+- [x] Add backend coverage for scheduling duplicate booking guards and duplicate Get Started blueprint prevention
+- [ ] Expand backend unit coverage for support authorization, scoring, and token edge cases
 - [x] Create backend integration tests
 - [x] Set up Vitest for the frontend
 - [x] Create initial frontend component tests
-- [ ] Expand React route and blueprint flow coverage
-- [ ] Re-verify lint and formatting discipline across the current frontend
+- [x] Add frontend coverage for protected admin/client route boundaries
+- [ ] Expand React route coverage for intake -> scheduling, booking confirmation -> registration, admin handoffs, and client portal rendering
+- [x] Re-verify lint and production build discipline across the current frontend
 
 ---
 
@@ -73,7 +75,26 @@
 - [x] Transfer shared blueprint models into the React app
 - [x] Replace legacy HTML and JS blueprint pages with React routes
 - [x] Remove legacy frontend files from the active app path
-- [ ] Add broader test coverage for create, gallery, and detail routes
+- [x] Add public Get Started and scheduling routes
+- [x] Add admin routes for clients, booked calls, schedule settings, support messages, users, and blueprints
+- [x] Add client portal routes for home, blueprint, next steps, results, and support
+- [ ] Add broader test coverage for create, gallery, detail, admin, and client portal routes
+
+---
+
+## Workflow Completion
+*Priority: High*
+
+- [x] Separate first-admin bootstrap from normal registration
+- [x] Restrict client registration to emails with booked/closed lead status
+- [x] Connect booked calls to client tracker readiness
+- [x] Show scheduled calls in the client portal
+- [x] Show assigned blueprint goals and visible fixes in the client portal
+- [x] Add admin controls for blueprint approval, purchase event, task owner/status, and client visibility
+- [x] Add support messaging with admin replies and polling refresh
+- [x] Prevent duplicate active bookings for the same email
+- [x] Avoid duplicate auto-blueprints from repeated Get Started bookings
+- [ ] Add journey-level tests for these workflows
 
 ---
 
@@ -91,21 +112,23 @@
 
 - [x] Consolidate frontend styling around the React app
 - [ ] Remove generated build artifacts from source control where appropriate
-- [ ] Add or tighten `.gitignore` coverage for local build output and secrets
-- [ ] Update `README.md` with the current React-first app flow
+- [x] Add or tighten `.gitignore` coverage for local build output and secrets
+- [x] Update `README.md` with the current React-first app flow
+- [ ] Decide whether to remove cleanup candidates: root `BlueprintRequest.java`, `frontend/src/main/java/org/example/Main.java`, and untracked `backend/package-lock.json`
 
 ---
 
 ## Current Verification Snapshot
 
-- [x] Backend tests passing
-- [x] Frontend build passing
-- [x] Frontend component tests passing
+- [x] Backend tests passing: `mvn --batch-mode test` (`24` tests)
+- [x] Frontend lint passing: `npm run lint`
+- [x] Frontend build passing: `npm run build`
+- [x] Frontend component tests passing: `npm test -- --run` (`8` tests)
 
 ---
 
 ## Current Priorities
 
-1. Expand React coverage around blueprint creation, gallery filtering, and detail flows
-2. Harden auth and session behavior, especially refresh-token lifecycle and navigation edge cases
-3. Improve production operations readiness around HTTPS, secrets, and release process
+1. Add journey-level tests around booking, registration eligibility, admin handoffs, and client portal visibility
+2. Clean generated/tracked artifacts and decide what to do with stray non-runtime files
+3. Improve production operations readiness around HTTPS, secrets, backups, and release process

@@ -35,6 +35,8 @@ public class BlueprintRequest {
     @Schema(example = "BOOKED_JOB")
     private PurchaseEventType purchaseEventType;
 
+    private List<FixRecommendation> fixes;
+
     // Getters and Setters
     public String getUrl() {
         return url;
@@ -98,5 +100,13 @@ public class BlueprintRequest {
 
     public void setPurchaseEventType(PurchaseEventType purchaseEventType) {
         this.purchaseEventType = purchaseEventType;
+    }
+
+    public List<FixRecommendation> getFixes() {
+        return fixes;
+    }
+
+    public void setFixes(List<FixRecommendation> fixes) {
+        this.fixes = fixes;
     }
 }

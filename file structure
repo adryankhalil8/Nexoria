@@ -3,7 +3,7 @@ Nexoria/
   .idea/                           # IDE settings
   .vscode/                         # Workspace settings
   backend/                         # Spring Boot REST API
-    .env.example                   # stale backend env example; needs refresh
+    .env.example                   # backend env example aligned with local H2 + MySQL runtime
     pom.xml
     src/
       main/
@@ -49,10 +49,36 @@ Nexoria/
               LeadResponse.java
               LeadService.java
               LeadStatus.java
+            schedule/
+              AvailabilityWindow.java
+              AvailabilityWindowRepository.java
+              AvailabilityWindowRequest.java
+              AvailabilityWindowResponse.java
+              CallSource.java
+              CreateBookingRequest.java
+              PublicAvailabilityResponse.java
+              ScheduledCall.java
+              ScheduledCallRepository.java
+              ScheduledCallResponse.java
+              ScheduledCallStatus.java
+              ScheduleSettings.java
+              ScheduleSettingsRepository.java
+              ScheduleSettingsRequest.java
+              ScheduleSettingsResponse.java
+              SchedulingController.java
+              SchedulingService.java
             security/
               AuthRateLimitFilter.java
               JwtAuthFilter.java
               SecurityConfig.java
+            support/
+              SupportController.java
+              SupportMessage.java
+              SupportMessageRepository.java
+              SupportMessageRequest.java
+              SupportMessageResponse.java
+              SupportMessageSender.java
+              SupportService.java
             user/
               CreateUserRequest.java
               Role.java
@@ -73,6 +99,10 @@ Nexoria/
               V1__init_schema.sql
               V2__add_user_ownership.sql
               V3__admin_portal_schema.sql
+              V4__client_portal_fields.sql
+              V5__scheduling.sql
+              V6__client_access_and_assignments.sql
+              V7__support_messages.sql
       test/
         java/                      # backend unit/integration tests
         resources/
@@ -90,8 +120,11 @@ Nexoria/
         auth.ts
         blueprint.ts
         client.ts
+        errors.ts
         external.ts
         leads.ts
+        scheduling.ts
+        support.ts
         users.ts
       assets/
         Images/
@@ -103,6 +136,7 @@ Nexoria/
       components/
         AdminLayout.tsx
         BlueprintCard.tsx
+        ClientPortalLayout.tsx
         Footer.tsx
         Navbar.tsx
         ScoreBadge.tsx
@@ -111,14 +145,26 @@ Nexoria/
         blueprint.ts
       pages/
         AdminClients.tsx
+        AdminBookedCalls.tsx
+        AdminBootstrap.tsx
         AdminOverview.tsx
+        AdminScheduleSettings.tsx
+        AdminSupportMessages.tsx
         AdminUsers.tsx
         BlueprintCreate.tsx
         BlueprintDetail.tsx
         BlueprintsGallery.tsx
+        BookingConfirmation.tsx
+        ClientBlueprint.tsx
+        ClientHome.tsx
+        ClientNextSteps.tsx
+        ClientResults.tsx
+        ClientSupport.tsx
+        GetStarted.tsx
         HomePage.tsx
         Login.tsx
         Register.tsx
+        ScheduleCall.tsx
       routes/
         ProtectedRoute.tsx
       styles/
@@ -130,7 +176,7 @@ Nexoria/
       main/
         java/
           org/example/
-            Main.java              # stray Java file inside frontend tree
+            Main.java              # cleanup candidate: stray Java sample inside frontend tree
   infra/                           # docs and architecture artifacts
     docs/
       Audit_Reports/
@@ -138,6 +184,8 @@ Nexoria/
         AUDIT_REPORT(2).md
         AUDIT_REPORT(3).md
         AUDIT_REPORT(4).md
+        AUDIT_REPORT(5).md
+        AUDIT_REPORT(6).md
       adr/
         0001-tech-stack.md
         0002-auth-jwt.md
@@ -145,10 +193,12 @@ Nexoria/
       api-design.md
       architecture-diagram.png
       deployment-guide.md
-      erd.png                      # currently empty
+      erd.dbml
+      erd.png                      # export generated from ERD editor when needed
   .env.example                     # root env for Docker/local setup
+  .gitignore
   admin.css                        # standalone legacy-style admin stylesheet
-  BlueprintRequest.java            # stray root-level Java file
+  BlueprintRequest.java            # cleanup candidate: stray root-level Java file
   docker-compose.yml
   docker-compose.prod.yml
   Dockerfile

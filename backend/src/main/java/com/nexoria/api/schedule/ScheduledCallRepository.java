@@ -9,4 +9,5 @@ public interface ScheduledCallRepository extends JpaRepository<ScheduledCall, Lo
     List<ScheduledCall> findAllByStatusAndScheduledEndAfterOrderByScheduledStartAsc(ScheduledCallStatus status, Instant scheduledEnd);
     List<ScheduledCall> findAllByOrderByScheduledStartAsc();
     List<ScheduledCall> findAllByLeadUserEmailIgnoreCaseOrderByScheduledStartAsc(String email);
+    boolean existsByEmailIgnoreCaseAndStatus(String email, ScheduledCallStatus status);
 }

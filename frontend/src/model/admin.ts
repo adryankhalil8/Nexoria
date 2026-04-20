@@ -2,6 +2,7 @@ export type ManagedUser = {
   id: number;
   email: string;
   username: string;
+  displayName?: string;
   role: 'ADMIN' | 'USER' | 'VIEWER';
   status: 'ACTIVE' | 'PENDING';
   createdAt: string;

@@ -6,6 +6,7 @@ public class UserSummaryResponse {
     private Long id;
     private String email;
     private String username;
+    private String displayName;
     private Role role;
     private UserStatus status;
     private LocalDateTime createdAt;
@@ -20,6 +21,12 @@ public class UserSummaryResponse {
         response.setStatus(user.getStatus());
         response.setCreatedAt(user.getCreatedAt());
         response.setUpdatedAt(user.getUpdatedAt());
+        return response;
+    }
+
+    public static UserSummaryResponse from(User user, String displayName) {
+        UserSummaryResponse response = from(user);
+        response.setDisplayName(displayName);
         return response;
     }
 
@@ -45,6 +52,14 @@ public class UserSummaryResponse {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public Role getRole() {

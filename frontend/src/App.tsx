@@ -49,7 +49,7 @@ export default function App() {
       </Route>
       <Route
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requireRole="USER">
             <ClientPortalLayout />
           </ProtectedRoute>
         }
