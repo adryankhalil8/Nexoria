@@ -314,6 +314,12 @@ export default function AdminClients() {
                           </Link>
                         )
                       )}
+                      <Link className="ghost-button ghost-button--small" to={`/admin/calls?search=${encodeURIComponent(lead.email)}`}>
+                        Calls
+                      </Link>
+                      <Link className="ghost-button ghost-button--small" to={`/admin/support?search=${encodeURIComponent(lead.email)}`}>
+                        Support
+                      </Link>
                       <button className="danger-button" onClick={() => void removeLead(lead.id)} type="button">
                         Delete
                       </button>
@@ -413,6 +419,12 @@ export default function AdminClients() {
                     </Link>
                   )
                 )}
+                <Link className="ghost-button" to={`/admin/calls?search=${encodeURIComponent(selectedLead.email)}`}>
+                  View Calls
+                </Link>
+                <Link className="ghost-button" to={`/admin/support?search=${encodeURIComponent(selectedLead.email)}`}>
+                  View Support
+                </Link>
                 {['BOOKED', 'CLOSED'].includes(editForm.status) && !selectedLead.hasAccount && (
                   <span className="pill">This email can now register for the client portal.</span>
                 )}

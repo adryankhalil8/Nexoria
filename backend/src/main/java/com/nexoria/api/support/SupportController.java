@@ -5,10 +5,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -36,6 +38,12 @@ public class SupportController {
         return ResponseEntity.status(HttpStatus.CREATED).body(supportService.sendClientMessage(user, request));
     }
 
+    @GetMapping(value = "/mine/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "Stream support messages for the current client")
+    public SseEmitter streamMine(@AuthenticationPrincipal User user) {
+        return supportService.streamMine(user);
+    }
+
     @GetMapping("/admin")
     @Operation(summary = "List all support messages for admins")
     public List<SupportMessageResponse> adminMessages() {
@@ -47,5 +55,11 @@ public class SupportController {
     public ResponseEntity<SupportMessageResponse> reply(@PathVariable String clientEmail,
                                                         @Valid @RequestBody SupportMessageRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(supportService.sendAdminReply(clientEmail, request));
+    }
+
+    @GetMapping(value = "/admin/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "Stream all support messages for admins")
+    public SseEmitter streamAdmin() {
+        return supportService.streamAdmin();
     }
 }

@@ -34,11 +34,15 @@ class AuthControllerIntegrationTest {
     private LeadRepository leadRepository;
 
     private void seedClosedLead(String email) {
+        seedLead(email, LeadStatus.CLOSED);
+    }
+
+    private void seedLead(String email, LeadStatus status) {
         Lead lead = new Lead();
         lead.setCompany("Test Company");
         lead.setContactName("Test Contact");
         lead.setEmail(email);
-        lead.setStatus(LeadStatus.CLOSED);
+        lead.setStatus(status);
         leadRepository.save(lead);
     }
 
@@ -109,5 +113,28 @@ class AuthControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void register_BookedLeadEmail_ShouldReturnTokens() throws Exception {
+        AuthRequest request = new AuthRequest("booked-client@test.com", "password123");
+        seedLead(request.getEmail(), LeadStatus.BOOKED);
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.token").exists());
+    }
+
+    @Test
+    void register_UnqualifiedLeadEmail_ShouldReturnBadRequest() throws Exception {
+        AuthRequest request = new AuthRequest("new-lead@test.com", "password123");
+        seedLead(request.getEmail(), LeadStatus.NEW);
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
     }
 }

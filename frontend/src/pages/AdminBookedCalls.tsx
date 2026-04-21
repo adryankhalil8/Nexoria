@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { getApiErrorMessage } from '../api/errors';
 import { schedulingApi } from '../api/scheduling';
 import type { ScheduledCall } from '../model/scheduling';
@@ -14,7 +14,9 @@ function formatDateTime(value: string, timezone: string) {
 
 export default function AdminBookedCalls() {
   const [calls, setCalls] = useState<ScheduledCall[]>([]);
+  const [search, setSearch] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const location = useLocation();
 
   useEffect(() => {
     schedulingApi
@@ -22,6 +24,13 @@ export default function AdminBookedCalls() {
       .then(setCalls)
       .catch((err: unknown) => setError(getApiErrorMessage(err, 'Unable to load booked calls')));
   }, []);
+
+  useEffect(() => {
+    const initialSearch = new URLSearchParams(location.search).get('search');
+    if (initialSearch) {
+      setSearch(initialSearch);
+    }
+  }, [location.search]);
 
   async function clearCall(id: number) {
     try {
@@ -32,13 +41,22 @@ export default function AdminBookedCalls() {
     }
   }
 
-  const sortedCalls = [...calls].sort((a, b) => {
-    if (a.status !== b.status) {
-      return a.status === 'BOOKED' ? -1 : 1;
-    }
+  const sortedCalls = useMemo(
+    () =>
+      calls
+        .filter((call) => {
+          const haystack = `${call.company} ${call.contactName} ${call.email} ${call.website ?? ''}`.toLowerCase();
+          return haystack.includes(search.toLowerCase());
+        })
+        .sort((a, b) => {
+          if (a.status !== b.status) {
+            return a.status === 'BOOKED' ? -1 : 1;
+          }
 
-    return new Date(a.scheduledStart).getTime() - new Date(b.scheduledStart).getTime();
-  });
+          return new Date(a.scheduledStart).getTime() - new Date(b.scheduledStart).getTime();
+        }),
+    [calls, search]
+  );
 
   function blueprintCreateUrl(call: ScheduledCall) {
     const params = new URLSearchParams({
@@ -66,6 +84,9 @@ export default function AdminBookedCalls() {
       {error && <p className="error-text">{error}</p>}
 
       <div className="card">
+        <div className="toolbar">
+          <input onChange={(event) => setSearch(event.target.value)} placeholder="Search calls" value={search} />
+        </div>
         <div className="table-wrap">
           <table className="table">
             <thead>

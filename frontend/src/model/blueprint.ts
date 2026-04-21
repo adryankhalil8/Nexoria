@@ -326,8 +326,8 @@ export function buildClientBlueprintView(blueprint: Blueprint): ClientBlueprintV
       purchases7d,
       conversionRate,
       revenue7d,
-      trackingConnected: Boolean(blueprint.externalSignal),
-      missingIntegrations: blueprint.externalSignal ? [] : ['Analytics access', 'Calendar or booking data'],
+      trackingConnected: false,
+      missingIntegrations: ['GA4 or analytics access', 'Calendar conversion event', 'Payment or purchase event source'],
     },
   };
 }

@@ -72,6 +72,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/blueprints/**").authenticated()
                 .requestMatchers("/api/blueprints/**").hasRole("ADMIN")
                 .requestMatchers("/api/leads/**").hasRole("ADMIN")
+                .requestMatchers("/api/support/messages/mine/**").hasAnyRole("USER", "VIEWER")
                 .requestMatchers("/api/support/messages/mine").hasAnyRole("USER", "VIEWER")
                 .requestMatchers("/api/support/**").hasRole("ADMIN")
                 .requestMatchers("/api/scheduling/**").hasRole("ADMIN")

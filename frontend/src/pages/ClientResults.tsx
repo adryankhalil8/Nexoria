@@ -17,7 +17,10 @@ export default function ClientResults() {
       <div className="page-intro">
         <p className="eyebrow">Results</p>
         <h2>Simple scoreboard</h2>
-        <p className="muted">The point here is clarity: what is moving, what is not, and whether tracking is actually connected.</p>
+        <p className="muted">
+          This stays honest: until the live tracking sources are connected, Nexoria shows the scoreboard structure
+          and the exact missing pieces instead of pretending the metrics are final.
+        </p>
       </div>
 
       <div className="stats-grid">
@@ -52,7 +55,10 @@ export default function ClientResults() {
         {!portal.metrics.trackingConnected ? (
           <div className="stack">
             <p className="eyebrow">Tracking not connected</p>
-            <p className="muted">We still need a few connections before this scoreboard becomes fully live.</p>
+            <p className="muted">
+              These values are preview estimates for now. Connect the items below before using this page as the
+              weekly source of truth.
+            </p>
             <ul className="comparison-list">
               {portal.metrics.missingIntegrations.map((item) => (
                 <li key={item}>{item}</li>
