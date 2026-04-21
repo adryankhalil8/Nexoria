@@ -1,14 +1,83 @@
 // Nexoria ERD
 // Source of truth: backend/src/main/resources/db/migration
-// Updated: 2026-04-20
+// Updated: 2026-04-21
+
+Project Nexoria {
+  database_type: 'MySQL / H2-compatible Flyway schema'
+  Note: '''
+  Public flow: Get Started and Book a Call create leads, scheduled calls, and draft/assigned blueprint context.
+  Admin flow: admins manage leads, calls, users, schedule settings, support messages, and blueprint approval/client visibility.
+  Client flow: eligible client users see their booked call, approved client-visible blueprint fixes, results state, and support thread.
+  '''
+}
+
+Enum user_role {
+  USER
+  ADMIN
+  VIEWER
+}
+
+Enum user_status {
+  ACTIVE
+  PENDING
+}
+
+Enum lead_status {
+  NEW
+  CONTACTED
+  BOOKED
+  QUALIFIED
+  CLOSED
+}
+
+Enum blueprint_status {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  ARCHIVED
+}
+
+Enum purchase_event_type {
+  PURCHASE
+  DEPOSIT
+  BOOKED_JOB
+}
+
+Enum task_owner {
+  CLIENT
+  NEXORIA
+  SHARED
+}
+
+Enum task_status {
+  NOT_STARTED
+  IN_PROGRESS
+  BLOCKED
+  DONE
+}
+
+Enum call_source {
+  BOOK_A_CALL
+  GET_STARTED
+}
+
+Enum scheduled_call_status {
+  BOOKED
+  CLEARED
+}
+
+Enum support_message_sender {
+  CLIENT
+  ADMIN
+}
 
 Table users {
   id bigint [pk, increment]
   email varchar(320) [not null, unique]
   username varchar(32) [unique]
   password_hash varchar(255) [not null]
-  role varchar(50) [not null]
-  status varchar(50) [not null, default: 'ACTIVE']
+  role user_role [not null]
+  status user_status [not null, default: 'ACTIVE']
   created_at timestamp [not null]
   updated_at timestamp [not null]
 }
@@ -22,8 +91,8 @@ Table blueprints {
   client_email varchar(320)
   score int [not null]
   ready_for_retainer boolean [not null]
-  status varchar(50) [not null, default: 'DRAFT']
-  purchase_event_type varchar(50) [not null, default: 'DEPOSIT']
+  status blueprint_status [not null, default: 'DRAFT']
+  purchase_event_type purchase_event_type [not null, default: 'DEPOSIT']
   windspeed double
   weathercode int
   temperature double
@@ -34,6 +103,8 @@ Table blueprints {
 Table blueprint_goals {
   blueprint_id bigint [not null]
   goal varchar(1024) [not null]
+
+  Note: 'Selected goals from the Get Started intake, rendered in the client blueprint preview.'
 }
 
 Table blueprint_fixes {
@@ -42,9 +113,11 @@ Table blueprint_fixes {
   impact varchar(1024)
   effort varchar(1024)
   why varchar(2048)
-  owner varchar(50) [not null, default: 'NEXORIA']
-  status varchar(50) [not null, default: 'NOT_STARTED']
+  owner task_owner [not null, default: 'NEXORIA']
+  status task_status [not null, default: 'NOT_STARTED']
   client_visible boolean [not null, default: true]
+
+  Note: 'Admin-controlled fixes/tasks. Client portal only shows records where client_visible is true on an approved blueprint.'
 }
 
 Table leads {
@@ -56,7 +129,7 @@ Table leads {
   website varchar(2048)
   industry varchar(255)
   notes varchar(4000)
-  status varchar(50) [not null]
+  status lead_status [not null]
   created_at timestamp [not null]
   updated_at timestamp [not null]
 }
@@ -79,8 +152,8 @@ Table availability_windows {
 Table scheduled_calls {
   id bigint [pk, increment]
   lead_id bigint
-  source varchar(50) [not null]
-  status varchar(50) [not null]
+  source call_source [not null]
+  status scheduled_call_status [not null]
   company varchar(255) [not null]
   contact_name varchar(255) [not null]
   email varchar(320) [not null]
@@ -99,9 +172,11 @@ Table support_messages {
   client_user_id bigint
   client_email varchar(320) [not null]
   business_name varchar(255)
-  sender varchar(50) [not null]
+  sender support_message_sender [not null]
   body varchar(4000) [not null]
   created_at timestamp [not null]
+
+  Note: 'Support thread messages are persisted here and streamed to the admin/client UI with Server-Sent Events.'
 }
 
 Ref: blueprints.user_id > users.id
@@ -110,3 +185,9 @@ Ref: blueprint_fixes.blueprint_id > blueprints.id [delete: cascade]
 Ref: leads.user_id > users.id
 Ref: scheduled_calls.lead_id > leads.id
 Ref: support_messages.client_user_id > users.id
+
+// Workflow-level associations enforced by application logic:
+// blueprints.client_email matches users.email for the client portal approved blueprint view.
+// scheduled_calls.email matches users.email for the client portal scheduled-call card.
+// support_messages.client_email groups admin/client support threads.
+// client registration is allowed only when a lead email has BOOKED or CLOSED status.
