@@ -28,8 +28,27 @@ export default function ClientSupport() {
 
   useEffect(() => {
     void loadMessages();
-    const interval = window.setInterval(() => void loadMessages(), 5000);
-    return () => window.clearInterval(interval);
+    let fallbackInterval: number | undefined;
+    const unsubscribe = supportApi.subscribeMine(
+      (message) => {
+        setMessages((current) => {
+          if (current.some((item) => item.id === message.id)) {
+            return current;
+          }
+
+          return [...current, message].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+        });
+      },
+      () => {
+        fallbackInterval = window.setInterval(() => void loadMessages(), 5000);
+      }
+    );
+    return () => {
+      unsubscribe();
+      if (fallbackInterval) {
+        window.clearInterval(fallbackInterval);
+      }
+    };
   }, []);
 
   async function sendMessage(event: FormEvent) {
@@ -57,7 +76,7 @@ export default function ClientSupport() {
         <p className="eyebrow">Support</p>
         <h2>Message Nexoria</h2>
         <p className="muted">
-          Send updates, blockers, approvals, or questions from the portal. Replies from Nexoria appear here automatically.
+          Send updates, blockers, approvals, or questions from the portal. Replies from Nexoria stream here in real time.
         </p>
       </div>
 

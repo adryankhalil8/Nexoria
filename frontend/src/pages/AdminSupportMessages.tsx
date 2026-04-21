@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { getApiErrorMessage } from '../api/errors';
 import { supportApi } from '../api/support';
 import type { SupportMessage } from '../model/support';
@@ -15,6 +16,7 @@ export default function AdminSupportMessages() {
   const [selectedEmail, setSelectedEmail] = useState('');
   const [reply, setReply] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const location = useLocation();
 
   async function loadMessages() {
     try {
@@ -28,9 +30,36 @@ export default function AdminSupportMessages() {
 
   useEffect(() => {
     void loadMessages();
-    const interval = window.setInterval(() => void loadMessages(), 5000);
-    return () => window.clearInterval(interval);
+    let fallbackInterval: number | undefined;
+    const unsubscribe = supportApi.subscribeAdmin(
+      (message) => {
+        setMessages((current) => {
+          if (current.some((item) => item.id === message.id)) {
+            return current;
+          }
+
+          return [message, ...current].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+        });
+        setSelectedEmail((current) => current || message.clientEmail);
+      },
+      () => {
+        fallbackInterval = window.setInterval(() => void loadMessages(), 5000);
+      }
+    );
+    return () => {
+      unsubscribe();
+      if (fallbackInterval) {
+        window.clearInterval(fallbackInterval);
+      }
+    };
   }, []);
+
+  useEffect(() => {
+    const initialSearch = new URLSearchParams(location.search).get('search');
+    if (initialSearch) {
+      setSelectedEmail(initialSearch);
+    }
+  }, [location.search]);
 
   const threads = useMemo(() => {
     const grouped = new Map<string, SupportMessage[]>();
@@ -75,7 +104,7 @@ export default function AdminSupportMessages() {
       <div className="page-intro">
         <p className="eyebrow">Support Messages</p>
         <h2>Track client messages and reply from the admin workspace.</h2>
-        <p className="muted">This view refreshes automatically so support conversations stay current.</p>
+        <p className="muted">New client messages stream in real time, with polling fallback if the stream drops.</p>
       </div>
 
       {error && <p className="error-text">{error}</p>}

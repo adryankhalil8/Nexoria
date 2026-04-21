@@ -161,14 +161,14 @@ Client portal routes:
 - `/portal/blueprint` - approved blueprint preview and visible fixes
 - `/portal/next-steps` - client-facing task board
 - `/portal/results` - KPI snapshot and tracking state
-- `/portal/support` - support thread with polling-based refresh
+- `/portal/support` - support thread with Server-Sent Events and polling fallback
 
 ## Workflow Notes
 
 - `Book a Call` and completed `Get Started` flows both route into scheduling.
 - A booked call creates the client handoff point and allows that email to register for client portal access.
 - Admins can mark leads closed, assign blueprints by client email, approve/archive blueprint status, choose the purchase event type, assign fix ownership, update fix status, and decide which fixes are visible to the client.
-- Support messaging is persistent and refreshes on a polling interval. It behaves like a lightweight live thread, but it is not currently WebSocket/SSE push.
+- Support messaging is persistent and streams updates with Server-Sent Events. If the stream drops, the UI falls back to polling.
 
 ## Useful Commands
 
@@ -206,7 +206,7 @@ npm run test -- --run
 
 Note:
 
-- the frontend build, lint, and test suite currently pass as of Audit Report 6
+- the backend tests, frontend build, frontend lint, and frontend test suite currently pass as of Audit Report 6
 
 ## Deployment Requirements
 
@@ -274,10 +274,9 @@ docker compose -f docker-compose.prod.yml up --build -d
 
 These do not stop local development, but they matter for maintenance and deployment quality:
 
-- `infra/docs/erd.png` may need to be regenerated from `infra/docs/erd.dbml` after schema changes
-- frontend test coverage is still fairly small
+- `infra/docs/erd.png` should be regenerated from `infra/docs/erd.dbml` after future schema changes
+- frontend test coverage has journey-level coverage now, but can still expand around edge cases
 - HTTPS is expected in deployment, but certificate management is not fully handled in-repo
-- stray non-runtime files still need a deliberate cleanup decision, including the root `BlueprintRequest.java` and the sample Java file under `frontend/src/main/java/`
 
 ## Docs
 

@@ -1,6 +1,6 @@
 # Nexoria Project TODO List
 **Based on the current codebase state - April 20, 2026**  
-**Status:** ~90% complete excluding deployment - public funnel, admin portal, client portal, scheduling, and support messaging are connected
+**Status:** ~95% complete excluding deployment - public funnel, admin portal, client portal, scheduling, support messaging, and key journey tests are connected
 
 ---
 
@@ -49,7 +49,7 @@
 - [x] Set up Vitest for the frontend
 - [x] Create initial frontend component tests
 - [x] Add frontend coverage for protected admin/client route boundaries
-- [ ] Expand React route coverage for intake -> scheduling, booking confirmation -> registration, admin handoffs, and client portal rendering
+- [x] Expand React route coverage for intake -> scheduling, booking confirmation -> registration, admin handoffs, client portal rendering, and support send/reply
 - [x] Re-verify lint and production build discipline across the current frontend
 
 ---
@@ -91,10 +91,10 @@
 - [x] Show scheduled calls in the client portal
 - [x] Show assigned blueprint goals and visible fixes in the client portal
 - [x] Add admin controls for blueprint approval, purchase event, task owner/status, and client visibility
-- [x] Add support messaging with admin replies and polling refresh
+- [x] Add support messaging with admin replies and Server-Sent Events plus polling fallback
 - [x] Prevent duplicate active bookings for the same email
 - [x] Avoid duplicate auto-blueprints from repeated Get Started bookings
-- [ ] Add journey-level tests for these workflows
+- [x] Add journey-level tests for these workflows
 
 ---
 
@@ -111,24 +111,24 @@
 ## Quick Wins
 
 - [x] Consolidate frontend styling around the React app
-- [ ] Remove generated build artifacts from source control where appropriate
+- [x] Remove generated build artifacts from source control where appropriate
 - [x] Add or tighten `.gitignore` coverage for local build output and secrets
 - [x] Update `README.md` with the current React-first app flow
-- [ ] Decide whether to remove cleanup candidates: root `BlueprintRequest.java`, `frontend/src/main/java/org/example/Main.java`, and untracked `backend/package-lock.json`
+- [x] Removed cleanup candidates from the repo: root `BlueprintRequest.java`, `frontend/src/main/java/org/example/Main.java`, and untracked `backend/package-lock.json`
 
 ---
 
 ## Current Verification Snapshot
 
-- [x] Backend tests passing: `mvn --batch-mode test` (`24` tests)
+- [x] Backend tests passing: `mvn --batch-mode test` (`26` tests)
 - [x] Frontend lint passing: `npm run lint`
 - [x] Frontend build passing: `npm run build`
-- [x] Frontend component tests passing: `npm test -- --run` (`8` tests)
+- [x] Frontend journey/component tests passing: `npm test -- --run` (`16` tests)
 
 ---
 
 ## Current Priorities
 
-1. Add journey-level tests around booking, registration eligibility, admin handoffs, and client portal visibility
-2. Clean generated/tracked artifacts and decide what to do with stray non-runtime files
-3. Improve production operations readiness around HTTPS, secrets, backups, and release process
+1. Keep final verification green as workflow polish continues
+2. Improve production operations readiness around HTTPS, secrets, backups, and release process
+3. Add any final edge-case tests requested by the capstone rubric

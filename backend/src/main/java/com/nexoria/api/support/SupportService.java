@@ -6,8 +6,12 @@ import com.nexoria.api.user.User;
 import com.nexoria.api.user.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Service
 @Transactional
@@ -15,6 +19,8 @@ public class SupportService {
     private final SupportMessageRepository supportMessageRepository;
     private final LeadRepository leadRepository;
     private final UserRepository userRepository;
+    private final ConcurrentMap<String, CopyOnWriteArrayList<SseEmitter>> clientStreams = new ConcurrentHashMap<>();
+    private final CopyOnWriteArrayList<SseEmitter> adminStreams = new CopyOnWriteArrayList<>();
 
     public SupportService(SupportMessageRepository supportMessageRepository,
                           LeadRepository leadRepository,
@@ -33,7 +39,9 @@ public class SupportService {
     public SupportMessageResponse sendClientMessage(User user, SupportMessageRequest request) {
         SupportMessage message = baseMessage(user.getEmail(), SupportMessageSender.CLIENT, request.getBody());
         message.setClientUser(user);
-        return SupportMessageResponse.from(supportMessageRepository.save(message));
+        SupportMessageResponse saved = SupportMessageResponse.from(supportMessageRepository.save(message));
+        publish(saved);
+        return saved;
     }
 
     public List<SupportMessageResponse> listAllForAdmin() {
@@ -45,7 +53,28 @@ public class SupportService {
     public SupportMessageResponse sendAdminReply(String clientEmail, SupportMessageRequest request) {
         SupportMessage message = baseMessage(clientEmail, SupportMessageSender.ADMIN, request.getBody());
         userRepository.findByEmail(clientEmail).ifPresent(message::setClientUser);
-        return SupportMessageResponse.from(supportMessageRepository.save(message));
+        SupportMessageResponse saved = SupportMessageResponse.from(supportMessageRepository.save(message));
+        publish(saved);
+        return saved;
+    }
+
+    public SseEmitter streamMine(User user) {
+        String email = user.getEmail().trim().toLowerCase();
+        SseEmitter emitter = createEmitter();
+        clientStreams.computeIfAbsent(email, ignored -> new CopyOnWriteArrayList<>()).add(emitter);
+        emitter.onCompletion(() -> removeClientEmitter(email, emitter));
+        emitter.onTimeout(() -> removeClientEmitter(email, emitter));
+        emitter.onError(error -> removeClientEmitter(email, emitter));
+        return emitter;
+    }
+
+    public SseEmitter streamAdmin() {
+        SseEmitter emitter = createEmitter();
+        adminStreams.add(emitter);
+        emitter.onCompletion(() -> adminStreams.remove(emitter));
+        emitter.onTimeout(() -> adminStreams.remove(emitter));
+        emitter.onError(error -> adminStreams.remove(emitter));
+        return emitter;
     }
 
     private SupportMessage baseMessage(String clientEmail, SupportMessageSender sender, String body) {
@@ -63,5 +92,42 @@ public class SupportService {
                 .map(Lead::getCompany)
                 .filter(company -> company != null && !company.isBlank())
                 .orElse(email);
+    }
+
+    private SseEmitter createEmitter() {
+        SseEmitter emitter = new SseEmitter(0L);
+        try {
+            emitter.send(SseEmitter.event().name("connected").data("ok"));
+        } catch (Exception ignored) {
+            emitter.complete();
+        }
+        return emitter;
+    }
+
+    private void publish(SupportMessageResponse message) {
+        emit(adminStreams, message);
+        emit(clientStreams.get(message.getClientEmail().toLowerCase()), message);
+    }
+
+    private void emit(List<SseEmitter> emitters, SupportMessageResponse message) {
+        if (emitters == null) {
+            return;
+        }
+
+        for (SseEmitter emitter : emitters) {
+            try {
+                emitter.send(SseEmitter.event().name("message").data(message));
+            } catch (Exception ex) {
+                emitter.completeWithError(ex);
+                emitters.remove(emitter);
+            }
+        }
+    }
+
+    private void removeClientEmitter(String email, SseEmitter emitter) {
+        CopyOnWriteArrayList<SseEmitter> emitters = clientStreams.get(email);
+        if (emitters != null) {
+            emitters.remove(emitter);
+        }
     }
 }

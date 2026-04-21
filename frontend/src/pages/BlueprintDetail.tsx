@@ -83,6 +83,9 @@ export default function BlueprintDetail() {
     );
   }
 
+  const visibleFixCount = item.fixes.filter((fix) => fix.clientVisible).length;
+  const readyForClientReview = item.status === 'APPROVED' && Boolean(item.clientEmail) && visibleFixCount > 0;
+
   return (
     <main className="page">
       <section className="hero-card detail-hero">
@@ -93,6 +96,12 @@ export default function BlueprintDetail() {
             {getOptionLabel(INDUSTRY_OPTIONS, item.industry)} | {getOptionLabel(REVENUE_OPTIONS, item.revenueRange)}
           </p>
           {item.clientEmail && <p className="muted">Assigned client: {item.clientEmail}</p>}
+          <div className="pill-row">
+            <span className={readyForClientReview ? 'pill pill--success' : 'pill pill--warning'}>
+              {readyForClientReview ? 'Ready for client review' : 'Needs client review setup'}
+            </span>
+            <span className="pill">{visibleFixCount} client-visible fixes</span>
+          </div>
         </div>
         <ScoreBadge score={item.score} />
       </section>
