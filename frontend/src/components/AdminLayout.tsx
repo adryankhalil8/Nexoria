@@ -22,6 +22,7 @@ export default function AdminLayout() {
           </div>
         </NavLink>
 
+
         <div className="admin-profile">
           <p className="eyebrow">Signed in</p>
           <strong>{currentUser?.email ?? 'Fetching profile'}</strong>

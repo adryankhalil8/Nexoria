@@ -16,8 +16,10 @@ export default function ClientBlueprint() {
     <section className="stack">
       <div className="page-intro">
         <p className="eyebrow">Blueprint</p>
-        <h2>Understand the plan</h2>
-        <p className="muted">This is the approved plan, the reasoning behind it, and the fixes that matter most right now.</p>
+        <h2>Understand the install plan</h2>
+        <p className="muted">
+          This is the approved, client-ready blueprint for fixing the lead-to-booked-job path.
+        </p>
       </div>
 
       <div className="two-column client-home-grid">
@@ -38,11 +40,11 @@ export default function ClientBlueprint() {
             </div>
           </div>
           <div>
-            <p className="eyebrow">Purchase event</p>
+            <p className="eyebrow">Booked-job or deposit event</p>
             <strong>{portal.purchaseEventType.replace(/_/g, ' ')}</strong>
           </div>
           <div>
-            <p className="eyebrow">What we installed / will install</p>
+            <p className="eyebrow">What we installed or will install</p>
             <ul className="comparison-list">
               {portal.installChecklist.map((item) => (
                 <li key={item}>{item}</li>
@@ -57,8 +59,8 @@ export default function ClientBlueprint() {
             <h3>What this plan is built around</h3>
           </div>
           <p className="muted">
-            Your blueprint preview is based on the goals selected during intake and the fixes Nexoria has
-            prioritized against them.
+            Your blueprint is based on the goals selected during intake and the client-visible fixes Nexoria
+            has prioritized against the booking path.
           </p>
           <a href={portal.url} rel="noreferrer" target="_blank">
             Visit live website

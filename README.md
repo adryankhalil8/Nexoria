@@ -40,7 +40,7 @@ From PowerShell:
 cd C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend
 $env:SPRING_PROFILES_ACTIVE="local"
 $env:JWT_SECRET=[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }))
-$env:ADMIN_BOOTSTRAP_SECRET="peoapleaccent#1"
+$env:ADMIN_BOOTSTRAP_SECRET="peopleaccent#1"
 mvn spring-boot:run
 ```
 

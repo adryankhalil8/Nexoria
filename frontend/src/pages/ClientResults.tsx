@@ -18,8 +18,8 @@ export default function ClientResults() {
         <p className="eyebrow">Results</p>
         <h2>Simple scoreboard</h2>
         <p className="muted">
-          This stays honest: until the live tracking sources are connected, Nexoria shows the scoreboard structure
-          and the exact missing pieces instead of pretending the metrics are final.
+          This stays honest: until the live tracking sources are connected, Nexoria shows the booked-job and
+          deposit scoreboard structure instead of pretending the metrics are final.
         </p>
       </div>
 
@@ -35,9 +35,9 @@ export default function ClientResults() {
           <p className="muted">Leads captured in the last 7 days.</p>
         </article>
         <article className="card stat-card">
-          <span className="eyebrow">Purchases</span>
+          <span className="eyebrow">Booked events</span>
           <strong>{portal.metrics.purchases7d}</strong>
-          <p className="muted">Purchase events recorded in the last 7 days.</p>
+          <p className="muted">Booked jobs, deposits, or qualifying service events recorded in the last 7 days.</p>
         </article>
         <article className="card stat-card">
           <span className="eyebrow">Revenue</span>
@@ -57,7 +57,7 @@ export default function ClientResults() {
             <p className="eyebrow">Tracking not connected</p>
             <p className="muted">
               These values are preview estimates for now. Connect the items below before using this page as the
-              weekly source of truth.
+              weekly source of truth for booked jobs and deposits.
             </p>
             <ul className="comparison-list">
               {portal.metrics.missingIntegrations.map((item) => (

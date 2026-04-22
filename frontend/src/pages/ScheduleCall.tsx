@@ -139,11 +139,11 @@ export default function ScheduleCall() {
   return (
     <main className="page schedule-page">
       <section className="page-intro">
-        <p className="eyebrow">{source === 'GET_STARTED' ? 'Get Started' : 'Book a Call'}</p>
-        <h1>Pick a time for your 45-minute call.</h1>
+        <p className="eyebrow">{source === 'GET_STARTED' ? 'Get Started' : 'Operator Diagnostic'}</p>
+        <h1>Pick a time for your 45-minute Operator Diagnostic.</h1>
         <p className="muted">
-          Choose an available slot, share the contact details we need, and we&apos;ll lock the time until it is
-          cleared from the admin workspace.
+          We will map where leads are leaking, identify the closest bottleneck to booked jobs or deposits,
+          and decide whether a 14-day install makes sense.
         </p>
       </section>
 
@@ -221,7 +221,7 @@ export default function ScheduleCall() {
 
           {error && <p className="error-text">{error}</p>}
           <button className="primary-button" disabled={isSubmitting} type="submit">
-            {isSubmitting ? 'Reserving time...' : 'Reserve Call'}
+            {isSubmitting ? 'Reserving time...' : 'Reserve Diagnostic'}
           </button>
 
           <p className="muted">

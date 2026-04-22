@@ -13,9 +13,9 @@ export const SCHEDULE_INTAKE_DRAFT_KEY = 'nexoria-schedule-intake-draft';
 export default function GetStarted() {
   const navigate = useNavigate();
   const [url, setUrl] = useState('');
-  const [industry, setIndustry] = useState('Remodeling');
+  const [industry, setIndustry] = useState('HVAC');
   const [revenueRange, setRevenueRange] = useState('Under $5k/mo');
-  const [goals, setGoals] = useState<string[]>(['More leads']);
+  const [goals, setGoals] = useState<string[]>(['Book more jobs']);
 
   const preview = useMemo(
     () =>
@@ -55,10 +55,10 @@ export default function GetStarted() {
       <section className="home-section">
         <div className="section-heading">
           <p className="eyebrow">Get started</p>
-          <h1>Start with a quick intake and see where your conversion path is leaking.</h1>
+          <h1>Start intake for your booked-job and deposit system.</h1>
           <p className="muted">
-            This is the handoff point between the public site and the schedule page where you reserve the
-            call that starts the install.
+            Share the basics about your service business, current lead flow, booking process, and goals.
+            Then reserve the Operator Diagnostic that starts the install decision.
           </p>
         </div>
 
@@ -126,7 +126,7 @@ export default function GetStarted() {
                 <h3>What your first-pass diagnostic surfaces</h3>
               </div>
               <span className={preview.readyForRetainer ? 'pill pill--success' : 'pill'}>
-                {preview.readyForRetainer ? 'Install Ready' : 'Needs Work'}
+                {preview.readyForRetainer ? 'Install Ready' : 'Leak Found'}
               </span>
             </div>
 

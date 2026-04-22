@@ -101,13 +101,18 @@ export type Option = {
 };
 
 export const INDUSTRY_OPTIONS: Option[] = [
-  { label: 'Tech / SaaS', value: 'Tech / SaaS' },
-  { label: 'Consulting', value: 'Consulting' },
-  { label: 'Marketing Agency', value: 'Marketing Agency' },
-  { label: 'E-commerce', value: 'E-commerce' },
-  { label: 'Real Estate', value: 'Real Estate' },
-  { label: 'Healthcare', value: 'Healthcare' },
-  { label: 'Remodeling', value: 'Remodeling' },
+  { label: 'Mechanics / auto repair', value: 'Mechanics / auto repair' },
+  { label: 'HVAC', value: 'HVAC' },
+  { label: 'Plumbing', value: 'Plumbing' },
+  { label: 'Electrical', value: 'Electrical' },
+  { label: 'Roofing', value: 'Roofing' },
+  { label: 'Landscaping', value: 'Landscaping' },
+  { label: 'Cleaning', value: 'Cleaning' },
+  { label: 'Mobile detailing', value: 'Mobile detailing' },
+  { label: 'Appliance repair', value: 'Appliance repair' },
+  { label: 'Pest control', value: 'Pest control' },
+  { label: 'Junk removal', value: 'Junk removal' },
+  { label: 'Concrete / flooring / remodeling', value: 'Concrete / flooring / remodeling' },
   { label: 'Other', value: 'Other' },
 ];
 
@@ -120,79 +125,80 @@ export const REVENUE_OPTIONS: Option[] = [
 ];
 
 export const GOAL_OPTIONS: Option[] = [
-  { label: 'More leads', value: 'More leads' },
-  { label: 'Better retention', value: 'Better retention' },
-  { label: 'Automate tasks', value: 'Automate tasks' },
-  { label: 'Grow revenue', value: 'Grow revenue' },
-  { label: 'Improve SEO', value: 'Improve SEO' },
+  { label: 'Book more jobs', value: 'Book more jobs' },
+  { label: 'Collect paid deposits', value: 'Collect paid deposits' },
+  { label: 'Qualify quote requests', value: 'Qualify quote requests' },
+  { label: 'Recover missed calls', value: 'Recover missed calls' },
+  { label: 'Follow up stale estimates', value: 'Follow up stale estimates' },
+  { label: 'Improve response speed', value: 'Improve response speed' },
 ];
 
 const FIX_MAP: Record<string, FixRecommendation> = {
-  automation: createFix(
-    'Implement workflow automation',
+  responseLayer: createFix(
+    'Install AI-assisted response coverage',
     'High',
     'Medium',
-    'Manual processes are your biggest time drain. Automating lead follow-up and invoicing alone saves 8-12 hrs/week.'
+    'Slow replies turn interested service inquiries into lost jobs. Response coverage keeps calls, forms, and DMs moving toward a real next step.'
   ),
-  leads: createFix(
-    'Build a lead capture funnel',
+  bookingPath: createFix(
+    'Build the booked-job intake path',
     'High',
     'Medium',
-    'No systematic funnel means you rely on referrals. A simple landing page and email sequence can multiply inbound leads.'
+    'The current path needs to capture the service need, urgency, area, and contact details before the lead cools off.'
   ),
-  retention: createFix(
-    'Launch a client retention sequence',
+  depositPath: createFix(
+    'Add a deposit commitment step',
     'High',
     'Low',
-    'Retaining existing clients is cheaper than acquiring new ones. A nurture sequence is usually the fastest win.'
+    'A paid diagnostic, dispatch fee, or appointment deposit filters no-shows and creates commitment before your team spends time.'
   ),
-  seo: createFix(
-    'Optimize on-page SEO',
+  quoteRequest: createFix(
+    'Clean up the quote-request flow',
     'Medium',
     'Low',
-    'Missing metadata and slow load times suppress organic traffic. Quick wins are available in under a day.'
+    'Better job details reduce back-and-forth, make pricing easier, and help the team decide whether to quote, inspect, or call back.'
   ),
-  analytics: createFix(
-    'Set up conversion tracking',
+  tracking: createFix(
+    'Track booked jobs and deposits',
     'High',
     'Low',
-    "You can't improve what you don't measure. A simple analytics setup unlocks data-driven decisions quickly."
+    'The business needs to see which inquiries become booked jobs, deposits, inspections, appointments, or callbacks.'
   ),
-  payments: createFix(
-    'Streamline payment and invoicing',
+  missedLead: createFix(
+    'Install missed-lead follow-up',
     'Medium',
     'Low',
-    'Late payments hurt cash flow. Automated invoicing reduces collection time significantly.'
+    'Missed calls, stale leads, and unclosed estimates need a follow-up path before they disappear or choose another provider.'
   ),
-  social: createFix(
-    'Systemize social content',
+  serviceArea: createFix(
+    'Clarify service area and dispatch rules',
     'Medium',
     'Medium',
-    'Inconsistent posting kills reach. A short content calendar and scheduler creates repeatability.'
+    'Clear service-area and job-fit rules help the funnel route the right customers to booking, deposit, quote request, or callback.'
   ),
   crm: createFix(
-    'Deploy a lightweight CRM',
+    'Deploy a lightweight lead tracker',
     'High',
     'Medium',
-    'Spreadsheets lead to missed follow-ups. A CRM pipeline keeps revenue opportunities visible.'
+    'Scattered notes and inboxes make it too easy to lose a job. A simple tracker keeps lead status, owner, and next step visible.'
   ),
   reporting: createFix(
-    'Build an automated weekly report',
+    'Build the weekly operator report',
     'Medium',
     'Low',
-    'Stakeholders need visibility. Automated reporting reduces status-call overhead and improves trust.'
+    'The team needs a simple weekly view of inquiries, callbacks, booked jobs, deposits, and the next bottleneck.'
   ),
-  lowRevenue: createFix(
-    'Introduce a recurring revenue offer',
+  proof: createFix(
+    'Strengthen reviews and proof near the decision point',
     'High',
-    'High',
-    'Project-based income is unpredictable. A retainer or subscription offer stabilizes cash flow.'
+    'Medium',
+    'Service buyers need confidence before booking. Reviews, photos, guarantees, and service examples should support the quote or deposit path.'
   ),
   externalSignal: createFix(
-    'Monitor external market conditions',
+    'Monitor local demand conditions',
     'Low',
     'Low',
-    'Macro and weather signals can affect demand. Even a lightweight alert view adds useful context.'
+    'Weather, seasonality, and local urgency can affect demand. Even a lightweight signal helps prioritize follow-up and dispatch decisions.'
   ),
 };
 
@@ -209,21 +215,27 @@ function createFix(title: string, impact: string, effort: string, why: string): 
 }
 
 const GOAL_TO_FIX: Record<string, string[]> = {
-  'More leads': ['leads', 'seo', 'social'],
-  'Better retention': ['retention', 'crm', 'analytics'],
-  'Automate tasks': ['automation', 'reporting', 'payments'],
-  'Grow revenue': ['lowRevenue', 'leads', 'automation'],
-  'Improve SEO': ['seo', 'analytics', 'social'],
+  'Book more jobs': ['bookingPath', 'crm', 'tracking'],
+  'Collect paid deposits': ['depositPath', 'bookingPath', 'tracking'],
+  'Qualify quote requests': ['quoteRequest', 'serviceArea', 'crm'],
+  'Recover missed calls': ['missedLead', 'responseLayer', 'crm'],
+  'Follow up stale estimates': ['missedLead', 'proof', 'reporting'],
+  'Improve response speed': ['responseLayer', 'missedLead', 'tracking'],
 };
 
 const INDUSTRY_SCORES: Record<string, number> = {
-  Remodeling: 72,
-  'Marketing Agency': 68,
-  Consulting: 74,
-  'E-commerce': 65,
-  Healthcare: 58,
-  'Real Estate': 70,
-  'Tech / SaaS': 80,
+  'Mechanics / auto repair': 74,
+  HVAC: 78,
+  Plumbing: 78,
+  Electrical: 74,
+  Roofing: 76,
+  Landscaping: 70,
+  Cleaning: 68,
+  'Mobile detailing': 66,
+  'Appliance repair': 72,
+  'Pest control': 72,
+  'Junk removal': 70,
+  'Concrete / flooring / remodeling': 72,
   Other: 63,
 };
 
@@ -294,40 +306,40 @@ export function buildClientBlueprintView(blueprint: Blueprint): ClientBlueprintV
     };
   });
 
-  const purchases7d = Math.max(1, Math.round(blueprint.score / 12));
-  const leads7d = Math.max(6, purchases7d * 5 + blueprint.goals.length * 2);
-  const conversionRate = `${Math.max(2, Math.min(35, Math.round((purchases7d / leads7d) * 100)))}%`;
-  const revenue7d = `$${(purchases7d * 1750).toLocaleString()}`;
+  const bookedJobs7d = Math.max(1, Math.round(blueprint.score / 12));
+  const leads7d = Math.max(6, bookedJobs7d * 5 + blueprint.goals.length * 2);
+  const conversionRate = `${Math.max(2, Math.min(35, Math.round((bookedJobs7d / leads7d) * 100)))}%`;
+  const revenue7d = `$${(bookedJobs7d * 1750).toLocaleString()}`;
 
   return {
     blueprintId: blueprint.id,
-    name: `${blueprint.industry} Growth Blueprint`,
+    name: `${blueprint.industry} Booked-Job Blueprint`,
     industry: blueprint.industry,
     url: blueprint.url,
     goals: blueprint.goals,
     status: blueprint.status,
     purchaseEventType: blueprint.purchaseEventType,
     score: blueprint.score,
-    diagnosis: `Your current path is creating interest, but the system still needs tighter follow-up, clearer handoff, and better visibility into what converts.`,
+    diagnosis: `Your current path is creating interest, but inquiries still need faster follow-up, clearer handoff, and better visibility into what becomes a booked job or paid deposit.`,
     installChecklist: [
-      'Offer and CTA path approved',
+      'Service offer and booking path approved',
       'Lead capture and routing configured',
       'Top priorities assigned with ownership',
-      'Reporting cadence established',
+      'Booked-job and deposit reporting cadence established',
     ],
     tasks,
     weeklyNotes: [
-      'Homepage and intake path are aligned around the current offer.',
+      'Landing page and intake path are aligned around the current service offer.',
       'Next priority is moving the highest-impact task to complete and unblocking anything waiting on approval.',
-      'We will keep measuring progress against the purchase event rather than generic traffic alone.',
+      'We will keep measuring progress against booked jobs or deposits rather than generic traffic alone.',
     ],
     metrics: {
       leads7d,
-      purchases7d,
+      purchases7d: bookedJobs7d,
       conversionRate,
       revenue7d,
       trackingConnected: false,
-      missingIntegrations: ['GA4 or analytics access', 'Calendar conversion event', 'Payment or purchase event source'],
+      missingIntegrations: ['Analytics access', 'Booking or calendar event', 'Deposit or booked-job event source'],
     },
   };
 }
@@ -345,7 +357,7 @@ function buildFixes(goals: string[]): FixRecommendation[] {
 
   selected.add('externalSignal');
 
-  ['analytics', 'crm', 'reporting', 'seo', 'automation'].forEach((fallback) => {
+  ['tracking', 'crm', 'reporting', 'bookingPath', 'responseLayer'].forEach((fallback) => {
     if (selected.size < 5) {
       selected.add(fallback);
     }

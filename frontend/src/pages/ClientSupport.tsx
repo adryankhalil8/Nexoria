@@ -12,6 +12,14 @@ function formatMessageTime(value: string) {
   }).format(new Date(value));
 }
 
+function mergeMessage(current: SupportMessage[], message: SupportMessage) {
+  if (current.some((item) => item.id === message.id)) {
+    return current;
+  }
+
+  return [...current, message].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+}
+
 export default function ClientSupport() {
   const { portal, isLoading } = useOutletContext<ClientPortalOutletContext>();
   const [messages, setMessages] = useState<SupportMessage[]>([]);
@@ -31,13 +39,7 @@ export default function ClientSupport() {
     let fallbackInterval: number | undefined;
     const unsubscribe = supportApi.subscribeMine(
       (message) => {
-        setMessages((current) => {
-          if (current.some((item) => item.id === message.id)) {
-            return current;
-          }
-
-          return [...current, message].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-        });
+        setMessages((current) => mergeMessage(current, message));
       },
       () => {
         fallbackInterval = window.setInterval(() => void loadMessages(), 5000);
@@ -59,7 +61,7 @@ export default function ClientSupport() {
 
     try {
       const saved = await supportApi.sendMine({ body });
-      setMessages((current) => [...current, saved]);
+      setMessages((current) => mergeMessage(current, saved));
       setBody('');
     } catch (err: unknown) {
       setError(getApiErrorMessage(err, 'Unable to send support message'));
