@@ -45,7 +45,7 @@ export default function ClientHome() {
           </div>
           <div className="pill-row">
             <span className="pill">{portal.status}</span>
-            <span className="pill">{portal.purchaseEventType.replace('_', ' ')}</span>
+            <span className="pill">{portal.purchaseEventType.replace(/_/g, ' ')}</span>
             <span className="pill pill--success">Score {portal.score}/100</span>
           </div>
         </article>
@@ -91,7 +91,7 @@ export default function ClientHome() {
                 </div>
                 <p className="muted">{task.why}</p>
                 <div className="pill-row">
-                  <span className="pill">{task.status.replace('_', ' ')}</span>
+                  <span className="pill">{task.status.replace(/_/g, ' ')}</span>
                   <span className="pill">{task.dueLabel}</span>
                 </div>
               </li>

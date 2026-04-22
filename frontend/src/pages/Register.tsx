@@ -67,51 +67,52 @@ export default function Register() {
 
   return (
     <main className="auth-page">
-      <section className="auth-card">
+      <section className="auth-card stack">
         <p className="eyebrow">Create account</p>
         <h1>Register</h1>
         <p className="muted">
           Use the same email from your booked call or an email marked <strong>CLOSED</strong> in the admin portal.
         </p>
         <form className="stack-form" onSubmit={submit}>
-        <label>
-          Email
-          <input
-            type='email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-        </label>
-        <label>
-          Password
-          <input
-            type='password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={isLoading}
-            minLength={8}
-          />
-        </label>
-        <label>
-          Confirm Password
-          <input
-            type='password'
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-        </label>
-        <button type='submit' disabled={isLoading}>
-          {isLoading ? 'Creating Account...' : 'Create Account'}
-        </button>
+          <label>
+            Email
+            <input
+              disabled={isLoading}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              type="email"
+              value={email}
+            />
+          </label>
+          <label>
+            Password
+            <input
+              disabled={isLoading}
+              minLength={8}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              type="password"
+              value={password}
+            />
+          </label>
+          <label>
+            Confirm Password
+            <input
+              disabled={isLoading}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              type="password"
+              value={confirmPassword}
+            />
+          </label>
+          {error && <p className="error-text">{error}</p>}
+          <button className="primary-button" disabled={isLoading} type="submit">
+            {isLoading ? 'Creating account...' : 'Create account'}
+          </button>
         </form>
-        {error && <div className="error-text">{error}</div>}
         <p className="muted">
-          Already have an account? <Link to={`/login?next=${encodeURIComponent(redirectTarget)}`}>Login here</Link>
+          Already have an account?{' '}
+          <Link to={`/login?next=${encodeURIComponent(redirectTarget)}`}>Login here</Link>
         </p>
       </section>
     </main>

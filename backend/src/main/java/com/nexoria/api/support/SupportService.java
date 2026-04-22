@@ -118,9 +118,17 @@ public class SupportService {
             try {
                 emitter.send(SseEmitter.event().name("message").data(message));
             } catch (Exception ex) {
-                emitter.completeWithError(ex);
                 emitters.remove(emitter);
+                closeQuietly(emitter);
             }
+        }
+    }
+
+    private void closeQuietly(SseEmitter emitter) {
+        try {
+            emitter.complete();
+        } catch (Exception ignored) {
+            // The client already disconnected or the async response is already closed.
         }
     }
 

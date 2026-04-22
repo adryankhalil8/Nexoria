@@ -96,7 +96,7 @@ export default function ClientPortalLayout() {
           <div className="pill-row">
             <span className="pill">{portal?.status ?? 'Pending'}</span>
             {portal?.purchaseEventType && (
-              <span className="pill pill--success">{portal.purchaseEventType.replace('_', ' ')}</span>
+              <span className="pill pill--success">{portal.purchaseEventType.replace(/_/g, ' ')}</span>
             )}
           </div>
         </header>

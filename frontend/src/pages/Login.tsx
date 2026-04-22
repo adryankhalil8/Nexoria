@@ -39,37 +39,38 @@ export default function Login() {
 
   return (
     <main className="auth-page">
-      <section className="auth-card">
+      <section className="auth-card stack">
         <p className="eyebrow">Welcome back</p>
         <h1>Login</h1>
         <form className="stack-form" onSubmit={submit}>
-        <label>
-          Email
-          <input
-            type='email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-        </label>
-        <label>
-          Password
-          <input
-            type='password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-        </label>
-        <button type='submit' disabled={isLoading}>
-          {isLoading ? 'Signing In...' : 'Sign In'}
-        </button>
+          <label>
+            Email
+            <input
+              disabled={isLoading}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              type="email"
+              value={email}
+            />
+          </label>
+          <label>
+            Password
+            <input
+              disabled={isLoading}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              type="password"
+              value={password}
+            />
+          </label>
+          {error && <p className="error-text">{error}</p>}
+          <button className="primary-button" disabled={isLoading} type="submit">
+            {isLoading ? 'Signing in...' : 'Sign in'}
+          </button>
         </form>
-        {error && <div className="error-text">{error}</div>}
         <p className="muted">
-          Don&apos;t have an account? <Link to={`/register?next=${encodeURIComponent(redirectTarget ?? '/portal')}`}>Register here</Link>
+          Don&apos;t have an account?{' '}
+          <Link to={`/register?next=${encodeURIComponent(redirectTarget ?? '/portal')}`}>Register here</Link>
         </p>
         <p className="muted">
           Need first-time admin access? <Link to="/admin-access">Set up admin</Link>

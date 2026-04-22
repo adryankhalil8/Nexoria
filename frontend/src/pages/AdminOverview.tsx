@@ -13,8 +13,10 @@ type OverviewStats = {
 };
 
 export default function AdminOverview() {
-  const [stats, setStats] = useState<OverviewStats>({ blueprints: 0, leads: 0, users: 0, calls: 0 });
+  const [stats, setStats] = useState<OverviewStats | null>(null);
   const [calls, setCalls] = useState<ScheduledCall[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([blueprintApi.getAll(), leadsApi.getAll(), usersApi.getAll(), schedulingApi.getBookedCalls()])
@@ -28,11 +30,21 @@ export default function AdminOverview() {
         });
         setCalls(activeCalls.slice(0, 4));
       })
-      .catch(() => {
-        setStats({ blueprints: 0, leads: 0, users: 0, calls: 0 });
-        setCalls([]);
-      });
+      .catch(() => setError('Unable to load dashboard data. Try refreshing.'))
+      .finally(() => setIsLoading(false));
   }, []);
+
+  if (isLoading) {
+    return (
+      <section className="stack">
+        <div className="page-intro">
+          <p className="eyebrow">Dashboard</p>
+          <h2>Admin operations at a glance</h2>
+        </div>
+        <p className="muted">Loading dashboard...</p>
+      </section>
+    );
+  }
 
   return (
     <section className="stack">
@@ -45,25 +57,27 @@ export default function AdminOverview() {
         </p>
       </div>
 
+      {error && <p className="error-text">{error}</p>}
+
       <div className="stats-grid">
         <article className="card stat-card">
           <span className="eyebrow">Blueprints</span>
-          <strong>{stats.blueprints}</strong>
+          <strong>{stats?.blueprints ?? '—'}</strong>
           <p className="muted">Saved diagnostic blueprints in the system.</p>
         </article>
         <article className="card stat-card">
           <span className="eyebrow">Clients</span>
-          <strong>{stats.leads}</strong>
+          <strong>{stats?.leads ?? '—'}</strong>
           <p className="muted">Tracked leads across the intake pipeline.</p>
         </article>
         <article className="card stat-card">
           <span className="eyebrow">Users</span>
-          <strong>{stats.users}</strong>
+          <strong>{stats?.users ?? '—'}</strong>
           <p className="muted">Managed accounts inside the admin workspace.</p>
         </article>
         <article className="card stat-card">
           <span className="eyebrow">Booked Calls</span>
-          <strong>{stats.calls}</strong>
+          <strong>{stats?.calls ?? '—'}</strong>
           <p className="muted">Reserved discovery calls on the calendar.</p>
         </article>
       </div>

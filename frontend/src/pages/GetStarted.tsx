@@ -62,7 +62,7 @@ export default function GetStarted() {
           </p>
         </div>
 
-        <div className="two-column two-column--home">
+        <div className="two-column">
           <form className="card stack-form diagnostic-card" onSubmit={continueToSchedule}>
             <label>
               Website URL

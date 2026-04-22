@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { blueprintApi } from '../api/blueprint';
 import { getApiErrorMessage } from '../api/errors';
@@ -25,6 +25,7 @@ export default function BlueprintDetail() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const successTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!id) {
@@ -34,8 +35,16 @@ export default function BlueprintDetail() {
     blueprintApi
       .getById(parseInt(id, 10))
       .then(setItem)
-      .catch((event) => setError(event.message));
+      .catch((err: unknown) => setError(getApiErrorMessage(err, 'Failed to load blueprint')));
   }, [id]);
+
+  useEffect(() => {
+    if (!success) return;
+    successTimer.current = setTimeout(() => setSuccess(null), 3000);
+    return () => {
+      if (successTimer.current) clearTimeout(successTimer.current);
+    };
+  }, [success]);
 
   async function saveBlueprint() {
     if (!item) {
@@ -166,7 +175,7 @@ export default function BlueprintDetail() {
               >
                 {PURCHASE_EVENT_OPTIONS.map((eventType) => (
                   <option key={eventType} value={eventType}>
-                    {eventType.replace('_', ' ')}
+                    {eventType.replace(/_/g, ' ')}
                   </option>
                 ))}
               </select>
@@ -220,7 +229,7 @@ export default function BlueprintDetail() {
                     >
                       {TASK_STATUS_OPTIONS.map((status) => (
                         <option key={status} value={status}>
-                          {status.replace('_', ' ')}
+                          {status.replace(/_/g, ' ')}
                         </option>
                       ))}
                     </select>
