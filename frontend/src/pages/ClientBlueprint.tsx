@@ -39,7 +39,7 @@ export default function ClientBlueprint() {
           </div>
           <div>
             <p className="eyebrow">Purchase event</p>
-            <strong>{portal.purchaseEventType.replace('_', ' ')}</strong>
+            <strong>{portal.purchaseEventType.replace(/_/g, ' ')}</strong>
           </div>
           <div>
             <p className="eyebrow">What we installed / will install</p>
@@ -81,7 +81,7 @@ export default function ClientBlueprint() {
             <article className="card stack" key={task.id}>
               <div className="fix-list__header">
                 <strong>{task.title}</strong>
-                <span className="pill">{task.status.replace('_', ' ')}</span>
+                <span className="pill">{task.status.replace(/_/g, ' ')}</span>
               </div>
               <p className="muted">{task.why}</p>
               <div className="pill-row">

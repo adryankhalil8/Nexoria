@@ -46,8 +46,12 @@ export default function AdminUsers() {
   }
 
   async function toggleStatus(id: number) {
-    const updated = await usersApi.toggleStatus(id);
-    setUsers((current) => current.map((user) => (user.id === id ? updated : user)));
+    try {
+      const updated = await usersApi.toggleStatus(id);
+      setUsers((current) => current.map((user) => (user.id === id ? updated : user)));
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Unable to update user status'));
+    }
   }
 
   async function removeUser(id: number) {

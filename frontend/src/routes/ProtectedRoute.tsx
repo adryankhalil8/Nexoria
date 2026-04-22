@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { getStoredRole } from '../auth/session';
+import { getStoredRole, SESSION_KEYS } from '../auth/session';
 import type { ManagedUser } from '../model/admin';
 
 interface ProtectedRouteProps {
@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ children, requireRole }: ProtectedRouteProps) {
   const location = useLocation();
-  const token = localStorage.getItem('nexoria-token');
+  const token = localStorage.getItem(SESSION_KEYS.TOKEN);
   const role = getStoredRole();
 
   if (!token) {

@@ -250,7 +250,6 @@ export default function HomePage() {
 
         <div className="install-hero__content">
           <div className="install-hero__copy">
-            <p className="eyebrow"></p>
             <h1>AI Operator</h1>
             <div className="install-hero__lede install-hero__points">
               <span>Purchase path installed</span>

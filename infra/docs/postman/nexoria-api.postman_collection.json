@@ -1,0 +1,533 @@
+{
+  "info": {
+    "name": "Nexoria API - Local Smoke Tests",
+    "description": "Import this with the Nexoria Local environment. Run the requests top-to-bottom after starting the backend on http://localhost:8080.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "00 Health",
+      "item": [
+        {
+          "name": "Backend Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{backendUrl}}/actuator/health"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('health endpoint responds', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 401, 403]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "01 Auth",
+      "item": [
+        {
+          "name": "Bootstrap First Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\",\n  \"bootstrapSecret\": \"{{adminBootstrapSecret}}\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/bootstrap-admin"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('admin bootstrap succeeds or already exists', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 409]);",
+                  "});",
+                  "if (pm.response.code < 300) {",
+                  "  const json = pm.response.json();",
+                  "  pm.environment.set('adminToken', json.token);",
+                  "  pm.environment.set('adminRefreshToken', json.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('admin login returns tokens', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.token).to.be.ok;",
+                  "  pm.expect(json.role).to.eql('ADMIN');",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.environment.set('adminToken', json.token);",
+                  "pm.environment.set('adminRefreshToken', json.refreshToken);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Current Admin User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/users/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Public Scheduling",
+      "item": [
+        {
+          "name": "Get Public Availability",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/scheduling/availability"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('availability responds', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "const firstSlot = json.availableSlots && json.availableSlots[0];",
+                  "if (firstSlot && firstSlot.start) {",
+                  "  pm.environment.set('scheduledStart', firstSlot.start);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Book Call From Get Started",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"company\": \"{{company}}\",\n  \"contactName\": \"{{contactName}}\",\n  \"email\": \"{{clientEmail}}\",\n  \"website\": \"https://example-client.com\",\n  \"industry\": \"Remodeling\",\n  \"revenueRange\": \"Under $5k/mo\",\n  \"goals\": [\"More leads\", \"Grow revenue\"],\n  \"notes\": \"Postman Get Started smoke test\",\n  \"scheduledStart\": \"{{scheduledStart}}\",\n  \"source\": \"GET_STARTED\"\n}"
+            },
+            "url": "{{baseUrl}}/scheduling/bookings"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('booking created or duplicate guarded', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 409]);",
+                  "});",
+                  "if (pm.response.code < 300) {",
+                  "  const json = pm.response.json();",
+                  "  pm.environment.set('bookingId', json.id);",
+                  "  if (json.leadId) pm.environment.set('leadId', json.leadId);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 Admin Operations",
+      "item": [
+        {
+          "name": "List Leads",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/leads"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('admin can list leads', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const leads = pm.response.json();",
+                  "const match = leads.find(l => (l.email || '').toLowerCase() === pm.environment.get('clientEmail').toLowerCase());",
+                  "if (match) pm.environment.set('leadId', match.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark Lead Closed",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"company\": \"{{company}}\",\n  \"contactName\": \"{{contactName}}\",\n  \"email\": \"{{clientEmail}}\",\n  \"website\": \"https://example-client.com\",\n  \"industry\": \"Remodeling\",\n  \"notes\": \"Marked closed from Postman\",\n  \"status\": \"CLOSED\"\n}"
+            },
+            "url": "{{baseUrl}}/leads/{{leadId}}"
+          }
+        },
+        {
+          "name": "List Booked Calls Admin",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/scheduling/bookings/admin"
+          }
+        },
+        {
+          "name": "Create Assigned Blueprint",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://example-client.com\",\n  \"industry\": \"Remodeling\",\n  \"revenueRange\": \"Under $5k/mo\",\n  \"clientEmail\": \"{{clientEmail}}\",\n  \"goals\": [\"More leads\", \"Grow revenue\"],\n  \"status\": \"APPROVED\",\n  \"purchaseEventType\": \"BOOKED_JOB\",\n  \"fixes\": [\n    {\n      \"title\": \"Clarify the estimate request path\",\n      \"impact\": \"High impact\",\n      \"effort\": \"Medium effort\",\n      \"why\": \"The visitor needs one obvious next step before follow-up automation can work.\",\n      \"owner\": \"NEXORIA\",\n      \"status\": \"IN_PROGRESS\",\n      \"clientVisible\": true\n    },\n    {\n      \"title\": \"Internal tracking QA\",\n      \"impact\": \"Medium impact\",\n      \"effort\": \"Low effort\",\n      \"why\": \"Internal-only implementation check.\",\n      \"owner\": \"NEXORIA\",\n      \"status\": \"NOT_STARTED\",\n      \"clientVisible\": false\n    }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/blueprints"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('blueprint created', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.environment.set('blueprintId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Blueprints Admin",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/blueprints"
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Client Portal",
+      "item": [
+        {
+          "name": "Register Client",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{clientEmail}}\",\n  \"password\": \"{{clientPassword}}\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/register"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('client register succeeds or already exists', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 409]);",
+                  "});",
+                  "if (pm.response.code < 300) {",
+                  "  const json = pm.response.json();",
+                  "  pm.environment.set('clientToken', json.token);",
+                  "  pm.environment.set('clientRefreshToken', json.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Client",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{clientEmail}}\",\n  \"password\": \"{{clientPassword}}\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('client login returns USER token', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.token).to.be.ok;",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.environment.set('clientToken', json.token);",
+                  "pm.environment.set('clientRefreshToken', json.refreshToken);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Current Client User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{clientToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/users/me"
+          }
+        },
+        {
+          "name": "Get My Booked Calls",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{clientToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/scheduling/bookings/mine"
+          }
+        },
+        {
+          "name": "Get My Approved Blueprint",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{clientToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/blueprints"
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Support",
+      "item": [
+        {
+          "name": "Client Sends Support Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{clientToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"body\": \"Can you confirm what I need to do before our call?\"\n}"
+            },
+            "url": "{{baseUrl}}/support/messages/mine"
+          }
+        },
+        {
+          "name": "Admin Lists Support Threads",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/support/messages/admin"
+          }
+        },
+        {
+          "name": "Admin Replies To Client",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"body\": \"Yes. Please bring website access and any current lead source notes.\"\n}"
+            },
+            "url": "{{baseUrl}}/support/messages/admin/{{clientEmail}}/reply"
+          }
+        },
+        {
+          "name": "Client Lists Support Thread",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{clientToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/support/messages/mine"
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Schedule Settings Admin",
+      "item": [
+        {
+          "name": "Get Schedule Settings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/scheduling/settings"
+          }
+        },
+        {
+          "name": "Update Schedule Settings",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"timezone\": \"America/New_York\",\n  \"slotDurationMinutes\": 45,\n  \"bookingHorizonDays\": 21,\n  \"availabilityWindows\": [\n    { \"dayOfWeek\": \"MONDAY\", \"startTime\": \"07:00\", \"endTime\": \"08:00\", \"active\": true },\n    { \"dayOfWeek\": \"MONDAY\", \"startTime\": \"12:00\", \"endTime\": \"13:00\", \"active\": true },\n    { \"dayOfWeek\": \"MONDAY\", \"startTime\": \"18:00\", \"endTime\": \"20:00\", \"active\": true },\n    { \"dayOfWeek\": \"SATURDAY\", \"startTime\": \"11:00\", \"endTime\": \"17:00\", \"active\": true },\n    { \"dayOfWeek\": \"SUNDAY\", \"startTime\": \"11:00\", \"endTime\": \"17:00\", \"active\": true }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/scheduling/settings"
+          }
+        }
+      ]
+    }
+  ]
+}

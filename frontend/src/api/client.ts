@@ -1,14 +1,13 @@
 import axios from 'axios';
-import { clearAuthSession } from '../auth/session';
+import { clearAuthSession, SESSION_KEYS } from '../auth/session';
 
 export const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim() || '/api';
 
 const apiClient = axios.create({ baseURL: apiBaseUrl });
 
-// Request interceptor to add auth token
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('nexoria-token');
+    const token = localStorage.getItem(SESSION_KEYS.TOKEN);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -17,7 +16,6 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle token refresh
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -27,21 +25,20 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = localStorage.getItem('nexoria-refresh-token');
+        const refreshToken = localStorage.getItem(SESSION_KEYS.REFRESH_TOKEN);
         if (refreshToken) {
           const response = await axios.post(`${apiBaseUrl}/auth/refresh`, { refreshToken });
           const { token, role } = response.data;
 
-          localStorage.setItem('nexoria-token', token);
+          localStorage.setItem(SESSION_KEYS.TOKEN, token);
           if (role) {
-            localStorage.setItem('nexoria-role', role);
+            localStorage.setItem(SESSION_KEYS.ROLE, role);
           }
           originalRequest.headers.Authorization = `Bearer ${token}`;
 
           return apiClient(originalRequest);
         }
       } catch {
-        // Refresh failed, redirect to login
         clearAuthSession();
         window.location.href = '/login';
       }
