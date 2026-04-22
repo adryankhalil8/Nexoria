@@ -52,8 +52,8 @@ export default function AdminOverview() {
         <p className="eyebrow">Dashboard</p>
         <h2>Admin operations at a glance</h2>
         <p className="muted">
-          Manage user access, keep the client tracker moving, and jump into diagnostic blueprints from one
-          protected workspace.
+          Manage the Nexoria operator console: leads, booked diagnostics, client access, blueprints,
+          support, and schedule availability from one protected workspace.
         </p>
       </div>
 
@@ -78,7 +78,7 @@ export default function AdminOverview() {
         <article className="card stat-card">
           <span className="eyebrow">Booked Calls</span>
           <strong>{stats?.calls ?? '—'}</strong>
-          <p className="muted">Reserved discovery calls on the calendar.</p>
+          <p className="muted">Reserved Operator Diagnostics on the calendar.</p>
         </article>
       </div>
 
@@ -93,7 +93,7 @@ export default function AdminOverview() {
         <div className="booked-call-grid">
           {calls.map((call) => (
             <article className="tone-card booked-call-card" key={call.id}>
-              <span className="pill">{call.source === 'GET_STARTED' ? 'Get Started' : 'Book a Call'}</span>
+              <span className="pill">{call.source === 'GET_STARTED' ? 'Get Started' : 'Operator Diagnostic'}</span>
               <strong>{call.company}</strong>
               <p className="muted">{call.contactName}</p>
               <p className="muted">{new Date(call.scheduledStart).toLocaleString()}</p>

@@ -108,7 +108,7 @@ export default function AdminBookedCalls() {
                     <strong>{call.contactName}</strong>
                     <div className="muted">{call.email}</div>
                   </td>
-                  <td>{call.source === 'GET_STARTED' ? 'Get Started' : 'Book a Call'}</td>
+                  <td>{call.source === 'GET_STARTED' ? 'Get Started' : 'Operator Diagnostic'}</td>
                   <td>{call.status}</td>
                   <td className="table-actions">
                     <Link

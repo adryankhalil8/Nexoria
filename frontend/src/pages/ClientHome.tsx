@@ -31,9 +31,12 @@ export default function ClientHome() {
   return (
     <section className="stack">
       <div className="page-intro">
-        <p className="eyebrow">Mission control</p>
+        <p className="eyebrow">Client execution portal</p>
         <h2>What to do next</h2>
-        <p className="muted">This view keeps the plan simple: what is approved, what needs attention, and how progress is measured.</p>
+        <p className="muted">
+          This view keeps the install operational: scheduled diagnostic, approved blueprint, next steps,
+          results state, and support.
+        </p>
       </div>
 
       {portal && (
@@ -55,15 +58,15 @@ export default function ClientHome() {
         <article className="card stack">
           <div className="preview-header">
             <div>
-              <p className="eyebrow">Scheduled call</p>
+              <p className="eyebrow">Scheduled Operator Diagnostic</p>
               <h3>Your next call with Nexoria</h3>
             </div>
             <span className="pill pill--success">Booked</span>
           </div>
           <p className="muted">{formatDateTime(upcomingCall.scheduledStart, upcomingCall.timezone)}</p>
           <p className="muted">
-            This is your first scheduled milestone. After the call, your action queue and blueprint tasks
-            continue here in the portal.
+            This is your first scheduled milestone. After the diagnostic, your approved blueprint and action
+            queue continue here in the portal.
           </p>
         </article>
       )}
@@ -120,7 +123,7 @@ export default function ClientHome() {
                   <strong>{portal.metrics.leads7d}</strong>
                 </div>
                 <div className="stat-card">
-                  <span className="eyebrow">Purchases (7d)</span>
+                  <span className="eyebrow">Booked events (7d)</span>
                   <strong>{portal.metrics.purchases7d}</strong>
                 </div>
                 <div className="stat-card">

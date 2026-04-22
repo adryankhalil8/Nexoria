@@ -16,8 +16,8 @@ const supportApiMock = vi.hoisted(() => ({
   sendMine: vi.fn(),
   getAdminMessages: vi.fn(),
   replyAsAdmin: vi.fn(),
-  subscribeMine: vi.fn(() => () => undefined),
-  subscribeAdmin: vi.fn(() => () => undefined),
+  subscribeMine: vi.fn((_onMessage?: unknown, _onError?: unknown) => () => undefined),
+  subscribeAdmin: vi.fn((_onMessage?: unknown, _onError?: unknown) => () => undefined),
 }));
 
 vi.mock('../api/support', () => ({
@@ -27,20 +27,20 @@ vi.mock('../api/support', () => ({
 const blueprint: Blueprint = {
   id: 7,
   url: 'https://client.example.com',
-  industry: 'Consulting',
+  industry: 'HVAC',
   revenueRange: '$10k-$50k/mo',
   clientEmail: 'client@example.com',
   score: 72,
   readyForRetainer: false,
   status: 'APPROVED',
   purchaseEventType: 'BOOKED_JOB',
-  goals: ['More leads', 'Grow revenue'],
+  goals: ['Book more jobs', 'Collect paid deposits'],
   fixes: [
     {
-      title: 'Build a lead capture funnel',
+      title: 'Build the booked-job intake path',
       impact: 'High',
       effort: 'Medium',
-      why: 'No systematic funnel means leads stall.',
+      why: 'The current path needs to capture the service need before the lead cools off.',
       owner: 'CLIENT',
       status: 'NOT_STARTED',
       clientVisible: true,
@@ -100,9 +100,9 @@ describe('journey flows', () => {
     expect(screen.getByText(/schedule page/i)).toBeInTheDocument();
     expect(JSON.parse(sessionStorage.getItem(SCHEDULE_INTAKE_DRAFT_KEY) ?? '{}')).toMatchObject({
       url: 'https://example-client.com',
-      industry: 'Remodeling',
+      industry: 'HVAC',
       revenueRange: 'Under $5k/mo',
-      goals: ['More leads'],
+      goals: ['Book more jobs'],
     });
   });
 
@@ -113,7 +113,7 @@ describe('journey flows', () => {
       contactName: 'Taylor Client',
       email: 'client@example.com',
       website: 'https://client.example.com',
-      industry: 'Consulting',
+      industry: 'HVAC',
       notes: '',
       timezone: 'America/New_York',
       scheduledStart: '2026-04-21T14:00:00Z',
@@ -131,7 +131,7 @@ describe('journey flows', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/your call is confirmed/i)).toBeInTheDocument();
+    expect(screen.getByText(/your diagnostic is confirmed/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /create client account/i })).toHaveAttribute(
       'href',
       '/register?next=%2Fportal&email=client%40example.com'
@@ -142,15 +142,15 @@ describe('journey flows', () => {
     renderWithPortalContext(<ClientBlueprint />);
 
     expect(screen.getByText(/selected goals/i)).toBeInTheDocument();
-    expect(screen.getByText(/more leads/i)).toBeInTheDocument();
-    expect(screen.getByText(/build a lead capture funnel/i)).toBeInTheDocument();
+    expect(screen.getByText(/book more jobs/i)).toBeInTheDocument();
+    expect(screen.getByText(/build the booked-job intake path/i)).toBeInTheDocument();
   });
 
   it('shows honest tracking-not-connected state on client results', () => {
     renderWithPortalContext(<ClientResults />);
 
     expect(screen.getByText(/tracking not connected/i)).toBeInTheDocument();
-    expect(screen.getByText(/ga4 or analytics access/i)).toBeInTheDocument();
+    expect(screen.getByText(/analytics access/i)).toBeInTheDocument();
   });
 
   it('sends a client support message', async () => {
@@ -173,6 +173,39 @@ describe('journey flows', () => {
 
     await waitFor(() => {
       expect(supportApiMock.sendMine).toHaveBeenCalledWith({ body: 'Need help with access.' });
+    });
+  });
+
+  it('does not duplicate a sent support message when the stream already added it', async () => {
+    let streamHandler: ((message: unknown) => void) | null = null;
+
+    supportApiMock.getMine.mockResolvedValue([]);
+    vi.mocked(supportApiMock.subscribeMine).mockImplementation((onMessage: (message: unknown) => void) => {
+      streamHandler = onMessage;
+      return () => undefined;
+    });
+    supportApiMock.sendMine.mockImplementation(async () => {
+      const saved = {
+        id: 10,
+        clientEmail: 'client@example.com',
+        businessName: 'Client Co',
+        sender: 'CLIENT',
+        body: 'Need help with access.',
+        createdAt: '2026-04-20T12:00:00Z',
+      };
+      streamHandler?.(saved);
+      return saved;
+    });
+
+    renderWithPortalContext(<ClientSupport />);
+
+    fireEvent.change(screen.getByLabelText(/new message/i), {
+      target: { value: 'Need help with access.' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /send message/i }));
+
+    await waitFor(() => {
+      expect(screen.getAllByText('Need help with access.')).toHaveLength(1);
     });
   });
 

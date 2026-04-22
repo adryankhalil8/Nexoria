@@ -19,7 +19,7 @@ export default function BookingConfirmation() {
       <main className="auth-page">
         <section className="auth-card stack">
           <h1>No booking found</h1>
-          <p className="muted">This confirmation page needs a booked call to display.</p>
+          <p className="muted">This confirmation page needs a booked diagnostic to display.</p>
           <div className="hero-actions">
             <button className="ghost-button" onClick={() => navigate('/schedule?source=BOOK_A_CALL')} type="button">
               Back to Schedule
@@ -38,22 +38,24 @@ export default function BookingConfirmation() {
       <section className="auth-card stack booking-confirmation">
         <div className="booking-confirmation__badge" aria-hidden="true">
           <span className="booking-confirmation__ring" />
-          <span className="booking-confirmation__check">✓</span>
+          <span className="booking-confirmation__check">OK</span>
         </div>
-        <p className="eyebrow">Call booked</p>
-        <h1>Your call is confirmed.</h1>
+        <p className="eyebrow">Operator Diagnostic booked</p>
+        <h1>Your diagnostic is confirmed.</h1>
         <p className="muted">
-          {booking.contactName}, your call with Nexoria is booked for{' '}
+          {booking.contactName}, your Operator Diagnostic with Nexoria is booked for{' '}
           <strong>{formatDateTime(booking.scheduledStart, booking.timezone)}</strong>.
         </p>
         <div className="tone-card stack">
           <strong>{booking.company}</strong>
           <span className="muted">{booking.email}</span>
-          <span className="muted">{booking.source === 'GET_STARTED' ? 'Scheduled from Get Started' : 'Scheduled from Book a Call'}</span>
+          <span className="muted">
+            {booking.source === 'GET_STARTED' ? 'Scheduled from Get Started' : 'Scheduled from Operator Diagnostic'}
+          </span>
         </div>
         <p className="muted">
-          Your booked call now unlocks client portal registration for this email. Create your account to
-          see the scheduled call and your intake-based blueprint preview.
+          Your booked diagnostic now unlocks client portal registration for this email. Create your account
+          to see the scheduled call and, once approved, the client-ready blueprint for your install.
         </p>
         <div className="hero-actions">
           <Link className="ghost-button" to="/">

@@ -90,7 +90,7 @@ export default function ClientPortalLayout() {
       <div className="client-main">
         <header className="client-topbar">
           <div>
-            <p className="eyebrow">Client portal</p>
+            <p className="eyebrow">Client execution portal</p>
             <h1>{portal?.name ?? 'Execution view'}</h1>
           </div>
           <div className="pill-row">

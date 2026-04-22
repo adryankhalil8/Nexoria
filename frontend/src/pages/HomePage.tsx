@@ -5,53 +5,54 @@ const logoImage = new URL('../assets/Images/logo.PNG', import.meta.url).href;
 
 const installPillars = [
   {
-    title: 'Offer + Purchase Path',
-    description: 'We sharpen the offer, clarify the next step, and make the path to action easy to follow.',
+    title: 'Booking Path',
+    description: 'A landing page and intake path built around booked jobs, deposits, qualified quote requests, inspections, appointments, or callbacks.',
   },
   {
-    title: 'Automation Layer',
-    description: 'We install follow-up, routing, and reminders so leads do not stall after the first click.',
+    title: 'Follow-up Layer',
+    description: 'Missed calls, stale estimates, form fills, and DMs get routed into a response system instead of sitting untracked.',
   },
   {
-    title: 'Tracking + Reporting',
-    description: 'We install reporting so you can see what is driving leads, purchases, and revenue.',
+    title: 'Operator Console',
+    description: 'Nexoria manages leads, scheduled diagnostics, blueprints, client-visible fixes, support, and results from one protected workspace.',
   },
 ];
 
 const includedItems = [
-  'Conversion page or mini-site',
-  'Lead capture and routing',
-  'Follow-up sequence',
-  'Purchase event tracking',
+  'Landing page or quote path',
+  'Lead intake and scheduling',
+  'Follow-up automations',
+  'AI-assisted response layer',
+  'Booked-job and deposit reporting',
 ];
 
 const installSections = [
   {
     eyebrow: 'Install 01',
-    title: 'Offer + Purchase Path Installed',
+    title: 'Deposit Funnel Install',
     outcomes: [
-      'Clarifies your promise, niche, and next step in one clean decision path.',
-      'Defines the purchase event for your business instead of treating traffic as the goal.',
-      'Turns your homepage and intake flow into a system built to convert attention into action.',
+      'For service businesses that need commitment before dispatch, diagnostic, appointment, or estimate.',
+      'Clarifies the job value, service area, urgency, and next step before your team spends time chasing.',
+      'Tracks the deposit or booked-job event instead of stopping at a form submission.',
     ],
     artifact: (
       <div className="system-card system-card--form">
         <div className="system-card__header">
-          <strong>Discovery Intake</strong>
-          <span className="pill">Get Started</span>
+          <strong>Deposit Path</strong>
+          <span className="pill">Ready</span>
         </div>
         <div className="system-form">
           <div>
-            <label>Business URL</label>
-            <span>yourbusiness.com</span>
+            <label>Service Needed</label>
+            <span>HVAC diagnostic</span>
           </div>
           <div>
-            <label>Niche</label>
-            <span>Remodeling</span>
+            <label>Service Area</label>
+            <span>North Atlanta</span>
           </div>
           <div>
-            <label>Primary goal</label>
-            <span>More leads</span>
+            <label>Event</label>
+            <span>Deposit or booked job</span>
           </div>
         </div>
       </div>
@@ -59,11 +60,11 @@ const installSections = [
   },
   {
     eyebrow: 'Install 02',
-    title: 'Follow-up Automation Installed',
+    title: 'Quote-Request Funnel Install',
     outcomes: [
-      'Routes inbound opportunities into a simple tracker your team can use right away.',
-      'Creates the first layer of follow-up so response gaps stop killing momentum.',
-      'Gives you a clear place to manage outreach, status, and handoff.',
+      'For businesses that need cleaner job details before pricing, quoting, or scheduling.',
+      'Captures the information your team needs to qualify the work and avoid back-and-forth.',
+      'Moves inquiries toward a qualified quote request, inspection, appointment, or callback.',
     ],
     artifact: (
       <div className="system-card system-card--table">
@@ -74,23 +75,23 @@ const installSections = [
         <div className="system-table">
           <div className="system-table__row system-table__row--head">
             <span>Company</span>
-            <span>Contact</span>
+            <span>Need</span>
             <span>Status</span>
           </div>
           <div className="system-table__row">
             <span>Brightline Roofing</span>
-            <span>Sam Ortiz</span>
-            <span>Qualified</span>
+            <span>Storm repair</span>
+            <span>Inspection</span>
           </div>
           <div className="system-table__row">
-            <span>Northside Dental</span>
-            <span>Mia Chen</span>
-            <span>Follow-up</span>
-          </div>
-          <div className="system-table__row">
-            <span>Urban Build Co.</span>
-            <span>Dion Price</span>
+            <span>Northside HVAC</span>
+            <span>No heat</span>
             <span>Booked</span>
+          </div>
+          <div className="system-table__row">
+            <span>Urban Concrete Co.</span>
+            <span>Driveway quote</span>
+            <span>Callback</span>
           </div>
         </div>
       </div>
@@ -98,34 +99,34 @@ const installSections = [
   },
   {
     eyebrow: 'Install 03',
-    title: 'Tracking + Reporting Installed',
+    title: 'Missed-Lead Follow-Up Install',
     outcomes: [
-      'Makes weekly performance visible without waiting on a custom dashboard project.',
-      'Connects traffic, leads, purchases, and revenue to the path we installed.',
-      'Shows what to improve next so decisions are based on signals instead of guesswork.',
+      'For businesses with missed calls, stale leads, unclosed estimates, or no reactivation system.',
+      'Adds response-speed coverage so interested prospects do not disappear before a human gets to them.',
+      'Shows what is happening after the inquiry: follow-up, booking, deposit, handoff, and results state.',
     ],
     artifact: (
       <div className="system-card system-card--kpi">
         <div className="system-card__header">
-          <strong>Weekly KPI Snapshot</strong>
+          <strong>Weekly Service Snapshot</strong>
           <span className="muted">Last 7 days</span>
         </div>
         <div className="kpi-grid">
           <div>
-            <span>Traffic</span>
-            <strong>4,280</strong>
-          </div>
-          <div>
-            <span>Leads</span>
+            <span>Inquiries</span>
             <strong>73</strong>
           </div>
           <div>
-            <span>Purchases</span>
-            <strong>11</strong>
+            <span>Callbacks</span>
+            <strong>41</strong>
           </div>
           <div>
-            <span>Revenue</span>
-            <strong>$18.4k</strong>
+            <span>Booked Jobs</span>
+            <strong>16</strong>
+          </div>
+          <div>
+            <span>Deposits</span>
+            <strong>$8.4k</strong>
           </div>
         </div>
       </div>
@@ -136,44 +137,55 @@ const installSections = [
 const timelineSteps = [
   {
     label: 'Days 1-3',
-    title: 'Discovery and purchase-event definition',
-    detail: 'We define the niche, offer, friction points, and what purchase actually means for your business.',
+    title: 'Leak diagnosis and event definition',
+    detail: 'We map where calls, forms, DMs, quote requests, and estimates are slowing down or going dark.',
   },
   {
-    label: 'Days 4-7',
-    title: 'Path and automation install',
-    detail: 'We build the conversion flow, intake capture, and follow-up logic that moves opportunities forward.',
+    label: 'Days 4-10',
+    title: 'Booking path and follow-up install',
+    detail: 'We install the landing page, quote/deposit path, routing, reminders, and AI-assisted response layer around the chosen event.',
   },
   {
-    label: 'Days 8-14',
-    title: 'Tracking, handoff, and reporting view',
-    detail: 'We wire reporting, admin visibility, and the operating artifacts your team uses after launch.',
+    label: 'Days 11-14',
+    title: 'Blueprint approval, handoff, and reporting',
+    detail: 'We approve the client-ready blueprint, expose the right fixes in the portal, and show the results structure your team will use.',
   },
 ];
 
-const nicheExamples = [
-  {
-    niche: 'Service businesses',
-    purchaseEvent: 'Booked consult or on-site estimate',
-  },
-  {
-    niche: 'Programs and education',
-    purchaseEvent: 'Application, enrollment, or deposit paid',
-  },
-  {
-    niche: 'B2B operators',
-    purchaseEvent: 'Qualified lead booked into sales follow-up',
-  },
+const industries = [
+  'Mechanics / auto repair',
+  'HVAC',
+  'Plumbing',
+  'Electrical',
+  'Roofing',
+  'Landscaping',
+  'Cleaning',
+  'Mobile detailing',
+  'Appliance repair',
+  'Pest control',
+  'Junk removal',
+  'Concrete / flooring / remodeling',
+];
+
+const workflowSteps = [
+  'Visitor interest',
+  'Intake',
+  'Operator Diagnostic',
+  'Admin review',
+  'Qualified client account',
+  'Approved blueprint',
+  'Execution tasks',
+  'Support and results',
 ];
 
 const pricingOptions = [
   {
     eyebrow: 'Entry Point',
     title: 'Operator Diagnostic',
-    audience: 'For teams that want the bottleneck identified before committing to the full install.',
+    audience: 'A 45-minute working call to map the leak, identify the closest bottleneck to booked jobs or deposits, and decide whether a 14-day install makes sense.',
     includes: [
-      'Discovery review',
-      'Purchase-path diagnosis',
+      'Lead-flow review',
+      'Booking or deposit bottleneck diagnosis',
       'Priority fixes and install recommendation',
     ],
     ctaLabel: 'Get Started',
@@ -182,14 +194,14 @@ const pricingOptions = [
   },
   {
     eyebrow: 'Core Offer',
-    title: 'AI Operator Install (14 days)',
-    audience: 'For teams ready to install the path, automation, and reporting layer now.',
+    title: 'Booked-Job System Install',
+    audience: 'For blue-collar service businesses ready to install the quote/deposit path, follow-up layer, response coverage, and reporting in 14 days.',
     includes: [
-      'Conversion path install',
+      'Landing page or service intake path',
       'Follow-up and lead-routing setup',
-      'Tracking, reporting, and operator view',
+      'Blueprint, client portal, support, and results view',
     ],
-    ctaLabel: 'Book a Call',
+    ctaLabel: 'Book Operator Diagnostic',
     ctaHref: '/schedule?source=BOOK_A_CALL',
     variant: 'primary',
   },
@@ -197,24 +209,24 @@ const pricingOptions = [
 
 const faqItems = [
   {
-    question: 'What exactly gets installed?',
+    question: 'Is Nexoria just a website, chatbot, or dashboard?',
     answer:
-      'The install focuses on the purchase path, intake capture, follow-up automation, and the reporting view needed to run it.',
-  },
-  {
-    question: 'Is this software or a done-with-you build?',
-    answer:
-      'This is positioned as a build and install, not a generic AI platform. The offer is a clear system setup with defined deliverables.',
+      'No. Those can be parts of the install, but the offer is the operating path that moves an inquiry toward a booked job, paid deposit, quote request, inspection, appointment, or callback.',
   },
   {
     question: 'What happens when I click Get Started?',
     answer:
-      'It takes you to a dedicated intake page where you enter your business details, review the first-pass diagnostic, and then continue into scheduling.',
+      'You complete intake details such as website, industry, revenue range, current booking process, lead sources, and goals. Then you schedule the Operator Diagnostic.',
   },
   {
-    question: 'What happens when I click Book a Call?',
+    question: 'Who gets portal access?',
     answer:
-      'It opens the scheduling page so you can choose from the live call times that are still open.',
+      'Portal access belongs to qualified clients moving through the install process. Registration is tied to an eligible lead, booked call, or approved client flow.',
+  },
+  {
+    question: 'What is the blueprint?',
+    answer:
+      'The blueprint is the client-ready plan for fixing the lead-to-booked-job system. It includes goals, status, event type, prioritized fixes, owners, and what the client can see.',
   },
 ];
 
@@ -233,9 +245,9 @@ export default function HomePage() {
           <div className="install-nav__links">
             <a href="#how-it-works">How it works</a>
             <a href="#what-you-get">What you get</a>
+            <a href="#industries">Industries</a>
             <a href="#pricing">Pricing</a>
             <a href="#faq">FAQ</a>
-            <a href="#contact">Contact</a>
           </div>
 
           <div className="install-nav__actions">
@@ -243,26 +255,33 @@ export default function HomePage() {
               Login
             </Link>
             <Link className="primary-button" to="/schedule?source=BOOK_A_CALL">
-              Book a Call
+              Book Operator Diagnostic
             </Link>
           </div>
         </div>
 
         <div className="install-hero__content">
           <div className="install-hero__copy">
-            <h1>AI Operator</h1>
+            <p className="eyebrow">14-day blue-collar service install</p>
+            <h1>Turn more service inquiries into booked jobs.</h1>
+            <p className="install-hero__lede">
+              Nexoria installs the quote/deposit path, follow-up automations, AI-assisted response layer,
+              and reporting dashboard for blue-collar service businesses in 14 days.
+            </p>
             <div className="install-hero__lede install-hero__points">
-              <span>Purchase path installed</span>
-              <span>Follow-up automated</span>
-              <span>Reporting made clear</span>
+              <span>Booked jobs</span>
+              <span>Paid deposits</span>
+              <span>Quote requests</span>
+              <span>Inspections</span>
+              <span>Callbacks</span>
             </div>
 
             <div className="hero-actions">
-              <Link className="ghost-button" to="/get-started">
+              <Link className="primary-button" to="/get-started">
                 Get Started
               </Link>
-              <Link className="primary-button" to="/schedule?source=BOOK_A_CALL">
-                Book a Call
+              <Link className="ghost-button" to="/schedule?source=BOOK_A_CALL">
+                Book Operator Diagnostic
               </Link>
             </div>
 
@@ -292,10 +311,12 @@ export default function HomePage() {
       <section className="home-section" id="what-you-get">
         <div className="section-heading">
           <p className="eyebrow">What you get</p>
-          <h2>A client-conversion system, installed for you.</h2>
+          <h2>A booked-job and deposit system, installed for you.</h2>
           <p className="muted">
-            Instead of vague promises, Nexoria gives you the actual operating pieces needed to capture,
-            follow up with, and convert demand.
+            Most service businesses do not lose money because nobody is interested. They lose money because
+            calls, DMs, forms, and quote requests move too slowly or get lost before a customer books.
+            Nexoria installs the system that captures the inquiry, routes it, follows up, and tracks the
+            booked-job or deposit event.
           </p>
         </div>
 
@@ -320,10 +341,10 @@ export default function HomePage() {
       <section className="home-section" id="how-it-works">
         <div className="section-heading">
           <p className="eyebrow">How it works</p>
-          <h2>How the install works.</h2>
+          <h2>From inquiry to install handoff.</h2>
           <p className="muted">
-            We keep the scope tight so you can go from idea to working system fast without dragging the
-            project out for months.
+            The sale does not end at a form submission. The visitor moves into a guided diagnostic,
+            blueprint, implementation, and handoff process.
           </p>
         </div>
 
@@ -338,35 +359,34 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="home-section home-section--split">
+      <section className="home-section home-section--split" id="industries">
         <div className="section-heading">
-          <p className="eyebrow">Niches + purchase event</p>
-          <h2>Define the sale before you automate the funnel.</h2>
+          <p className="eyebrow">Built for service operators</p>
+          <h2>For businesses where every missed inquiry can become lost revenue.</h2>
           <p className="muted">
-            More traffic does not fix a broken path. We start by defining the event that matters most for
-            your niche, then build around it.
+            Nexoria is for real service teams dealing with response speed, dispatch, diagnostic fees,
+            service areas, no-shows, stale estimates, reviews, proof, and follow-up.
           </p>
         </div>
 
         <div className="two-column install-comparison">
           <div className="card stack">
-            <h3>Examples by niche</h3>
-            <ul className="faq-list">
-              {nicheExamples.map((example) => (
-                <li key={example.niche}>
-                  <strong>{example.niche}</strong>
-                  <p className="muted">Purchase event: {example.purchaseEvent}</p>
-                </li>
+            <h3>Target industries</h3>
+            <div className="pill-row">
+              {industries.map((industry) => (
+                <span className="chip" key={industry}>
+                  {industry}
+                </span>
               ))}
-            </ul>
+            </div>
           </div>
 
           <div className="card stack">
-            <h3>DIY tools vs installed system</h3>
+            <h3>Operating workflow</h3>
             <ul className="comparison-list">
-              <li>Buying tools does not give you a working conversion system.</li>
-              <li>More traffic does not fix a broken purchase path.</li>
-              <li>Nexoria installs the wiring, follow-up, and tracking together.</li>
+              {workflowSteps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
             </ul>
           </div>
         </div>
@@ -374,10 +394,11 @@ export default function HomePage() {
 
       <section className="home-section" id="pricing">
         <div className="section-heading">
-          <p className="eyebrow">Pricing / entry points</p>
-          <h2>Two clear ways to move forward.</h2>
+          <p className="eyebrow">Pricing / entry point</p>
+          <h2>Start with the diagnostic, then install the system.</h2>
           <p className="muted">
-            No fake SaaS tiers. Just the two real next steps for a business that wants better conversion.
+            No disconnected service menu. Nexoria diagnoses the leak, then installs the system around one
+            measurable service event.
           </p>
         </div>
 
@@ -406,7 +427,7 @@ export default function HomePage() {
       <section className="home-section" id="faq">
         <div className="section-heading">
           <p className="eyebrow">FAQ</p>
-          <h2>Questions potential clients usually ask before they click.</h2>
+          <h2>What service business owners usually ask before they book.</h2>
         </div>
 
         <div className="faq-grid">
@@ -422,18 +443,18 @@ export default function HomePage() {
       <section className="final-cta card" id="contact">
         <div>
           <p className="eyebrow">Final CTA</p>
-          <h2>Stop losing leads to a weak follow-up and conversion path.</h2>
+          <h2>Find the leak in your lead-to-job path.</h2>
           <p className="muted">
-            If you want a cleaner system for turning traffic into booked calls and purchases, this is the
-            next step.
+            Book a 45-minute Operator Diagnostic. We will map where leads are leaking, identify the closest
+            bottleneck to booked jobs or deposits, and decide whether a 14-day install makes sense.
           </p>
         </div>
         <div className="hero-actions">
-          <Link className="ghost-button" to="/get-started">
-            Get Started
+          <Link className="primary-button" to="/get-started">
+            Start Intake
           </Link>
-          <Link className="primary-button" to="/schedule?source=BOOK_A_CALL">
-            Book a Call
+          <Link className="ghost-button" to="/schedule?source=BOOK_A_CALL">
+            Book Operator Diagnostic
           </Link>
         </div>
       </section>

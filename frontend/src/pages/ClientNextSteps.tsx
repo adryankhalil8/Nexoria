@@ -24,8 +24,11 @@ export default function ClientNextSteps() {
     <section className="stack">
       <div className="page-intro">
         <p className="eyebrow">Next steps</p>
-        <h2>Execution clarity</h2>
-        <p className="muted">This is not Jira. It is the clearest possible view of what needs to happen next and who owns it.</p>
+        <h2>Install next steps</h2>
+        <p className="muted">
+          The action queue shows what needs to happen next, who owns it, and what is blocked before the
+          booking path can move forward.
+        </p>
       </div>
 
       <div className="client-kanban">

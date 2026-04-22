@@ -154,6 +154,23 @@ public class SchedulingService {
             return settingsRepository.save(created);
         });
 
+        boolean settingsCorrected = false;
+        if (settings.getTimezone() == null || settings.getTimezone().isBlank()) {
+            settings.setTimezone("America/New_York");
+            settingsCorrected = true;
+        }
+        if (settings.getSlotDurationMinutes() < 1) {
+            settings.setSlotDurationMinutes(45);
+            settingsCorrected = true;
+        }
+        if (settings.getBookingHorizonDays() < 1) {
+            settings.setBookingHorizonDays(14);
+            settingsCorrected = true;
+        }
+        if (settingsCorrected) {
+            settings = settingsRepository.save(settings);
+        }
+
         if (availabilityWindowRepository.count() == 0) {
             availabilityWindowRepository.saveAll(defaultWindows());
         }
@@ -174,6 +191,9 @@ public class SchedulingService {
         List<Instant> slots = new ArrayList<>();
         LocalDate today = LocalDate.now(zoneId);
         int duration = settings.getSlotDurationMinutes();
+        if (duration < 1) {
+            duration = 45;
+        }
 
         for (int offset = 0; offset < settings.getBookingHorizonDays(); offset++) {
             LocalDate date = today.plusDays(offset);
