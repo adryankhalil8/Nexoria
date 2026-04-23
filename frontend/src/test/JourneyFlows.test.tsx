@@ -11,6 +11,8 @@ import AdminSupportMessages from '../pages/AdminSupportMessages';
 import { buildClientBlueprintView, type Blueprint } from '../model/blueprint';
 import type { ScheduledCall } from '../model/scheduling';
 
+const routerFuture = { v7_relativeSplatPath: true, v7_startTransition: true };
+
 const supportApiMock = vi.hoisted(() => ({
   getMine: vi.fn(),
   sendMine: vi.fn(),
@@ -53,7 +55,7 @@ const blueprint: Blueprint = {
 
 function renderWithPortalContext(element: React.ReactNode) {
   render(
-    <MemoryRouter initialEntries={['/portal/blueprint']}>
+    <MemoryRouter future={routerFuture} initialEntries={['/portal/blueprint']}>
       <Routes>
         <Route
           element={
@@ -84,7 +86,7 @@ describe('journey flows', () => {
 
   it('carries Get Started intake into scheduling', () => {
     render(
-      <MemoryRouter initialEntries={['/get-started']}>
+      <MemoryRouter future={routerFuture} initialEntries={['/get-started']}>
         <Routes>
           <Route element={<GetStarted />} path="/get-started" />
           <Route element={<div>Schedule Page</div>} path="/schedule" />
@@ -124,7 +126,7 @@ describe('journey flows', () => {
     };
 
     render(
-      <MemoryRouter initialEntries={[{ pathname: '/schedule/confirmation', state: { booking } }]}>
+      <MemoryRouter future={routerFuture} initialEntries={[{ pathname: '/schedule/confirmation', state: { booking } }]}>
         <Routes>
           <Route element={<BookingConfirmation />} path="/schedule/confirmation" />
         </Routes>
@@ -230,7 +232,7 @@ describe('journey flows', () => {
     });
 
     render(
-      <MemoryRouter initialEntries={['/admin/support']}>
+      <MemoryRouter future={routerFuture} initialEntries={['/admin/support']}>
         <AdminSupportMessages />
       </MemoryRouter>
     );

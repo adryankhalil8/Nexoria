@@ -3,10 +3,12 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Login from '../pages/Login';
 
+const routerFuture = { v7_relativeSplatPath: true, v7_startTransition: true };
+
 describe('Login Component', () => {
   it('renders login form', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={routerFuture}>
         <Login />
       </MemoryRouter>
     );
@@ -19,7 +21,7 @@ describe('Login Component', () => {
 
   it('shows validation errors for empty fields', async () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={routerFuture}>
         <Login />
       </MemoryRouter>
     );
@@ -35,7 +37,7 @@ describe('Login Component', () => {
 
   it('renders a register link', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={routerFuture}>
         <Login />
       </MemoryRouter>
     );

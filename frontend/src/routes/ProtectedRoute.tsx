@@ -4,7 +4,7 @@ import type { ManagedUser } from '../model/admin';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requireRole?: ManagedUser['role'];
+  requireRole?: ManagedUser['role'] | ManagedUser['role'][];
 }
 
 export default function ProtectedRoute({ children, requireRole }: ProtectedRouteProps) {
@@ -16,7 +16,9 @@ export default function ProtectedRoute({ children, requireRole }: ProtectedRoute
     return <Navigate replace state={{ from: `${location.pathname}${location.search}` }} to="/login" />;
   }
 
-  if (requireRole && role !== requireRole) {
+  const allowedRoles = Array.isArray(requireRole) ? requireRole : requireRole ? [requireRole] : [];
+
+  if (allowedRoles.length > 0 && (!role || !allowedRoles.includes(role))) {
     if (role === 'ADMIN') {
       return <Navigate replace to="/admin" />;
     }

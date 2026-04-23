@@ -49,7 +49,7 @@ export default function App() {
       </Route>
       <Route
         element={
-          <ProtectedRoute requireRole="USER">
+          <ProtectedRoute requireRole={['USER', 'VIEWER']}>
             <ClientPortalLayout />
           </ProtectedRoute>
         }

@@ -165,13 +165,15 @@ public class BlueprintService {
 
     private int industryScore(String industry) {
         return switch (industry) {
-            case "Remodeling" -> 72;
-            case "Marketing Agency" -> 68;
-            case "Consulting" -> 74;
-            case "E-commerce" -> 65;
-            case "Healthcare" -> 58;
-            case "Real Estate" -> 70;
-            case "Tech / SaaS" -> 80;
+            case "Mechanics / auto repair" -> 74;
+            case "HVAC", "Plumbing" -> 78;
+            case "Electrical" -> 74;
+            case "Roofing" -> 76;
+            case "Landscaping", "Junk removal" -> 70;
+            case "Cleaning" -> 68;
+            case "Mobile detailing" -> 66;
+            case "Appliance repair", "Pest control" -> 72;
+            case "Concrete / flooring / remodeling", "Remodeling" -> 72;
             default -> 63;
         };
     }
@@ -189,20 +191,26 @@ public class BlueprintService {
 
     private PurchaseEventType purchaseEventTypeForIndustry(String industry) {
         return switch (industry) {
-            case "Remodeling", "Real Estate" -> PurchaseEventType.BOOKED_JOB;
-            case "E-commerce" -> PurchaseEventType.PURCHASE;
+            case "HVAC", "Plumbing", "Electrical", "Roofing", "Appliance repair", "Pest control",
+                    "Junk removal", "Concrete / flooring / remodeling", "Remodeling" -> PurchaseEventType.BOOKED_JOB;
             default -> PurchaseEventType.DEPOSIT;
         };
     }
 
     public List<FixRecommendation> buildFixes(List<String> goals, int score, ExternalSignal externalSignal) {
         Map<String, FixRecommendation> fixMap = loadFixMap();
-        List<String> fallbacks = List.of("analytics", "crm", "reporting", "seo", "automation");
+        List<String> fallbacks = List.of("tracking", "crm", "reporting", "bookingPath", "responseLayer");
         Set<String> selected = new LinkedHashSet<>();
 
         if (goals != null) {
             for (String goal : goals) {
                 switch (goal) {
+                    case "Book more jobs" -> selectKeys(selected, List.of("bookingPath", "crm", "tracking"), 4);
+                    case "Collect paid deposits" -> selectKeys(selected, List.of("depositPath", "bookingPath", "tracking"), 4);
+                    case "Qualify quote requests" -> selectKeys(selected, List.of("quoteRequest", "serviceArea", "crm"), 4);
+                    case "Recover missed calls" -> selectKeys(selected, List.of("missedLead", "responseLayer", "crm"), 4);
+                    case "Follow up stale estimates" -> selectKeys(selected, List.of("missedLead", "proof", "reporting"), 4);
+                    case "Improve response speed" -> selectKeys(selected, List.of("responseLayer", "missedLead", "tracking"), 4);
                     case "More leads" -> selectKeys(selected, List.of("leads", "seo", "social"), 4);
                     case "Better retention" -> selectKeys(selected, List.of("retention", "crm", "analytics"), 4);
                     case "Automate tasks" -> selectKeys(selected, List.of("automation", "reporting", "payments"), 4);
@@ -312,6 +320,14 @@ public class BlueprintService {
 
     private Map<String, FixRecommendation> loadFixMap() {
         Map<String, FixRecommendation> map = new LinkedHashMap<>();
+        map.put("responseLayer", new FixRecommendation("Install AI-assisted response coverage", "High", "Medium", "Slow replies turn interested service inquiries into lost jobs. Response coverage keeps calls, forms, and DMs moving toward a real next step."));
+        map.put("bookingPath", new FixRecommendation("Build the booked-job intake path", "High", "Medium", "The current path needs to capture the service need, urgency, area, and contact details before the lead cools off."));
+        map.put("depositPath", new FixRecommendation("Add a deposit commitment step", "High", "Low", "A paid diagnostic, dispatch fee, or appointment deposit filters no-shows and creates commitment before your team spends time."));
+        map.put("quoteRequest", new FixRecommendation("Clean up the quote-request flow", "Medium", "Low", "Better job details reduce back-and-forth, make pricing easier, and help the team decide whether to quote, inspect, or call back."));
+        map.put("tracking", new FixRecommendation("Track booked jobs and deposits", "High", "Low", "The business needs to see which inquiries become booked jobs, deposits, inspections, appointments, or callbacks."));
+        map.put("missedLead", new FixRecommendation("Install missed-lead follow-up", "Medium", "Low", "Missed calls, stale leads, and unclosed estimates need a follow-up path before they disappear or choose another provider."));
+        map.put("serviceArea", new FixRecommendation("Clarify service area and dispatch rules", "Medium", "Medium", "Clear service-area and job-fit rules help the funnel route the right customers to booking, deposit, quote request, or callback."));
+        map.put("proof", new FixRecommendation("Strengthen reviews and proof near the decision point", "High", "Medium", "Service buyers need confidence before booking. Reviews, photos, guarantees, and service examples should support the quote or deposit path."));
         map.put("automation", new FixRecommendation("Implement workflow automation", "High", "Medium", "Manual processes are your biggest time drain. Automating lead follow-up and invoicing alone saves 8-12 hrs/week."));
         map.put("leads", new FixRecommendation("Build a lead capture funnel", "High", "Medium", "No systematic funnel means you rely on referrals. A simple landing page and email sequence can multiply inbound leads."));
         map.put("retention", new FixRecommendation("Launch a client retention sequence", "High", "Low", "Retaining existing clients is cheaper than acquiring new ones. A nurture sequence is usually the fastest win."));
