@@ -3,6 +3,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import AdminClients from '../pages/AdminClients';
 
+const routerFuture = { v7_relativeSplatPath: true, v7_startTransition: true };
+
 const apiMocks = vi.hoisted(() => ({
   leadsGetAll: vi.fn(),
   leadsCreate: vi.fn(),
@@ -54,7 +56,7 @@ describe('admin workflow handoffs', () => {
     apiMocks.blueprintsGetAll.mockResolvedValue([]);
 
     render(
-      <MemoryRouter initialEntries={['/admin/clients']}>
+      <MemoryRouter future={routerFuture} initialEntries={['/admin/clients']}>
         <AdminClients />
       </MemoryRouter>
     );
@@ -119,7 +121,7 @@ describe('admin workflow handoffs', () => {
     ]);
 
     render(
-      <MemoryRouter initialEntries={['/admin/clients']}>
+      <MemoryRouter future={routerFuture} initialEntries={['/admin/clients']}>
         <AdminClients />
       </MemoryRouter>
     );

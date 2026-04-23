@@ -38,14 +38,20 @@ From PowerShell:
 
 ```powershell
 cd C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend
-$env:SPRING_PROFILES_ACTIVE="local"
+
+# $env:SPRING_PROFILES_ACTIVE="local"
+$env:DB_HOST="localhost"
+$env:DB_PORT="3306"
+$env:DB_NAME="users"
+$env:DB_USERNAME="root"
+$env:DB_PASSWORD="peopleaccent#1"
 $env:JWT_SECRET=[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }))
 $env:ADMIN_BOOTSTRAP_SECRET="peopleaccent#1"
 mvn spring-boot:run
 ```
 
 What this does:
-
+- run $env:SPRING_PROFILES_ACTIVE="local" for quick test.
 - runs the Spring Boot API on `http://localhost:8080`
 - uses the `local` profile in `backend/src/main/resources/application-local.yml`
 - uses in-memory H2 instead of MySQL

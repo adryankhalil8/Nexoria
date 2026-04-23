@@ -5,7 +5,7 @@ import ProtectedRoute from '../routes/ProtectedRoute';
 
 function renderRoutes(initialPath: string) {
   render(
-    <MemoryRouter initialEntries={[initialPath]}>
+    <MemoryRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }} initialEntries={[initialPath]}>
       <Routes>
         <Route
           element={
@@ -17,7 +17,7 @@ function renderRoutes(initialPath: string) {
         />
         <Route
           element={
-            <ProtectedRoute requireRole="USER">
+            <ProtectedRoute requireRole={['USER', 'VIEWER']}>
               <div>Client Portal</div>
             </ProtectedRoute>
           }
@@ -54,6 +54,15 @@ describe('ProtectedRoute', () => {
     localStorage.setItem('nexoria-role', 'USER');
 
     renderRoutes('/admin');
+
+    expect(screen.getByText(/client portal/i)).toBeInTheDocument();
+  });
+
+  it('allows viewers into the client portal', () => {
+    localStorage.setItem('nexoria-token', 'token');
+    localStorage.setItem('nexoria-role', 'VIEWER');
+
+    renderRoutes('/portal');
 
     expect(screen.getByText(/client portal/i)).toBeInTheDocument();
   });
