@@ -1157,7 +1157,7 @@ textarea {
 }
 
 .schedule-grid {
-  align-items: start;
+  align-items: stretch;
 }
 
 .schedule-page h1 {
@@ -1170,6 +1170,23 @@ textarea {
   justify-content: space-between;
   gap: 1rem;
   align-items: center;
+}
+
+.schedule-availability-card {
+  max-height: 760px;
+  overflow: hidden;
+}
+
+.schedule-availability-card .schedule-day-list {
+  min-height: 0;
+  max-height: min(58vh, 570px);
+  overflow-y: auto;
+  padding-right: 0.35rem;
+  scrollbar-gutter: stable;
+}
+
+.schedule-booking-form {
+  align-self: stretch;
 }
 
 .schedule-day-list,
@@ -1286,6 +1303,17 @@ textarea {
 
   .install-nav {
     border-radius: 28px;
+  }
+
+  .schedule-availability-card {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .schedule-availability-card .schedule-day-list {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
   }
 
   .install-pillars {

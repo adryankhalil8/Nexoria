@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { fetchExternalSignal } from '../api/external';
 import { blueprintApi, BlueprintRequest } from '../api/blueprint';
 import { getApiErrorMessage } from '../api/errors';
 import ScoreBadge from '../components/ScoreBadge';
@@ -11,7 +10,6 @@ import {
   getOptionLabel,
   INDUSTRY_OPTIONS,
   REVENUE_OPTIONS,
-  type ExternalSignal,
 } from '../model/blueprint';
 
 export default function BlueprintCreate() {
@@ -22,15 +20,12 @@ export default function BlueprintCreate() {
     clientEmail: '',
     goals: [],
   });
-  const [signal, setSignal] = useState<ExternalSignal | null>(null);
-  const [isSignalLoading, setIsSignalLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    void refreshSignal();
     const params = new URLSearchParams(location.search);
     const clientEmail = params.get('clientEmail');
     const url = params.get('url');
@@ -58,18 +53,7 @@ export default function BlueprintCreate() {
     }
   }, [location.search]);
 
-  const preview = computeBlueprintPreview({ ...form, externalSignal: signal ?? undefined });
-
-  async function refreshSignal() {
-    setIsSignalLoading(true);
-    try {
-      setSignal(await fetchExternalSignal());
-    } catch {
-      setSignal({ windspeed: 10, weathercode: 0, temperature: 15 });
-    } finally {
-      setIsSignalLoading(false);
-    }
-  }
+  const preview = computeBlueprintPreview(form);
 
   function toggleGoal(goal: string) {
     setForm((current) => ({
@@ -92,10 +76,7 @@ export default function BlueprintCreate() {
     }
 
     try {
-      const blueprint = await blueprintApi.create({
-        ...form,
-        externalSignal: signal ?? undefined,
-      });
+      const blueprint = await blueprintApi.create(form);
       navigate(`/admin/blueprints/${blueprint.id}`);
     } catch (err: unknown) {
       setError(getApiErrorMessage(err, 'Create failed'));
@@ -172,20 +153,6 @@ export default function BlueprintCreate() {
             ))}
           </fieldset>
 
-          <div className="signal-panel">
-            <div>
-              <p className="eyebrow">External Signal</p>
-              <p className="muted">
-                {signal
-                  ? `${signal.windspeed} km/h wind | ${signal.temperature} deg C | code ${signal.weathercode}`
-                  : 'Loading market signal...'}
-              </p>
-            </div>
-            <button className="ghost-button" onClick={() => void refreshSignal()} type="button">
-              {isSignalLoading ? 'Refreshing...' : 'Refresh Signal'}
-            </button>
-          </div>
-
           {error && <p className="error-text">{error}</p>}
 
           <button className="primary-button" disabled={isSubmitting} type="submit">
@@ -213,7 +180,7 @@ export default function BlueprintCreate() {
           <div className="stack">
             <h3>Goals</h3>
             <p className="muted">
-              {form.goals.length ? form.goals.join(', ') : 'Select one or more goals to see recommendations.'}
+              {form.goals.length ? form.goals.join(', ') : 'Select up to 2 goals to see recommendations.'}
             </p>
           </div>
 

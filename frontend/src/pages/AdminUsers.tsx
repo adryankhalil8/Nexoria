@@ -72,7 +72,7 @@ export default function AdminUsers() {
     <section className="stack">
       <div className="page-intro">
         <p className="eyebrow">User Manager</p>
-        <h2>Add users, set roles, and manage account readiness.</h2>
+        <h2>Add users, set roles, and manage accounts.</h2>
       </div>
 
       <div className="two-column">

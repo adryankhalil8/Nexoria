@@ -148,7 +148,7 @@ export default function ScheduleCall() {
       </section>
 
       <div className="two-column schedule-grid">
-        <section className="card stack">
+        <section className="card stack schedule-availability-card">
           <div className="schedule-panel__header">
             <div>
               <h2>Available times</h2>
@@ -181,7 +181,7 @@ export default function ScheduleCall() {
           </div>
         </section>
 
-        <form className="card stack-form" onSubmit={submit}>
+        <form className="card stack-form schedule-booking-form" onSubmit={submit}>
           <label>
             Company
             <input onChange={(event) => setForm({ ...form, company: event.target.value })} required value={form.company} />

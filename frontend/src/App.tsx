@@ -17,6 +17,7 @@ import ClientHome from './pages/ClientHome';
 import ClientNextSteps from './pages/ClientNextSteps';
 import ClientResults from './pages/ClientResults';
 import ClientSupport from './pages/ClientSupport';
+import FaqPage from './pages/FaqPage';
 import GetStarted from './pages/GetStarted';
 import HomePage from './pages/HomePage';
 import Login from './pages/Login';
@@ -28,6 +29,7 @@ export default function App() {
   return (
     <Routes>
       <Route element={<HomePage />} path="/" />
+      <Route element={<FaqPage />} path="/faq" />
       <Route element={<GetStarted />} path="/get-started" />
       <Route
         element={

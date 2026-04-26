@@ -39,7 +39,7 @@ export default function AdminOverview() {
       <section className="stack">
         <div className="page-intro">
           <p className="eyebrow">Dashboard</p>
-          <h2>Admin operations at a glance</h2>
+          <h2>Admin Operations</h2>
         </div>
         <p className="muted">Loading dashboard...</p>
       </section>
@@ -50,10 +50,10 @@ export default function AdminOverview() {
     <section className="stack">
       <div className="page-intro">
         <p className="eyebrow">Dashboard</p>
-        <h2>Admin operations at a glance</h2>
+        <h2>Admin Operations</h2>
         <p className="muted">
-          Manage the Nexoria operator console: leads, booked diagnostics, client access, blueprints,
-          support, and schedule availability from one protected workspace.
+          Manage leads, booked diagnostics, client access, blueprints,
+          support, and schedule availability.
         </p>
       </div>
 
@@ -63,22 +63,22 @@ export default function AdminOverview() {
         <article className="card stat-card">
           <span className="eyebrow">Blueprints</span>
           <strong>{stats?.blueprints ?? '—'}</strong>
-          <p className="muted">Saved diagnostic blueprints in the system.</p>
+          <p className="muted">Saved diagnostic blueprints.</p>
         </article>
         <article className="card stat-card">
           <span className="eyebrow">Clients</span>
           <strong>{stats?.leads ?? '—'}</strong>
-          <p className="muted">Tracked leads across the intake pipeline.</p>
+          <p className="muted">Tracked leads.</p>
         </article>
         <article className="card stat-card">
           <span className="eyebrow">Users</span>
           <strong>{stats?.users ?? '—'}</strong>
-          <p className="muted">Managed accounts inside the admin workspace.</p>
+          <p className="muted">Managed accounts.</p>
         </article>
         <article className="card stat-card">
           <span className="eyebrow">Booked Calls</span>
           <strong>{stats?.calls ?? '—'}</strong>
-          <p className="muted">Reserved Operator Diagnostics on the calendar.</p>
+          <p className="muted">Reserved Operator Diagnostics calls.</p>
         </article>
       </div>
 
