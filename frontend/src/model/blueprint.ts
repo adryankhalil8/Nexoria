@@ -20,7 +20,6 @@ export type BlueprintDraft = {
   revenueRange: string;
   clientEmail?: string;
   goals: string[];
-  externalSignal?: ExternalSignal;
   status?: BlueprintPortalStatus;
   purchaseEventType?: PurchaseEventType;
   fixes?: FixRecommendation[];
@@ -194,12 +193,6 @@ const FIX_MAP: Record<string, FixRecommendation> = {
     'Medium',
     'Service buyers need confidence before booking. Reviews, photos, guarantees, and service examples should support the quote or deposit path.'
   ),
-  externalSignal: createFix(
-    'Monitor local demand conditions',
-    'Low',
-    'Low',
-    'Weather, seasonality, and local urgency can affect demand. Even a lightweight signal helps prioritize follow-up and dispatch decisions.'
-  ),
 };
 
 function createFix(title: string, impact: string, effort: string, why: string): FixRecommendation {
@@ -258,14 +251,11 @@ export function computeBlueprintPreview(draft: BlueprintDraft): BlueprintScoreRe
   const industryBase = INDUSTRY_SCORES[draft.industry] ?? 63;
   const revenueBase = REVENUE_SCORES[draft.revenueRange] ?? 50;
   const goalBonus = Math.min(draft.goals.length * 5, 20);
-  const extNorm = Math.min((draft.externalSignal?.windspeed ?? 10) / 100, 1);
-  const extBonus = Math.round(extNorm * 30);
 
   const raw =
     (industryBase / 100) * 20 +
     (revenueBase / 100) * 20 +
-    (goalBonus / 20) * 30 +
-    (extBonus / 30) * 30;
+    (goalBonus / 20) * 60;
 
   const score = Math.min(100, Math.max(1, Math.round(raw)));
   const readyForRetainer = score <= RETAINER_THRESHOLD && RETAINER_REVENUE_OPTIONS.has(draft.revenueRange);
@@ -354,8 +344,6 @@ function buildFixes(goals: string[]): FixRecommendation[] {
       }
     });
   });
-
-  selected.add('externalSignal');
 
   ['tracking', 'crm', 'reporting', 'bookingPath', 'responseLayer'].forEach((fallback) => {
     if (selected.size < 5) {

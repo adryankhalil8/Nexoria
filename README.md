@@ -42,7 +42,7 @@ cd C:\Users\adryan.jefferson\Desktop\IdeaProjects\Nexoria\backend
 # $env:SPRING_PROFILES_ACTIVE="local"
 $env:DB_HOST="localhost"
 $env:DB_PORT="3306"
-$env:DB_NAME="users"
+$env:DB_NAME="nexoria"
 $env:DB_USERNAME="root"
 $env:DB_PASSWORD="peopleaccent#1"
 $env:JWT_SECRET=[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }))
@@ -212,7 +212,7 @@ npm run test -- --run
 
 Note:
 
-- the backend tests, frontend build, frontend lint, and frontend test suite currently pass as of Audit Report 6
+- the backend tests, frontend build, frontend lint, and frontend test suite currently pass as of Audit Report 7
 
 ## Deployment Requirements
 
@@ -289,6 +289,9 @@ These do not stop local development, but they matter for maintenance and deploym
 Additional project docs live under `infra/docs/`, including:
 
 - audit reports
+- architecture diagram
+- file structure
+- project proposal
 - ADRs
 - API design notes
 - deployment guide

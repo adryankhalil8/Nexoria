@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexoria — Capstone Presentation 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D1117;--surface:#161B22;--surface-2:#1C2128;
+  --border:#30363D;--teal:#00C9A7;--teal-dim:rgba(0,201,167,.12);
+  --teal-border:rgba(0,201,167,.3);--text:#F0F6FC;--muted:#8B949E;
+  --subtle:#484F58;--red:#FF7B72;--yellow:#E3B341;--blue:#58A6FF;
+  --purple:#BC8CFF;--orange:#FFA657;--green:#3FB950;
+}
+html,body{width:100%;height:100%;background:var(--bg);
+  font-family:'Inter',system-ui,sans-serif;color:var(--text);overflow:hidden}
+#app{width:100vw;height:100vh;display:flex;flex-direction:column}
+#sw{flex:1;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s ease}
+.slide.active{opacity:1;visibility:visible;pointer-events:all}
+
+/* HEADER */
+.sh{background:var(--surface);border-bottom:1px solid var(--border);
+  padding:14px 44px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px}
+.bmark{width:26px;height:26px;background:var(--teal);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:13px;color:#000;letter-spacing:-.5px}
+.bname{font-size:14px;font-weight:700;letter-spacing:-.3px}
+.stitle-wrap{display:flex;flex-direction:column;align-items:center}
+.stitle{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.stiming{font-size:10px;color:var(--subtle);margin-top:2px}
+.snum{font-size:12px;color:var(--subtle);font-weight:500}
+
+/* BODY */
+.sb{flex:1;overflow-y:auto;padding:28px 44px 20px}
+.sb::-webkit-scrollbar{width:4px}
+.sb::-webkit-scrollbar-track{background:transparent}
+.sb::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* BOTTOM */
+#bb{background:var(--surface);border-top:1px solid var(--border);
+  padding:10px 44px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+#dots{display:flex;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--subtle);cursor:pointer;transition:all .2s}
+.dot.active{background:var(--teal);transform:scale(1.35)}
+#navbtns{display:flex;gap:8px}
+.nbtn{background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  padding:7px 18px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;
+  font-family:'Inter',sans-serif;transition:all .15s}
+.nbtn:hover{background:var(--border);border-color:var(--teal)}
+.nbtn:disabled{opacity:.3;cursor:not-allowed}
+#notesbtn{background:transparent;border:1px solid var(--border);color:var(--muted);
+  padding:5px 13px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:500;
+  font-family:'Inter',sans-serif;transition:all .15s}
+#notesbtn:hover,#notesbtn.on{border-color:var(--teal);color:var(--teal)}
+#notesbtn.on{background:var(--teal-dim)}
+
+/* NOTES PANEL */
+#np{position:fixed;bottom:56px;left:50%;transform:translateX(-50%);
+  width:min(680px,calc(100vw - 88px));background:var(--surface-2);
+  border:1px solid var(--teal-border);border-radius:12px;padding:18px 22px;
+  display:none;z-index:200;box-shadow:0 20px 60px rgba(0,0,0,.55)}
+#np.on{display:block}
+#np h4{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--teal);margin-bottom:8px}
+#np p{font-size:12.5px;line-height:1.65;color:var(--muted)}
+
+/* TYPOGRAPHY HELPERS */
+.h1{font-size:34px;font-weight:800;letter-spacing:-1.4px;line-height:1.1}
+.h2{font-size:24px;font-weight:700;letter-spacing:-.7px}
+.h3{font-size:18px;font-weight:600;letter-spacing:-.4px}
+.h4{font-size:14px;font-weight:600}
+.sm{font-size:12px;line-height:1.55}
+.xs{font-size:11px}
+.tc{color:var(--teal)}.mc{color:var(--muted)}.sc{color:var(--subtle)}
+.bc{color:var(--blue)}.rc{color:var(--red)}.yc{color:var(--yellow)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.bt{background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border)}
+.bb2{background:rgba(88,166,255,.1);color:var(--blue);border:1px solid rgba(88,166,255,.3)}
+.bp{background:rgba(188,140,255,.1);color:var(--purple);border:1px solid rgba(188,140,255,.3)}
+.br{background:rgba(255,123,114,.1);color:var(--red);border:1px solid rgba(255,123,114,.3)}
+.by{background:rgba(227,179,65,.1);color:var(--yellow);border:1px solid rgba(227,179,65,.3)}
+.bg2{background:rgba(63,185,80,.1);color:var(--green);border:1px solid rgba(63,185,80,.3)}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+.card-t{background:var(--teal-dim);border-color:var(--teal-border)}
+
+/* SCREENSHOT PLACEHOLDER */
+.sph{background:var(--surface-2);border:1.5px dashed var(--border);border-radius:8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;padding:16px;color:var(--subtle);min-height:110px}
+.sph .icon{font-size:26px;opacity:.5}
+.sph .lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;text-align:center}
+.sph .sub{font-size:10px;text-align:center}
+
+/* ENTITY CARD */
+.ec{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.eh{background:var(--surface-2);border-bottom:1px solid var(--border);
+  padding:7px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.ef{padding:8px 12px;display:flex;flex-direction:column;gap:3px}
+.efield{font-size:10.5px;color:var(--muted);display:flex;gap:6px}
+.fn{color:var(--text);font-weight:500;flex-shrink:0}
+.ft{color:var(--subtle)}
+
+/* BEFORE/AFTER */
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ba-card{border-radius:7px;padding:11px 13px}
+.ba-b{background:rgba(255,123,114,.07);border:1px solid rgba(255,123,114,.22)}
+.ba-a{background:rgba(0,201,167,.07);border:1px solid rgba(0,201,167,.22)}
+.ba-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.ba-b .ba-lbl{color:var(--red)}.ba-a .ba-lbl{color:var(--teal)}
+.ba-txt{font-size:11px;line-height:1.5;color:var(--muted)}
+
+/* STEP */
+.step{display:flex;gap:12px;align-items:flex-start}
+.sn{width:26px;height:26px;border-radius:50%;background:var(--teal);color:#000;
+  font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.sc2{flex:1}
+
+/* CODE */
+.code{background:#010409;border:1px solid var(--border);border-radius:7px;
+  padding:12px 16px;font-family:'JetBrains Mono','Fira Code',monospace;font-size:11px;
+  line-height:1.7;color:#79C0FF;overflow-x:auto}
+.co{color:var(--subtle)}.kw{color:var(--red)}.str{color:#A5D6FF}.cmd{color:var(--teal)}
+
+/* ICON LIST */
+.il{display:flex;flex-direction:column;gap:9px}
+.ili{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:var(--muted);line-height:1.5}
+.ili .ico{flex-shrink:0;font-size:14px;margin-top:1px}
+
+/* QA */
+.qa{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px 16px}
+.qq{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:5px}
+.qq::before{content:"Q  ";color:var(--teal)}
+.qa-ans{font-size:11.5px;color:var(--muted);line-height:1.55}
+.qa-ans::before{content:"A  ";color:var(--blue);font-weight:600}
+
+/* PROBLEM ROW */
+.pr{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;
+  background:var(--surface);border:1px solid var(--border);border-radius:8px}
+.picon{font-size:17px;flex-shrink:0;margin-top:2px}
+.ptxt{font-size:12.5px;line-height:1.5;color:var(--muted)}
+
+/* GRID HELPERS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* ARCH */
+.abox{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
+  padding:10px 16px;text-align:center;width:200px}
+.abox .ai{font-size:20px;margin-bottom:3px}
+.abox .at{font-size:12px;font-weight:700}
+.abox .as{font-size:10px;color:var(--muted);margin-top:2px}
+.abox-t{border-color:var(--teal-border);background:var(--teal-dim)}
+.abox-b{border-color:rgba(88,166,255,.35);background:rgba(88,166,255,.07)}
+.abox-y{border-color:rgba(227,179,65,.35);background:rgba(227,179,65,.07)}
+.aconn{display:flex;flex-direction:column;align-items:center;padding:3px 0}
+.aconn-line{width:2px;height:12px}
+.aconn-tip{font-size:13px;line-height:1}
+.aconn-lbl{font-size:9px;color:var(--subtle);margin-top:2px}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="sw">
+
+<!-- ═══ SLIDE 1: PROBLEM & SOLUTION ═══ -->
+<div class="slide active" id="s1">
+  <div class="sh">
+    <div class="brand"><div class="bmark">N</div><span class="bname">Nexoria</span></div>
+    <div class="stitle-wrap"><span class="stitle">Problem &amp; Solution</span><span class="stiming">~1 min</span></div>
+    <span class="snum">1 / 9</span>
+  </div>
+  <div class="sb" style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start">
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div>
+        <p class="xs mc" style="text-transform:uppercase;letter-spacing:1px;margin-bottom:7px">The Challenge</p>
+        <h1 class="h1">Service businesses <span class="tc">lose revenue</span> from holes in processes.</h1>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="pr"><span class="picon">📋</span>
+          <p class="ptxt"><strong>No intake system.</strong> Leads captured via DM, email, or voicemail — never aggregated.</p></div>
+        <div class="pr"><span class="picon">📞</span>
+          <p class="ptxt"><strong>Manual booking.</strong> Discovery calls scheduled over WhatsApp, iCal, or not at all.</p></div>
+        <div class="pr"><span class="picon">🗂️</span>
+          <p class="ptxt"><strong>Zero deliverable.</strong> Clients pay for a "strategy session" and get a PDF nobody reads.</p></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span class="badge bt">HVAC</span><span class="badge bt">Plumbing</span>
+        <span class="badge bt">Electrical</span><span class="badge bt">Roofing</span>
+        <span class="xs mc">→ Service SMBs</span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card card-t">
+        <p class="xs tc" style="font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:9px">The Solution</p>
+        <h2 class="h3" style="margin-bottom:6px">Nexoria — full-stack client intake platform</h2>
+        <p class="sm mc">Book calls → qualify leads → deliver a scored business blueprint → give clients a portal to execute on it.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:11px;padding:11px 13px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+          <span style="font-size:18px">✅</span>
+          <div><p class="h4">Centralized lead pipeline</p>
+               <p class="xs mc" style="margin-top:2px">NEW → CONTACTED → BOOKED → QUALIFIED → CLOSED</p></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;padding:11px 13px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+          <span style="font-size:18px">📊</span>
+          <div><p class="h4">Weighted business blueprint</p>
+               <p class="xs mc" style="margin-top:2px">Scored by industry, revenue, goals &amp; market signals</p></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:11px;padding:11px 13px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+          <span style="font-size:18px">🔐</span>
+          <div><p class="h4">Role-based client portal</p>
+               <p class="xs mc" style="margin-top:2px">Clients log in to view blueprint, track fixes, message support</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nd" hidden>Nexoria is the layer between "I booked a call" and "I'm actually delivering value." Service businesses run intake via text and deliver strategy via Google Docs. Nexoria packages the entire flow into one product. Keep this tight — you'll demo the solution live in Slide 5.</div>
+</div>
+
+<!-- ═══ SLIDE 2: USER STORIES ═══ -->
+<div class="slide" id="s2">
+  <div class="sh">
+    <div class="brand"><div class="bmark">N</div><span class="bname">Nexoria</span></div>
+    <div class="stitle-wrap"><span class="stitle">User Stories + Core Features</span><span class="stiming">~30 sec</span></div>
+    <span class="snum">2 / 9</span>
+  </div>
+  <div class="sb">
+    <div class="g2" style="align-items:start">
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <h2 class="h3" style="margin-bottom:2px">Who uses Nexoria?</h2>
+        <div class="card" style="display:flex;flex-direction:column;gap:7px">
+          <span class="badge bb2">Public Visitor</span>
+          <p class="sm mc">As a <strong>prospect</strong>, I want to see a diagnostic preview of my business so I have a reason to book a call.</p>
+        </div>
+        <div class="card" style="display:flex;flex-direction:column;gap:7px">
+          <span class="badge bb2">Public Visitor</span>
+          <p class="sm mc">As a <strong>prospect</strong>, I want to pick an available time slot so I can book a call without emailing back and forth.</p>
+        </div>
+        <div class="card" style="display:flex;flex-direction:column;gap:7px">
+          <span class="badge bp">Admin</span>
+          <p class="sm mc">As an <strong>admin</strong>, I want to manage my lead pipeline and update statuses so I can track where every prospect sits in the funnel.</p>
+        </div>
+        <div class="card" style="display:flex;flex-direction:column;gap:7px">
+          <span class="badge bp">Admin</span>
+          <p class="sm mc">As an <strong>admin</strong>, I want to create and score a business blueprint so I can deliver a structured, actionable roadmap.</p>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:32px">
+        <div class="card" style="display:flex;flex-direction:column;gap:7px">
+          <span class="badge bp">Admin</span>
+          <p class="sm mc">As an <strong>admin</strong>, I want to assign fix recommendations with owner + status so the client knows exactly what to do and who's responsible.</p>
+        </div>
+        <div class="card" style="display:flex;flex-direction:column;gap:7px">
+          <span class="badge bt">Client</span>
+          <p class="sm mc">As a <strong>client</strong>, I want to log into a private portal and view my approved blueprint — a single source of truth for my roadmap.</p>
+        </div>
+        <div class="card" style="display:flex;flex-direction:column;gap:7px">
+          <span class="badge bt">Client</span>
+          <p class="sm mc">As a <strong>client</strong>, I want to send a support message and receive a real-time reply without switching to email.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="text-align:center;padding:12px 8px;border-right:1px solid var(--border)">
+            <div class="tc" style="font-size:22px;font-weight:800;letter-spacing:-1px">20+</div>
+            <div class="xs mc">API endpoints</div>
+          </div>
+          <div style="text-align:center;padding:12px 8px;border-right:1px solid var(--border)">
+            <div class="tc" style="font-size:22px;font-weight:800;letter-spacing:-1px">19</div>
+            <div class="xs mc">Pages / routes</div>
+          </div>
+          <div style="text-align:center;padding:12px 8px;border-right:1px solid var(--border)">
+            <div class="tc" style="font-size:22px;font-weight:800;letter-spacing:-1px">7</div>
+            <div class="xs mc">DB migrations</div>
+          </div>
+          <div style="text-align:center;padding:12px 8px">
+            <div class="tc" style="font-size:22px;font-weight:800;letter-spacing:-1px">42</div>
+            <div class="xs mc">Tests passing</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nd" hidden>Map each story to something you'll show live. "Admin creates blueprint" → you create one in the demo. "Client views portal" → you switch accounts. Mention the three roles — Public, Admin, Client — and move on. Don't read every story aloud.</div>
+</div>
+
+<!-- ═══ SLIDE 3: ARCHITECTURE ═══ -->
+<div class="slide" id="s3">
+  <div class="sh">
+    <div class="brand"><div class="bmark">N</div><span class="bname">Nexoria</span></div>
+    <div class="stitle-wrap"><span class="stitle">Architecture Overview</span><span class="stiming">~2 min</span></div>
+    <span class="snum">3 / 9</span>
+  </div>
+  <div class="sb" style="display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start">
+
+    <!-- Diagram column -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <h2 class="h3">System Architecture</h2>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;display:flex;flex-direction:column;align-items:center">
+
+        <div class="abox"><div class="ai">🌐</div><div class="at">Browser</div><div class="as">Chrome · Safari · Firefox</div></div>
+        <div class="aconn">
+          <div class="aconn-line" style="background:linear-gradient(to bottom,var(--border),var(--teal))"></div>
+          <div class="aconn-tip tc">▼</div>
+          <div class="aconn-lbl">React Router / Vite dev server</div>
+        </div>
+
+        <div class="abox abox-t"><div class="ai">⚛️</div><div class="at tc">React 18 + TypeScript</div><div class="as">Vite · Public / Admin / Portal routes</div></div>
+        <div class="aconn">
+          <div class="aconn-line" style="background:linear-gradient(to bottom,var(--teal),var(--blue))"></div>
+          <div class="aconn-tip" style="color:var(--blue)">▼</div>
+          <div class="aconn-lbl">HTTP · Authorization: Bearer &lt;JWT&gt; · CORS</div>
+        </div>
+
+        <div class="abox abox-b"><div class="ai">☕</div><div class="at bc">Spring Boot 3.3 API</div><div class="as">Java 21 · JwtAuthFilter · REST controllers</div></div>
+        <div class="aconn">
+          <div class="aconn-line" style="background:linear-gradient(to bottom,var(--blue),var(--yellow))"></div>
+          <div class="aconn-tip yc">▼</div>
+          <div class="aconn-lbl">JDBC · HikariCP · Flyway auto-migrate</div>
+        </div>
+
+        <div class="abox abox-y"><div class="ai">🗄️</div><div class="at yc">MySQL 8</div><div class="as">schema: nexoria · 9 tables · V1–V7</div></div>
+      </div>
+
+      <div class="sph" style="min-height:72px">
+        <span class="icon">📐</span>
+        <span class="lbl">Architecture Diagram</span>
+        <span class="sub">infra/docs/architecture-diagram.md</span>
+      </div>
+    </div>
+
+    <!-- Stack breakdown -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <h2 class="h3">Tech Stack</h2>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+          <span style="font-size:17px">⚛️</span><span class="h4">Frontend</span>
+          <span class="badge bt" style="margin-left:auto">:5173</span>
+        </div>
+        <div class="il">
+          <div class="ili"><span class="ico">·</span><span>React 18 + TypeScript + Vite build toolchain</span></div>
+          <div class="ili"><span class="ico">·</span><span>React Router v6 — public, admin, client portal route trees</span></div>
+          <div class="ili"><span class="ico">·</span><span>Axios HTTP client · SessionStorage for multi-step intake drafts</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+          <span style="font-size:17px">☕</span><span class="h4">Backend API</span>
+          <span class="badge bb2" style="margin-left:auto">:8080</span>
+        </div>
+        <div class="il">
+          <div class="ili"><span class="ico">·</span><span>Spring Boot 3.3 · Java 21 · Maven</span></div>
+          <div class="ili"><span class="ico">·</span><span>Spring Security + JJWT 0.11 filter chain</span></div>
+          <div class="ili"><span class="ico">·</span><span>Spring Data JPA + Hibernate ORM</span></div>
+          <div class="ili"><span class="ico">·</span><span>Springdoc OpenAPI → Swagger UI at /swagger-ui/</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+          <span style="font-size:17px">🗄️</span><span class="h4">Database</span>
+          <span class="badge by" style="margin-left:auto">:3306</span>
+        </div>
+        <div class="il">
+          <div class="ili"><span class="ico">·</span><span>MySQL 8 — schema: <code style="color:var(--teal);font-size:11px">nexoria</code></span></div>
+          <div class="ili"><span class="ico">·</span><span>Flyway V1–V7 auto-run on startup</span></div>
+          <div class="ili"><span class="ico">·</span><span>HikariCP connection pool</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="xs mc" style="text-transform:uppercase;letter-spacing:.8px;font-size:10px;margin-bottom:8px">Request Flow — End to End</p>
+        <p style="font-size:11.5px;color:var(--muted);line-height:1.85">
+          <code style="color:var(--blue);font-size:10px">GET /admin/blueprints</code>
+          → ProtectedRoute checks sessionStorage token
+          → Axios adds <code style="color:var(--teal);font-size:10px">Bearer &lt;JWT&gt;</code>
+          → <code style="color:var(--blue);font-size:10px">JwtAuthFilter</code> validates, sets SecurityContext
+          → Controller → Service → JPA Repository → MySQL
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="nd" hidden>Walk top-to-bottom: Browser hits React, React hits Spring Boot with a JWT, Spring Boot hits MySQL. Flyway runs migrations automatically on startup — no manual SQL scripts. Three separate contexts: public (no auth), admin (ROLE_ADMIN), client portal (ROLE_USER). Docker Compose wraps all three services for production.</div>
+</div>
+
+<!-- ═══ SLIDE 4: DATA MODEL ═══ -->
+<div class="slide" id="s4">
+  <div class="sh">
+    <div class="brand"><div class="bmark">N</div><span class="bname">Nexoria</span></div>
+    <div class="stitle-wrap"><span class="stitle">Data Model</span><span class="stiming">~45 sec</span></div>
+    <span class="snum">4 / 9</span>
+  </div>
+  <div class="sb" style="display:grid;grid-template-columns:1fr 1.6fr;gap:22px">
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <h2 class="h3">Entity Relationships</h2>
+      <div class="sph" style="flex:1;min-height:180px">
+        <span class="icon">🗂️</span>
+        <span class="lbl">ERD Diagram</span>
+        <span class="sub">infra/docs/erd.png</span>
+      </div>
+      <div class="card">
+        <p class="xs mc" style="text-transform:uppercase;letter-spacing:.8px;font-size:9px;margin-bottom:8px">Key Relationships</p>
+        <div style="font-size:11px;line-height:2;color:var(--muted)">
+          <code class="tc" style="font-size:10px">users</code> 1 → N <code class="bc" style="font-size:10px">blueprints</code><br>
+          <code class="tc" style="font-size:10px">users</code> 1 → N <code style="color:var(--orange);font-size:10px">leads</code><br>
+          <code class="bc" style="font-size:10px">blueprints</code> 1 → N <code class="bc" style="font-size:10px">blueprint_fixes</code> (embedded)<br>
+          <code class="bc" style="font-size:10px">blueprints</code> 1 → N <code class="bc" style="font-size:10px">blueprint_goals</code> (ElementCollection)<br>
+          <code style="color:var(--orange);font-size:10px">leads</code> 1 → N <code style="color:var(--orange);font-size:10px">scheduled_calls</code><br>
+          <code class="tc" style="font-size:10px">users</code> 1 → N <code class="rc" style="font-size:10px">support_messages</code>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <h2 class="h3">Key Entities</h2>
+      <div class="g3">
+
+        <div class="ec">
+          <div class="eh tc">Users</div>
+          <div class="ef">
+            <div class="efield"><span class="fn">email</span><span class="ft">unique</span></div>
+            <div class="efield"><span class="fn">role</span><span class="ft">ADMIN/USER</span></div>
+            <div class="efield"><span class="fn">status</span><span class="ft">ACTIVE/PENDING</span></div>
+            <div class="efield"><span class="fn">passwordHash</span></div>
+          </div>
+        </div>
+
+        <div class="ec">
+          <div class="eh bc">Blueprints</div>
+          <div class="ef">
+            <div class="efield"><span class="fn">score</span><span class="ft">0–100</span></div>
+            <div class="efield"><span class="fn">status</span><span class="ft">DRAFT→APPROVED</span></div>
+            <div class="efield"><span class="fn">industry</span></div>
+            <div class="efield"><span class="fn">clientEmail</span></div>
+            <div class="efield"><span class="fn">readyForRetainer</span><span class="ft">bool</span></div>
+          </div>
+        </div>
+
+        <div class="ec">
+          <div class="eh" style="color:var(--purple)">BlueprintFixes</div>
+          <div class="ef">
+            <div class="efield"><span class="fn">title</span></div>
+            <div class="efield"><span class="fn">owner</span><span class="ft">CLIENT/NEXORIA</span></div>
+            <div class="efield"><span class="fn">status</span><span class="ft">NOT_STARTED→DONE</span></div>
+            <div class="efield"><span class="fn">clientVisible</span><span class="ft">bool</span></div>
+          </div>
+        </div>
+
+        <div class="ec">
+          <div class="eh" style="color:var(--orange)">Leads</div>
+          <div class="ef">
+            <div class="efield"><span class="fn">company</span></div>
+            <div class="efield"><span class="fn">contactName</span></div>
+            <div class="efield"><span class="fn">status</span><span class="ft">NEW→CLOSED</span></div>
+            <div class="efield"><span class="fn">user_id</span><span class="ft">FK nullable</span></div>
+          </div>
+        </div>
+
+        <div class="ec">
+          <div class="eh" style="color:var(--orange)">ScheduledCalls</div>
+          <div class="ef">
+            <div class="efield"><span class="fn">scheduledStart</span></div>
+            <div class="efield"><span class="fn">scheduledEnd</span></div>
+            <div class="efield"><span class="fn">status</span><span class="ft">BOOKED/CLEARED</span></div>
+            <div class="efield"><span class="fn">lead_id</span><span class="ft">FK nullable</span></div>
+          </div>
+        </div>
+
+        <div class="ec">
+          <div class="eh rc">SupportMessages</div>
+          <div class="ef">
+            <div class="efield"><span class="fn">body</span></div>
+            <div class="efield"><span class="fn">sender</span><span class="ft">CLIENT/ADMIN</span></div>
+            <div class="efield"><span class="fn">clientEmail</span></div>
+            <div class="efield"><span class="fn">clientUser_id</span><span class="ft">FK</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="card" style="padding:10px 14px">
+        <p class="xs mc" style="text-transform:uppercase;letter-spacing:.8px;font-size:9px;margin-bottom:7px">Migration History — Flyway V1→V7</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="badge bt" style="font-size:9px">V1 init schema</span>
+          <span class="badge bt" style="font-size:9px">V2 user ownership</span>
+          <span class="badge bt" style="font-size:9px">V3 admin portal</span>
+          <span class="badge bt" style="font-size:9px">V4 client fields</span>
+          <span class="badge bt" style="font-size:9px">V5 scheduling</span>
+          <span class="badge bt" style="font-size:9px">V6 assignments</span>
+          <span class="badge bt" style="font-size:9px">V7 support msgs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nd" hidden>Point to the ERD from the repo. Walk the chain: prospect books a ScheduledCall → becomes a Lead → admin builds a Blueprint → Blueprint gets Goals and Fixes → client gets USER account to view it. Focus on the status progressions (NEW→CLOSED, DRAFT→APPROVED) — those are the business logic driving the app.</div>
+</div>
+
+<!-- ═══ SLIDE 5: LIVE DEMO ═══ -->
+<div class="slide" id="s5">
+  <div class="sh">
+    <div class="brand"><div class="bmark">N</div><span class="bname">Nexoria</span></div>
+    <div class="stitle-wrap"><span class="stitle">Live Demo</span><span class="stiming">~3 min</span></div>
+    <span class="snum">5 / 9</span>
+  </div>
+  <div class="sb" style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <h2 class="h3">Demo Script — Exact Click Path</h2>
+
+      <div class="step">
+        <div class="sn">1</div>
+        <div class="sc2">
+          <p class="h4">Homepage → GetStarted (Public Flow)</p>
+          <p class="xs mc" style="margin-top:3px">Navigate to <code class="tc" style="font-size:10px">/</code> → click "Get Started" → fill in URL, industry, revenue, goals → see live diagnostic score appear in real time</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="sn">2</div>
+        <div class="sc2">
+          <p class="h4">Login as ADMIN → Dashboard</p>
+          <p class="xs mc" style="margin-top:3px">Go to <code class="tc" style="font-size:10px">/login</code> → enter admin credentials → JWT stored in sessionStorage → redirected to <code class="tc" style="font-size:10px">/admin</code> overview dashboard</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="sn">3</div>
+        <div class="sc2">
+          <p class="h4">Lead Management — /admin/clients</p>
+          <p class="xs mc" style="margin-top:3px">View lead list → create new lead → change status:
+            <span class="badge bb2" style="font-size:9px">NEW</span> →
+            <span class="badge bt" style="font-size:9px">CONTACTED</span> →
+            <span class="badge bg2" style="font-size:9px">QUALIFIED</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="sn">4</div>
+        <div class="sc2">
+          <p class="h4">Blueprint — Approve + Manage Fixes</p>
+          <p class="xs mc" style="margin-top:3px">Go to <code class="tc" style="font-size:10px">/admin/blueprints</code> → open blueprint → change status to <span class="badge bt" style="font-size:9px">APPROVED</span> → toggle fix <code class="bc" style="font-size:10px">clientVisible = true</code></p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="sn">5</div>
+        <div class="sc2">
+          <p class="h4">Postman — JWT Auth in Action</p>
+          <p class="xs mc" style="margin-top:3px">POST <code class="tc" style="font-size:10px">/api/auth/login</code> → copy <code>accessToken</code> → GET <code class="tc" style="font-size:10px">/api/leads</code> with <code class="bc" style="font-size:10px">Authorization: Bearer &lt;token&gt;</code> → 200 OK</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <h2 class="h3">Screenshots</h2>
+      <div class="g2" style="flex:1">
+        <div class="sph">
+          <span class="icon">🏠</span>
+          <span class="lbl">Landing Page</span>
+          <span class="sub">Hero + Book Call CTA</span>
+        </div>
+        <div class="sph">
+          <span class="icon">🔐</span>
+          <span class="lbl">Login / Auth</span>
+          <span class="sub">Protected route redirect</span>
+        </div>
+        <div class="sph">
+          <span class="icon">📋</span>
+          <span class="lbl">Admin Lead Tracker</span>
+          <span class="sub">CRUD + status filter</span>
+        </div>
+        <div class="sph">
+          <span class="icon">📊</span>
+          <span class="lbl">Blueprint Detail</span>
+          <span class="sub">Score + fixes + approve</span>
+        </div>
+      </div>
+      <div class="sph" style="min-height:82px">
+        <span class="icon">📬</span>
+        <span class="lbl">Postman — JWT in Action</span>
+        <span class="sub">Login request → Bearer token → GET /api/leads → 200 OK</span>
+      </div>
+    </div>
+  </div>
+  <div class="nd" hidden>Practice this exact path twice before presenting. Start with the public flow to show the prospect experience, then pivot to admin to show the power user side. Postman is non-negotiable — it proves JWT actually works. End on the client portal to close the loop: "This is what the client sees after their blueprint is approved."</div>
+</div>
+
+<!-- ═══ SLIDE 6: TECHNICAL DEEP DIVE ═══ -->
+<div class="slide" id="s6">
+  <div class="sh">
+    <div class="brand"><div class="bmark">N</div><span class="bname">Nexoria</span></div>
+    <div class="stitle-wrap"><span class="stitle">Technical Deep Dive</span><span class="stiming">~2 min</span></div>
+    <span class="snum">6 / 9</span>
+  </div>
+  <div class="sb" style="display:flex;flex-direction:column;gap:16px">
+    <h2 class="h3">3 Hard Problems — Solved</h2>
+    <div class="g3" style="flex:1;align-items:start">
+
+      <!-- Problem 1 -->
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:17px">🔐</span>
+          <p class="h4">403 vs 404 — Info Leakage</p>
+        </div>
+        <p class="xs mc">Returning <code class="rc" style="font-size:10px">403 Forbidden</code> when a user didn't own a resource confirmed the resource existed — enabling ID enumeration.</p>
+        <div class="ba-grid">
+          <div class="ba-card ba-b">
+            <div class="ba-lbl">Before</div>
+            <div class="ba-txt"><code class="rc" style="font-size:10px">GET /api/blueprints/42</code><br>→ 403 Forbidden<br><br>Attacker knows ID 42 exists. Can enumerate IDs to map out all resources.</div>
+          </div>
+          <div class="ba-card ba-a">
+            <div class="ba-lbl">After</div>
+            <div class="ba-txt"><code class="tc" style="font-size:10px">findByIdAndUser()</code> returns Optional → <code class="tc" style="font-size:10px">404 Not Found</code> if not owned. Resource existence is hidden from unauthorized callers.</div>
+          </div>
+        </div>
+        <div class="code">
+<span class="co">// BlueprintController.java</span>
+return repo.<span class="kw">findByIdAndUser</span>(id, user)
+  .map(b -> ok(b))
+  .orElse(<span class="cmd">notFound().build()</span>);
+        </div>
+      </div>
+
+      <!-- Problem 2 -->
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:17px">🗄️</span>
+          <p class="h4">MySQL Safe Update Mode</p>
+        </div>
+        <p class="xs mc">MySQL's <code class="yc" style="font-size:10px">sql_safe_updates=1</code> blocks UPDATE/DELETE statements without a primary key in the WHERE clause — silently breaking PATCH endpoints.</p>
+        <div class="ba-grid">
+          <div class="ba-card ba-b">
+            <div class="ba-lbl">Before</div>
+            <div class="ba-txt"><code class="rc" style="font-size:10px">PATCH /api/leads/5</code><br>→ MySQL Error 1175:<br>UPDATE blocked — unsafe update, no PK in WHERE.</div>
+          </div>
+          <div class="ba-card ba-a">
+            <div class="ba-lbl">After</div>
+            <div class="ba-txt">JPA repositories use PK-based WHERE automatically. Added <code class="tc" style="font-size:10px">sql_safe_updates=0</code> to JDBC URL for local dev environment.</div>
+          </div>
+        </div>
+        <div class="code">
+<span class="co"># application-local.yml</span>
+datasource:
+  url: jdbc:mysql://localhost/<span class="cmd">nexoria</span>
+    ?<span class="str">sql_safe_updates=0</span>
+    &allowPublicKeyRetrieval=true
+        </div>
+      </div>
+
+      <!-- Problem 3 -->
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:17px">📦</span>
+          <p class="h4">Flyway — Duplicate Column Errors</p>
+        </div>
+        <p class="xs mc">Adding new columns across 7 migrations without idempotency caused <code class="yc" style="font-size:10px">Duplicate column name</code> failures on fresh schema installs.</p>
+        <div class="ba-grid">
+          <div class="ba-card ba-b">
+            <div class="ba-lbl">Before</div>
+            <div class="ba-txt"><code class="rc" style="font-size:10px">ALTER TABLE blueprints ADD COLUMN status...</code><br>→ Error: Duplicate column if migration partially applied or table rebuilt.</div>
+          </div>
+          <div class="ba-card ba-a">
+            <div class="ba-lbl">After</div>
+            <div class="ba-txt">Each migration owns its version exclusively. Columns added only in their introducing migration. Strict ordering prevents re-runs. Validated with fresh DB wipe.</div>
+          </div>
+        </div>
+        <div class="code">
+<span class="co">-- V4__client_portal_fields.sql</span>
+ALTER TABLE blueprints
+  ADD COLUMN <span class="cmd">status</span> VARCHAR(50)
+    DEFAULT <span class="str">'DRAFT'</span> NOT NULL,
+  ADD COLUMN <span class="cmd">purchase_event_type</span>
+    VARCHAR(50);
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nd" hidden>For each problem: state what broke, why it was non-obvious, and what the fix taught you. The 403/404 issue demonstrates security thinking — not just "it failed." The safe updates issue shows you understand how MySQL behaves in real environments. The Flyway issue shows disciplined schema evolution. Frame these as engineering decisions, not accidents.</div>
+</div>
+
+<!-- ═══ SLIDE 7: SECURITY + SETUP ═══ -->
+<div class="slide" id="s7">
+  <div class="sh">
+    <div class="brand"><div class="bmark">N</div><span class="bname">Nexoria</span></div>
+    <div class="stitle-wrap"><span class="stitle">Security + Local Setup</span><span class="stiming">~1 min</span></div>
+    <span class="snum">7 / 9</span>
+  </div>
+  <div class="sb" style="display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:start">
+
+    <div style="display:flex;flex-direction:column;gap:13px">
+      <h2 class="h3">Auth &amp; Security</h2>
+
+      <div class="card">
+        <p class="xs mc" style="text-transform:uppercase;letter-spacing:.8px;font-size:9px;margin-bottom:11px">JWT Auth Flow — HS256 · JJWT 0.11</p>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--teal-dim);border:1px solid var(--teal-border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--teal);flex-shrink:0">1</div>
+            <p class="xs mc">Client POSTs <code class="bc" style="font-size:10px">/api/auth/login</code> with <code>email + password</code></p>
+          </div>
+          <div style="width:2px;height:8px;background:var(--border);margin-left:11px"></div>
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--teal-dim);border:1px solid var(--teal-border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--teal);flex-shrink:0">2</div>
+            <p class="xs mc">Server returns <code class="tc" style="font-size:10px">accessToken</code> (24h) + <code class="tc" style="font-size:10px">refreshToken</code> (7d)</p>
+          </div>
+          <div style="width:2px;height:8px;background:var(--border);margin-left:11px"></div>
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--teal-dim);border:1px solid var(--teal-border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--teal);flex-shrink:0">3</div>
+            <p class="xs mc">React stores in <code class="yc" style="font-size:10px">sessionStorage</code> · Axios attaches <code class="bc" style="font-size:10px">Authorization: Bearer &lt;JWT&gt;</code> on every request</p>
+          </div>
+          <div style="width:2px;height:8px;background:var(--border);margin-left:11px"></div>
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--teal-dim);border:1px solid var(--teal-border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--teal);flex-shrink:0">4</div>
+            <p class="xs mc"><code class="bc" style="font-size:10px">JwtAuthFilter</code> validates signature + expiry → sets <code class="tc" style="font-size:10px">SecurityContext</code> → controller proceeds</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="xs mc" style="text-transform:uppercase;letter-spacing:.8px;font-size:9px;margin-bottom:9px">Role-Based Access Control</p>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center">
+          <span class="badge bp">ADMIN</span><span class="xs mc">Users · Leads · Blueprints · Scheduling · Support</span>
+          <span class="badge bt">USER</span><span class="xs mc">Client portal — blueprint, tasks, results, support thread</span>
+          <span class="badge bb2">VIEWER</span><span class="xs mc">Read-only subset of USER routes</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="xs mc" style="text-transform:uppercase;letter-spacing:.8px;font-size:9px;margin-bottom:8px">Security Headers + Rate Limiting — ADR-003</p>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <span class="badge br" style="font-size:9px">CSP: default-src 'self'</span>
+          <span class="badge br" style="font-size:9px">HSTS 1yr + subdomains</span>
+          <span class="badge br" style="font-size:9px">X-Frame: DENY</span>
+          <span class="badge br" style="font-size:9px">nosniff</span>
+          <span class="badge by" style="font-size:9px">Rate limit: 5 req/IP/min on /auth/**</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <h2 class="h3">Run Locally</h2>
+      <div class="code"><span class="co"># 1. Start MySQL</span>
+<span class="cmd">docker compose up -d db</span></div>
+      <div class="code"><span class="co"># 2. Backend (Flyway auto-migrates)</span>
+<span class="cmd">cd backend</span>
+<span class="cmd">mvn spring-boot:run</span>
+<span class="co"># → http://localhost:8080</span>
+<span class="co"># → /swagger-ui/ available</span></div>
+      <div class="code"><span class="co"># 3. Frontend</span>
+<span class="cmd">cd frontend</span>
+<span class="cmd">npm install && npm run dev</span>
+<span class="co"># → http://localhost:5173</span></div>
+      <div class="code"><span class="co"># 4. Bootstrap first admin</span>
+POST /api/auth/bootstrap-admin
+<span class="str">{ "secret": "&lt;ADMIN_BOOTSTRAP_SECRET&gt;" }</span></div>
+      <div class="card" style="padding:10px 13px">
+        <p class="xs mc" style="font-size:9px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Required ENV Vars</p>
+        <div style="font-family:monospace;font-size:10.5px;color:var(--muted);line-height:1.9">
+          <span class="bc">JWT_SECRET</span>=your-256-bit-secret<br>
+          <span class="bc">JWT_EXPIRATION</span>=86400000<br>
+          <span class="bc">ADMIN_BOOTSTRAP_SECRET</span>=first-admin-key<br>
+          <span class="bc">DB_URL</span>=jdbc:mysql://localhost/nexoria
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nd" hidden>The JWT filter runs on every request — not middleware you opt into, it's part of the filter chain. CSP and HSTS were added deliberately via ADR-003, not retrofitted. Flyway runs on startup automatically so there's no manual SQL to run. sessionStorage was chosen over localStorage to limit the XSS attack window — tokens clear when the tab closes.</div>
+</div>
+
+<!-- ═══ SLIDE 8: LESSONS LEARNED ═══ -->
+<div class="slide" id="s8">
+  <div class="sh">
+    <div class="brand"><div class="bmark">N</div><span class="bname">Nexoria</span></div>
+    <div class="stitle-wrap"><span class="stitle">Lessons Learned</span><span class="stiming">~1 min</span></div>
+    <span class="snum">8 / 9</span>
+  </div>
+  <div class="sb" style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start">
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <h2 class="h3">What We Learned</h2>
+      <div class="il">
+        <div class="ili"><span class="ico tc">🏗️</span><span><strong>Schema-first thinking pays off.</strong> Flyway forced us to plan data transitions before writing code. Every feature required a migration spec first.</span></div>
+        <div class="ili"><span class="ico tc">🔐</span><span><strong>Security can't be retrofitted.</strong> JWT + RBAC + rate limiting + CSP headers were built from day one via ADR-003 — not added after the fact.</span></div>
+        <div class="ili"><span class="ico tc">🧩</span><span><strong>Role boundaries create API clarity.</strong> Separating ADMIN, USER, and VIEWER forced explicit contracts — every controller asks "who is allowed here?"</span></div>
+        <div class="ili"><span class="ico tc">📋</span><span><strong>Multi-step UX needs lightweight state.</strong> SessionStorage was the right call for intake drafts — no server overhead, acceptable loss on tab close for a public flow.</span></div>
+        <div class="ili"><span class="ico tc">📡</span><span><strong>SSE over WebSockets for this use case.</strong> Support chat is primarily one-directional. Spring's SseEmitter handled it natively without upgrade handshakes.</span></div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <h2 class="h3">What's Next</h2>
+      <div class="il">
+        <div class="ili"><span class="ico bc">☁️</span><span><strong>Cloud deployment.</strong> Docker Compose → AWS ECS or Fly.io with RDS. Nginx reverse proxy already lives in <code style="font-size:10px">infra/</code>.</span></div>
+        <div class="ili"><span class="ico bc">🔄</span><span><strong>CI/CD pipeline.</strong> GitHub Actions → build + test → Docker push → staging deploy. Currently at ~96%; shipping is the remaining 4%.</span></div>
+        <div class="ili"><span class="ico bc">📄</span><span><strong>Pagination.</strong> Leads and Blueprints need Spring Data <code style="font-size:10px">Pageable</code> for scale — currently returns all records in a single query.</span></div>
+        <div class="ili"><span class="ico bc">🧪</span><span><strong>End-to-end tests.</strong> Playwright for the full public booking flow. 42 unit/integration tests cover the API layer; browser UX is untested.</span></div>
+        <div class="ili"><span class="ico bc">📊</span><span><strong>Observability.</strong> Spring Actuator is wired up. Next: Prometheus + Grafana or Datadog for request latency and error rate dashboards.</span></div>
+      </div>
+
+      <div class="card card-t" style="margin-top:4px;padding:13px 15px">
+        <p class="xs tc" style="font-weight:700;margin-bottom:5px">Current Status — Audit 7 · April 2026</p>
+        <p class="xs mc">~96% complete (excluding deployment) · 26 backend + 16 frontend tests passing · All routes functional · Docker Compose and Nginx config ready</p>
+      </div>
+    </div>
+  </div>
+  <div class="nd" hidden>Frame this as "here's what building a real product taught me" — not "here's what I wish I'd done." The lessons should sound like engineering maturity. The What's Next list signals you know how to take this to production — which is exactly what an Accenture consultant will be evaluating. Mention the 96% Audit 7 number as evidence this was tracked rigorously throughout.</div>
+</div>
+
+<!-- ═══ SLIDE 9: Q&A ═══ -->
+<div class="slide" id="s9">
+  <div class="sh">
+    <div class="brand"><div class="bmark">N</div><span class="bname">Nexoria</span></div>
+    <div class="stitle-wrap"><span class="stitle">Q&amp;A — Backup Questions</span><span class="stiming">Be ready</span></div>
+    <span class="snum">9 / 9</span>
+  </div>
+  <div class="sb" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <h2 class="h3">Questions</h2>
+      <span class="badge bt">Backup Slide</span>
+    </div>
+    <div class="g2" style="flex:1;align-items:start">
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="qa">
+          <div class="qq">Why Spring Boot over Node.js or FastAPI?</div>
+          <div class="qa-ans">Spring Security is the most mature RBAC + JWT framework available. Java 21 virtual threads give excellent concurrency. JPA + Flyway fit a product with a real, evolving data model — not a scripting job. It's the industry standard in enterprise consulting.</div>
+        </div>
+        <div class="qa">
+          <div class="qq">How do you handle token expiry?</div>
+          <div class="qa-ans">Access tokens expire in 24h. A separate 7-day refresh token is issued at login. The client hits <code class="tc" style="font-size:10px">POST /api/auth/refresh</code> with the refresh token to get a new access token without re-authenticating.</div>
+        </div>
+        <div class="qa">
+          <div class="qq">Why SSE instead of WebSockets for support?</div>
+          <div class="qa-ans">Support chat is primarily one-directional push (admin → client). SSE works over plain HTTP/1.1, no upgrade handshake needed, and Spring's SseEmitter handles it natively. WebSockets would add protocol complexity with zero benefit for this use case.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="qa">
+          <div class="qq">How would you scale this beyond one server?</div>
+          <div class="qa-ans">Containerize with Docker → ECS or Kubernetes. Move JWT secret + DB credentials to AWS Secrets Manager. Replace Guava in-memory rate limiter with Redis. MySQL → RDS Multi-AZ. CDN in front of the React build. Stateless JWT design makes horizontal scaling clean.</div>
+        </div>
+        <div class="qa">
+          <div class="qq">What if two admins update the same blueprint at once?</div>
+          <div class="qa-ans">Currently last-write-wins — no optimistic locking. In production I'd add a <code class="tc" style="font-size:10px">@Version</code> field to Blueprint for JPA optimistic locking. The second writer gets a 409 Conflict and must reload before saving.</div>
+        </div>
+        <div class="qa">
+          <div class="qq">Why sessionStorage instead of localStorage for the JWT?</div>
+          <div class="qa-ans">sessionStorage clears when the tab closes — this limits the XSS attack window. localStorage persists indefinitely. The app doesn't need "stay logged in" semantics, so sessionStorage is the safer default with no UX trade-off.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nd" hidden>This is your safety net. If asked something not on this slide, slow down and reason from first principles — don't guess. It's okay to say "I'd approach that by..." The Accenture consultant will ask about scale and production readiness. The instructor will ask about the hardest bug. Both are covered here. Pause, think, answer precisely.</div>
+</div>
+
+</div><!-- /sw -->
+
+<!-- Bottom bar -->
+<div id="bb">
+  <div id="dots">
+    <div class="dot active" data-i="0"></div>
+    <div class="dot" data-i="1"></div>
+    <div class="dot" data-i="2"></div>
+    <div class="dot" data-i="3"></div>
+    <div class="dot" data-i="4"></div>
+    <div class="dot" data-i="5"></div>
+    <div class="dot" data-i="6"></div>
+    <div class="dot" data-i="7"></div>
+    <div class="dot" data-i="8"></div>
+  </div>
+  <div id="navbtns">
+    <button class="nbtn" id="prev" disabled>← Prev</button>
+    <button class="nbtn" id="next">Next →</button>
+  </div>
+  <button id="notesbtn">Speaker Notes (N)</button>
+</div>
+
+<!-- Notes panel -->
+<div id="np"><h4>Speaker Notes</h4><p id="nt"></p></div>
+</div><!-- /app -->
+
+<script>
+const slides = [...document.querySelectorAll('.slide')];
+const dots   = [...document.querySelectorAll('.dot')];
+const prev   = document.getElementById('prev');
+const next   = document.getElementById('next');
+const notesbtn = document.getElementById('notesbtn');
+const np       = document.getElementById('np');
+const nt       = document.getElementById('nt');
+let cur = 0, notesOn = false;
+
+function note(i) {
+  const el = slides[i].querySelector('.nd');
+  return el ? el.textContent.trim() : '';
+}
+
+function go(n) {
+  slides[cur].classList.remove('active');
+  dots[cur].classList.remove('active');
+  cur = n;
+  slides[cur].classList.add('active');
+  dots[cur].classList.add('active');
+  prev.disabled = cur === 0;
+  next.disabled = cur === slides.length - 1;
+  if (notesOn) nt.textContent = note(cur);
+}
+
+next.addEventListener('click', () => { if (cur < slides.length-1) go(cur+1); });
+prev.addEventListener('click', () => { if (cur > 0) go(cur-1); });
+dots.forEach((d,i) => d.addEventListener('click', () => go(i)));
+
+notesbtn.addEventListener('click', () => {
+  notesOn = !notesOn;
+  np.classList.toggle('on', notesOn);
+  notesbtn.classList.toggle('on', notesOn);
+  if (notesOn) nt.textContent = note(cur);
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); if(cur<slides.length-1) go(cur+1); }
+  if (e.key==='ArrowLeft')               { e.preventDefault(); if(cur>0) go(cur-1); }
+  if (e.key==='n'||e.key==='N') {
+    notesOn = !notesOn;
+    np.classList.toggle('on', notesOn);
+    notesbtn.classList.toggle('on', notesOn);
+    if (notesOn) nt.textContent = note(cur);
+  }
+});
+</script>
+</body>
+</html>

@@ -56,16 +56,15 @@ public class BlueprintController {
                     existing.setRevenueRange(request.getRevenueRange());
                     existing.setClientEmail(service.blankToNull(request.getClientEmail()));
                     existing.setGoals(service.copyGoals(request.getGoals()));
-                    existing.setExternalSignal(request.getExternalSignal());
                     existing.setStatus(service.resolveStatus(request, existing));
                     existing.setPurchaseEventType(service.resolvePurchaseEventType(request, existing));
-                    int score = service.computeScore(existing.getIndustry(), existing.getRevenueRange(), existing.getGoals(), existing.getExternalSignal());
+                    int score = service.computeScore(existing.getIndustry(), existing.getRevenueRange(), existing.getGoals());
                     existing.setScore(score);
                     existing.setReadyForRetainer(service.isReadyForRetainer(score, existing.getRevenueRange()));
                     existing.setFixes(
                             service.mergeFixes(
                                     request.getFixes() != null ? request.getFixes() : existing.getFixes(),
-                                    service.buildFixes(existing.getGoals(), score, existing.getExternalSignal())
+                                    service.buildFixes(existing.getGoals(), score)
                             )
                     );
                     service.save(existing);

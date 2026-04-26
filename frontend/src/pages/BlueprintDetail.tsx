@@ -62,7 +62,6 @@ export default function BlueprintDetail() {
         revenueRange: item.revenueRange,
         clientEmail: item.clientEmail,
         goals: item.goals,
-        externalSignal: item.externalSignal,
         status: item.status,
         purchaseEventType: item.purchaseEventType,
         fixes: item.fixes,
@@ -126,15 +125,6 @@ export default function BlueprintDetail() {
                 {goal}
               </span>
             ))}
-          </div>
-
-          <div className="stack">
-            <h2>External signal</h2>
-            <p className="muted">
-              {item.externalSignal
-                ? `${item.externalSignal.windspeed} km/h wind | ${item.externalSignal.temperature} deg C | code ${item.externalSignal.weathercode}`
-                : 'No external signal data was stored for this blueprint.'}
-            </p>
           </div>
 
           <div className="stack">

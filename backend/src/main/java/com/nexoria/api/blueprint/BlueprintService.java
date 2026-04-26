@@ -23,7 +23,6 @@ public class BlueprintService {
     private final Integer weightIndustry;
     private final Integer weightGoals;
     private final Integer weightRevenue;
-    private final Integer weightExternal;
     private final Integer retainerMinScore;
     private final List<String> retainerRevenueTiers;
 
@@ -31,14 +30,12 @@ public class BlueprintService {
                             @Value("${config.weightIndustry:20}") Integer weightIndustry,
                             @Value("${config.weightGoals:30}") Integer weightGoals,
                             @Value("${config.weightRevenue:20}") Integer weightRevenue,
-                            @Value("${config.weightExternal:30}") Integer weightExternal,
                             @Value("${config.retainerMinScore:45}") Integer retainerMinScore,
                             @Value("${config.retainerRevenueTiers:$10k-$50k/mo,$50k-$200k/mo,$200k+/mo}") String retainerRevenueTiers) {
         this.repository = repository;
         this.weightIndustry = weightIndustry;
         this.weightGoals = weightGoals;
         this.weightRevenue = weightRevenue;
-        this.weightExternal = weightExternal;
         this.retainerMinScore = retainerMinScore;
         this.retainerRevenueTiers = Arrays.asList(retainerRevenueTiers.split(","));
     }
@@ -83,10 +80,10 @@ public class BlueprintService {
 
     public Blueprint computeAndSave(BlueprintRequest request, User user) {
         Blueprint blueprint = mapRequest(request, user);
-        int score = computeScore(blueprint.getIndustry(), blueprint.getRevenueRange(), blueprint.getGoals(), blueprint.getExternalSignal());
+        int score = computeScore(blueprint.getIndustry(), blueprint.getRevenueRange(), blueprint.getGoals());
         blueprint.setScore(score);
         blueprint.setReadyForRetainer(isReadyForRetainer(score, blueprint.getRevenueRange()));
-        blueprint.setFixes(buildFixes(blueprint.getGoals(), score, blueprint.getExternalSignal()));
+        blueprint.setFixes(buildFixes(blueprint.getGoals(), score));
         return repository.save(blueprint);
     }
 
@@ -110,7 +107,6 @@ public class BlueprintService {
         blueprint.setRevenueRange(request.getRevenueRange());
         blueprint.setClientEmail(blankToNull(request.getClientEmail()));
         blueprint.setGoals(copyGoals(request.getGoals()));
-        blueprint.setExternalSignal(request.getExternalSignal() != null ? request.getExternalSignal() : new ExternalSignal(10.0, 0, 15.0));
         blueprint.setStatus(request.getStatus() != null ? request.getStatus() : BlueprintStatus.APPROVED);
         blueprint.setPurchaseEventType(resolvePurchaseEventType(request));
         return blueprint;
@@ -148,17 +144,14 @@ public class BlueprintService {
         return purchaseEventTypeForIndustry(request.getIndustry());
     }
 
-    public int computeScore(String industry, String revenueRange, List<String> goals, ExternalSignal externalSignal) {
+    public int computeScore(String industry, String revenueRange, List<String> goals) {
         int industryBase = industryScore(industry);
         int revenueBase = revenueScore(revenueRange);
         int goalBonus = Math.min(goals != null ? goals.size() * 5 : 0, 20);
-        double extNorm = Math.min(externalSignal.getWindspeed() / 100.0, 1.0);
-        int extBonus = (int) Math.round(extNorm * weightExternal);
 
         double raw = (industryBase / 100.0) * weightIndustry
                 + (revenueBase / 100.0) * weightRevenue
-                + (goalBonus / 20.0) * weightGoals
-                + (extBonus / (double) weightExternal) * weightExternal;
+                + (goalBonus / 20.0) * (weightGoals + 30);
 
         return Math.min(100, Math.max(1, (int) Math.round(raw)));
     }
@@ -197,7 +190,7 @@ public class BlueprintService {
         };
     }
 
-    public List<FixRecommendation> buildFixes(List<String> goals, int score, ExternalSignal externalSignal) {
+    public List<FixRecommendation> buildFixes(List<String> goals, int score) {
         Map<String, FixRecommendation> fixMap = loadFixMap();
         List<String> fallbacks = List.of("tracking", "crm", "reporting", "bookingPath", "responseLayer");
         Set<String> selected = new LinkedHashSet<>();
@@ -223,10 +216,6 @@ public class BlueprintService {
                     break;
                 }
             }
-        }
-
-        if (!selected.contains("externalSignal") && selected.size() < 5) {
-            selected.add("externalSignal");
         }
 
         for (String fallback : fallbacks) {
@@ -338,7 +327,6 @@ public class BlueprintService {
         map.put("crm", new FixRecommendation("Deploy a lightweight CRM", "High", "Medium", "Contacts in spreadsheets mean dropped follow-ups. A CRM pipeline ensures nothing falls through the cracks."));
         map.put("reporting", new FixRecommendation("Build an automated weekly report", "Medium", "Low", "Stakeholders need visibility. An automated dashboard report builds trust and reduces status-call overhead."));
         map.put("lowRevenue", new FixRecommendation("Introduce a recurring revenue offer", "High", "High", "Project-based income is unpredictable. A retainer or subscription product stabilizes monthly cash flow."));
-        map.put("externalSignal", new FixRecommendation("Monitor external market conditions", "Low", "Low", "Macro signals such as weather disruptions and economic shifts affect demand. A simple alert dashboard adds useful context."));
         return map;
     }
 }

@@ -1,13 +1,19 @@
 // Nexoria ERD
 // Source of truth: backend/src/main/resources/db/migration
-// Updated: 2026-04-21
+// Updated: 2026-04-24
 
 Project Nexoria {
-  database_type: 'MySQL / H2-compatible Flyway schema'
+  database_type: 'MySQL 8 Flyway schema'
   Note: '''
   Public flow: Get Started and Book a Call create leads, scheduled calls, and draft/assigned blueprint context.
   Admin flow: admins manage leads, calls, users, schedule settings, support messages, and blueprint approval/client visibility.
   Client flow: eligible client users see their booked call, approved client-visible blueprint fixes, results state, and support thread.
+
+  MySQL compatibility notes:
+  - Application enums are persisted as VARCHAR(50) in Flyway migrations even though DBML enums are used here for readability.
+  - BOOLEAN fields map to MySQL BOOLEAN/TINYINT(1).
+  - Temporal fields mirror the Flyway schema's TIMESTAMP usage.
+  - Field definitions below are aligned to V1-V7 migration history.
   '''
 }
 

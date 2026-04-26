@@ -78,7 +78,7 @@ export default function AdminBookedCalls() {
     <section className="stack">
       <div className="page-intro">
         <p className="eyebrow">Booked Calls</p>
-        <h2>See reserved times and clear them when they open back up.</h2>
+        <h2>View and manage Diagnostic calls.</h2>
       </div>
 
       {error && <p className="error-text">{error}</p>}
