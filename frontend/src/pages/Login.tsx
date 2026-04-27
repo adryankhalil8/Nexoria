@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { authApi } from '../api/auth';
 import { getApiErrorMessage } from '../api/errors';
 import { persistAuthSession } from '../auth/session';
+import PublicHomeLink from '../components/PublicHomeLink';
 
 export default function Login() {
   const location = useLocation();
@@ -39,6 +40,7 @@ export default function Login() {
 
   return (
     <main className="auth-page">
+      <PublicHomeLink />
       <section className="auth-card stack">
         <p className="eyebrow">Welcome back</p>
         <h1>Login</h1>

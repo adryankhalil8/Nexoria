@@ -44,13 +44,15 @@ public class Blueprint {
     @Column(name = "goal")
     private List<String> goals = new ArrayList<>();
 
+    @JsonIgnore
     @NotNull
     @Column(nullable = false)
-    private Integer score;
+    private Integer score = 0;
 
+    @JsonIgnore
     @NotNull
     @Column(nullable = false)
-    private Boolean readyForRetainer;
+    private Boolean readyForRetainer = false;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

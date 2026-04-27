@@ -41,6 +41,16 @@ export default function AdminBookedCalls() {
     }
   }
 
+  async function deleteCall(id: number) {
+    try {
+      setError(null);
+      await schedulingApi.deleteBooking(id);
+      setCalls((current) => current.filter((call) => call.id !== id));
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Unable to delete booked call'));
+    }
+  }
+
   const sortedCalls = useMemo(
     () =>
       calls
@@ -127,6 +137,9 @@ export default function AdminBookedCalls() {
                     ) : (
                       <span className="muted">Available again</span>
                     )}
+                    <button className="icon-delete-button" onClick={() => void deleteCall(call.id)} type="button">
+                      x
+                    </button>
                   </td>
                 </tr>
               ))}

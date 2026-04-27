@@ -65,7 +65,6 @@ export default function ClientBlueprint() {
           <a href={portal.url} rel="noreferrer" target="_blank">
             Visit live website
           </a>
-          <span className="pill pill--success">Score {portal.score}/100</span>
           <Link className="text-link" to="/portal/support">
             Ask Nexoria about this blueprint
           </Link>
@@ -75,7 +74,7 @@ export default function ClientBlueprint() {
       <div className="stack">
         <div className="page-intro">
           <p className="eyebrow">Prioritized fixes</p>
-          <h3>Ranked for execution</h3>
+          <h3>Progress</h3>
         </div>
 
         <div className="client-fix-grid">

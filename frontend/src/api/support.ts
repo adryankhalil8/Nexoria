@@ -79,6 +79,10 @@ export const supportApi = {
     return response.data;
   },
 
+  deleteThreadAsAdmin: async (clientEmail: string): Promise<void> => {
+    await apiClient.delete(`/support/messages/admin/${encodeURIComponent(clientEmail)}`);
+  },
+
   subscribeMine: (onMessage: SupportStreamHandler, onError?: SupportStreamErrorHandler) =>
     subscribeToSupportStream('/support/messages/mine/stream', onMessage, onError),
 

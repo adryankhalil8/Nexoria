@@ -7,7 +7,6 @@ export default function BlueprintsGallery() {
   const [items, setItems] = useState<Blueprint[]>([]);
   const [search, setSearch] = useState('');
   const [industry, setIndustry] = useState('All');
-  const [readyOnly, setReadyOnly] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -16,6 +15,16 @@ export default function BlueprintsGallery() {
       .then(setItems)
       .catch((e) => setError(e.message));
   }, []);
+
+  async function removeBlueprint(id: number) {
+    try {
+      setError(null);
+      await blueprintApi.delete(id);
+      setItems((current) => current.filter((item) => item.id !== id));
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Unable to delete blueprint');
+    }
+  }
 
   if (error) {
     return (
@@ -29,16 +38,15 @@ export default function BlueprintsGallery() {
     .slice()
     .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime())
     .filter((item) => (industry === 'All' ? true : item.industry === industry))
-    .filter((item) => (readyOnly ? item.readyForRetainer : true))
     .filter((item) => item.url.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <main className="page">
       <section className="hero-card">
         <p className="eyebrow">Blueprint Library</p>
-        <h1>Blueprints now live inside the admin workspace</h1>
+        <h1>Blueprint Gallery</h1>
         <p className="muted">
-          Filter by industry, search by URL, and jump from the admin dashboard into detailed recommendations
+          Jump straight into a install plan.
           without leaving the protected workspace.
         </p>
       </section>
@@ -60,16 +68,13 @@ export default function BlueprintsGallery() {
             ))}
           </select>
         </label>
-
-        <label className="checkbox-inline">
-          <input checked={readyOnly} onChange={(e) => setReadyOnly(e.target.checked)} type="checkbox" />
-          <span>Retainer ready only</span>
-        </label>
       </section>
 
       <section className="gallery-grid">
         {filtered.length ? (
-          filtered.map((blueprint) => <BlueprintCard blueprint={blueprint} key={blueprint.id} />)
+          filtered.map((blueprint) => (
+            <BlueprintCard blueprint={blueprint} key={blueprint.id} onDelete={(id) => void removeBlueprint(id)} />
+          ))
         ) : (
           <article className="card empty-state">
             <h2>No blueprints match</h2>

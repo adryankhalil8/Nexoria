@@ -2,12 +2,10 @@ package com.nexoria.api.blueprint;
 
 import com.nexoria.api.user.Role;
 import com.nexoria.api.user.User;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -20,24 +18,9 @@ import java.util.Set;
 public class BlueprintService {
 
     private final BlueprintRepository repository;
-    private final Integer weightIndustry;
-    private final Integer weightGoals;
-    private final Integer weightRevenue;
-    private final Integer retainerMinScore;
-    private final List<String> retainerRevenueTiers;
 
-    public BlueprintService(BlueprintRepository repository,
-                            @Value("${config.weightIndustry:20}") Integer weightIndustry,
-                            @Value("${config.weightGoals:30}") Integer weightGoals,
-                            @Value("${config.weightRevenue:20}") Integer weightRevenue,
-                            @Value("${config.retainerMinScore:45}") Integer retainerMinScore,
-                            @Value("${config.retainerRevenueTiers:$10k-$50k/mo,$50k-$200k/mo,$200k+/mo}") String retainerRevenueTiers) {
+    public BlueprintService(BlueprintRepository repository) {
         this.repository = repository;
-        this.weightIndustry = weightIndustry;
-        this.weightGoals = weightGoals;
-        this.weightRevenue = weightRevenue;
-        this.retainerMinScore = retainerMinScore;
-        this.retainerRevenueTiers = Arrays.asList(retainerRevenueTiers.split(","));
     }
 
     public List<Blueprint> findAll() {
@@ -80,15 +63,8 @@ public class BlueprintService {
 
     public Blueprint computeAndSave(BlueprintRequest request, User user) {
         Blueprint blueprint = mapRequest(request, user);
-        int score = computeScore(blueprint.getIndustry(), blueprint.getRevenueRange(), blueprint.getGoals());
-        blueprint.setScore(score);
-        blueprint.setReadyForRetainer(isReadyForRetainer(score, blueprint.getRevenueRange()));
-        blueprint.setFixes(buildFixes(blueprint.getGoals(), score));
+        blueprint.setFixes(buildFixes(blueprint.getGoals()));
         return repository.save(blueprint);
-    }
-
-    public boolean isReadyForRetainer(int score, String revenueRange) {
-        return score <= retainerMinScore && retainerRevenueTiers.contains(revenueRange);
     }
 
     public String blankToNull(String value) {
@@ -144,44 +120,6 @@ public class BlueprintService {
         return purchaseEventTypeForIndustry(request.getIndustry());
     }
 
-    public int computeScore(String industry, String revenueRange, List<String> goals) {
-        int industryBase = industryScore(industry);
-        int revenueBase = revenueScore(revenueRange);
-        int goalBonus = Math.min(goals != null ? goals.size() * 5 : 0, 20);
-
-        double raw = (industryBase / 100.0) * weightIndustry
-                + (revenueBase / 100.0) * weightRevenue
-                + (goalBonus / 20.0) * (weightGoals + 30);
-
-        return Math.min(100, Math.max(1, (int) Math.round(raw)));
-    }
-
-    private int industryScore(String industry) {
-        return switch (industry) {
-            case "Mechanics / auto repair" -> 74;
-            case "HVAC", "Plumbing" -> 78;
-            case "Electrical" -> 74;
-            case "Roofing" -> 76;
-            case "Landscaping", "Junk removal" -> 70;
-            case "Cleaning" -> 68;
-            case "Mobile detailing" -> 66;
-            case "Appliance repair", "Pest control" -> 72;
-            case "Concrete / flooring / remodeling", "Remodeling" -> 72;
-            default -> 63;
-        };
-    }
-
-    private int revenueScore(String revenue) {
-        return switch (revenue) {
-            case "Under $5k/mo" -> 30;
-            case "$5k-$10k/mo" -> 45;
-            case "$10k-$50k/mo" -> 60;
-            case "$50k-$200k/mo" -> 75;
-            case "$200k+/mo" -> 90;
-            default -> 50;
-        };
-    }
-
     private PurchaseEventType purchaseEventTypeForIndustry(String industry) {
         return switch (industry) {
             case "HVAC", "Plumbing", "Electrical", "Roofing", "Appliance repair", "Pest control",
@@ -190,7 +128,7 @@ public class BlueprintService {
         };
     }
 
-    public List<FixRecommendation> buildFixes(List<String> goals, int score) {
+    public List<FixRecommendation> buildFixes(List<String> goals) {
         Map<String, FixRecommendation> fixMap = loadFixMap();
         List<String> fallbacks = List.of("tracking", "crm", "reporting", "bookingPath", "responseLayer");
         Set<String> selected = new LinkedHashSet<>();

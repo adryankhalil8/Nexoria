@@ -125,9 +125,7 @@ export default function GetStarted() {
                 <p className="eyebrow">Preview</p>
                 <h3>What your first-pass diagnostic surfaces</h3>
               </div>
-              <span className={preview.readyForRetainer ? 'pill pill--success' : 'pill'}>
-                {preview.readyForRetainer ? 'Install Ready' : 'Leak Found'}
-              </span>
+              <span className="pill">Preview</span>
             </div>
 
             <ul className="fix-list">

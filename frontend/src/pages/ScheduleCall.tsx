@@ -140,10 +140,9 @@ export default function ScheduleCall() {
     <main className="page schedule-page">
       <section className="page-intro">
         <p className="eyebrow">{source === 'GET_STARTED' ? 'Get Started' : 'Operator Diagnostic'}</p>
-        <h1>Pick a time for your 45-minute Operator Diagnostic.</h1>
+        <h1>Book your 1-1 for Nexoria Operator</h1>
         <p className="muted">
-          We will map where leads are leaking, identify the closest bottleneck to booked jobs or deposits,
-          and decide whether a 14-day install makes sense.
+          Tell us what's broken. We'll tell you how we'll fix it.
         </p>
       </section>
 

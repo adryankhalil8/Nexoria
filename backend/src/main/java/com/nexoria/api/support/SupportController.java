@@ -57,6 +57,13 @@ public class SupportController {
         return ResponseEntity.status(HttpStatus.CREATED).body(supportService.sendAdminReply(clientEmail, request));
     }
 
+    @DeleteMapping("/admin/{clientEmail}")
+    @Operation(summary = "Delete a client support thread")
+    public ResponseEntity<Void> deleteThread(@PathVariable String clientEmail) {
+        supportService.deleteThread(clientEmail);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping(value = "/admin/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @Operation(summary = "Stream all support messages for admins")
     public SseEmitter streamAdmin() {

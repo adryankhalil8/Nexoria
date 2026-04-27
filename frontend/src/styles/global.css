@@ -218,6 +218,20 @@ textarea {
   color: var(--danger);
 }
 
+.icon-delete-button {
+  width: 2.2rem;
+  height: 2.2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(181, 68, 47, 0.22);
+  background: rgba(181, 68, 47, 0.08);
+  color: var(--danger);
+  line-height: 1;
+  padding: 0;
+  flex: 0 0 auto;
+}
+
 .chip {
   background: rgba(255, 255, 255, 0.55);
 }
@@ -340,24 +354,10 @@ textarea {
   align-items: center;
 }
 
-.score-badge {
-  display: inline-flex;
-  border-radius: 999px;
-  padding: 0.5rem 0.85rem;
-  font-weight: 700;
-  color: white;
-}
-
-.score-badge--high {
-  background: var(--success);
-}
-
-.score-badge--mid {
-  background: var(--secondary);
-}
-
-.score-badge--low {
-  background: var(--danger);
+.blueprint-card__actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
 }
 
 .fix-list {
@@ -400,6 +400,7 @@ textarea {
   display: grid;
   place-items: center;
   padding: 1.5rem;
+  position: relative;
 }
 
 .auth-card {
@@ -743,7 +744,7 @@ textarea {
 
 .final-cta {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   gap: 1.5rem;
   align-items: center;
   margin-bottom: 2rem;
@@ -754,14 +755,9 @@ textarea {
 }
 
 .final-cta .hero-actions {
+  width: 100%;
   justify-content: center;
   align-items: center;
-}
-
-.final-cta h2 {
-  margin: 0 0 0.75rem;
-  font-size: clamp(2rem, 3vw, 3.2rem);
-  line-height: 1;
 }
 
 .footer {
@@ -1119,6 +1115,12 @@ textarea {
   overflow-x: auto;
 }
 
+.table-wrap--client-tracker {
+  max-height: min(62vh, 720px);
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -1142,18 +1144,48 @@ textarea {
   position: fixed;
   inset: 0;
   background: rgba(25, 16, 8, 0.48);
-  display: grid;
-  place-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
   padding: 1rem;
 }
 
 .modal-card {
   width: min(720px, 100%);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
   border-radius: 28px;
   padding: 1.5rem;
   background: #fffaf5;
   border: 1px solid var(--panel-border);
   box-shadow: var(--shadow);
+}
+
+.modal-actions {
+  flex-wrap: wrap;
+}
+
+.public-home-link {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  backdrop-filter: blur(14px);
+  background: rgba(255, 250, 243, 0.86);
+  border: 1px solid rgba(55, 38, 18, 0.12);
+  box-shadow: 0 18px 40px rgba(69, 46, 18, 0.1);
+}
+
+.public-home-link img {
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  object-fit: cover;
 }
 
 .schedule-grid {
@@ -1386,6 +1418,16 @@ textarea {
   gap: 0.25rem;
   padding: 1rem;
   text-align: left;
+}
+
+.support-thread-row {
+  position: relative;
+}
+
+.support-thread-delete {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
 }
 
 .support-thread--active {

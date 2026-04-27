@@ -16,9 +16,9 @@ export default function ClientResults() {
     <section className="stack">
       <div className="page-intro">
         <p className="eyebrow">Results</p>
-        <h2>Simple scoreboard</h2>
+        <h2>Dashboard</h2>
         <p className="muted">
-          This stays honest: until the live tracking sources are connected, Nexoria shows the booked-job and
+          Nexoria shows the booked-job and
           deposit scoreboard structure instead of pretending the metrics are final.
         </p>
       </div>

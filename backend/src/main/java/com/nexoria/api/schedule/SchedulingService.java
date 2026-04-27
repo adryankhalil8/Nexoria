@@ -117,6 +117,13 @@ public class SchedulingService {
         return ScheduledCallResponse.from(scheduledCallRepository.save(call));
     }
 
+    public void deleteCall(Long id) {
+        if (!scheduledCallRepository.existsById(id)) {
+            throw new IllegalArgumentException("Scheduled call not found");
+        }
+        scheduledCallRepository.deleteById(id);
+    }
+
     public List<ScheduledCallResponse> getCurrentUserCalls(User user) {
         return scheduledCallRepository.findAllByLeadUserEmailIgnoreCaseOrderByScheduledStartAsc(user.getEmail()).stream()
                 .map(ScheduledCallResponse::from)

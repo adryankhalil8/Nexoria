@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { blueprintApi, BlueprintRequest } from '../api/blueprint';
 import { getApiErrorMessage } from '../api/errors';
-import ScoreBadge from '../components/ScoreBadge';
+import { leadsApi } from '../api/leads';
+import { usersApi } from '../api/users';
 import { HOMEPAGE_BLUEPRINT_DRAFT_KEY } from './GetStarted';
 import {
   computeBlueprintPreview,
@@ -11,6 +12,7 @@ import {
   INDUSTRY_OPTIONS,
   REVENUE_OPTIONS,
 } from '../model/blueprint';
+import type { Lead, ManagedUser } from '../model/admin';
 
 export default function BlueprintCreate() {
   const [form, setForm] = useState<BlueprintRequest>({
@@ -22,6 +24,8 @@ export default function BlueprintCreate() {
   });
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [users, setUsers] = useState<ManagedUser[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -53,7 +57,40 @@ export default function BlueprintCreate() {
     }
   }, [location.search]);
 
+  useEffect(() => {
+    Promise.all([leadsApi.getAll(), usersApi.getAll()])
+      .then(([leadData, userData]) => {
+        setLeads(leadData);
+        setUsers(userData.filter((user) => user.role !== 'ADMIN'));
+      })
+      .catch(() => {
+        // Keep blueprint creation available even if client suggestions cannot load.
+      });
+  }, []);
+
   const preview = computeBlueprintPreview(form);
+  const existingClientOptions = useMemo(() => {
+    const entries = new Map<string, { email: string; label: string }>();
+
+    leads.forEach((lead) => {
+      entries.set(lead.email.toLowerCase(), {
+        email: lead.email,
+        label: `${lead.company} (${lead.contactName}) - ${lead.email}`,
+      });
+    });
+
+    users.forEach((user) => {
+      const key = user.email.toLowerCase();
+      if (!entries.has(key)) {
+        entries.set(key, {
+          email: user.email,
+          label: `${user.displayName || user.username || user.email} - ${user.email}`,
+        });
+      }
+    });
+
+    return Array.from(entries.values()).sort((left, right) => left.label.localeCompare(right.label));
+  }, [leads, users]);
 
   function toggleGoal(goal: string) {
     setForm((current) => ({
@@ -88,10 +125,9 @@ export default function BlueprintCreate() {
     <main className="page">
       <section className="hero-card">
         <p className="eyebrow">Blueprint Generator</p>
-        <h1>Create a blueprint inside the admin workflow</h1>
+        <h1>Create Blueprint</h1>
         <p className="muted">
-          This replaces the old disconnected diagnostic flow. Select the company profile, goals, and
-          market context, then save the scored blueprint directly into the protected admin workspace.
+          Custom blueprints for prospecting.
         </p>
       </section>
 
@@ -123,6 +159,21 @@ export default function BlueprintCreate() {
             <select onChange={(event) => setForm({ ...form, revenueRange: event.target.value })} value={form.revenueRange}>
               {REVENUE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Assign to existing client
+            <select
+              onChange={(event) => setForm({ ...form, clientEmail: event.target.value })}
+              value={form.clientEmail ?? ''}
+            >
+              <option value="">Select an existing client</option>
+              {existingClientOptions.map((option) => (
+                <option key={option.email} value={option.email}>
                   {option.label}
                 </option>
               ))}
@@ -166,15 +217,11 @@ export default function BlueprintCreate() {
               <p className="eyebrow">Live Preview</p>
               <h2>{form.url || 'Your future blueprint'}</h2>
             </div>
-            <ScoreBadge score={preview.score} />
           </div>
 
           <div className="pill-row">
             <span className="pill">{getOptionLabel(INDUSTRY_OPTIONS, form.industry)}</span>
             <span className="pill">{getOptionLabel(REVENUE_OPTIONS, form.revenueRange)}</span>
-            <span className={preview.readyForRetainer ? 'pill pill--success' : 'pill'}>
-              {preview.readyForRetainer ? 'Retainer Ready' : 'Needs Work'}
-            </span>
           </div>
 
           <div className="stack">

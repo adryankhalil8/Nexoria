@@ -41,4 +41,8 @@ export const schedulingApi = {
     const response = await apiClient.patch<ScheduledCall>(`/scheduling/bookings/${id}/clear`);
     return response.data;
   },
+
+  deleteBooking: async (id: number): Promise<void> => {
+    await apiClient.delete(`/scheduling/bookings/${id}`);
+  },
 };

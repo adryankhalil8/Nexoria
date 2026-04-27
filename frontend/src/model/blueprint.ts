@@ -31,17 +31,13 @@ export type BlueprintSummary = {
   industry: string;
   revenueRange: string;
   clientEmail?: string;
-  score: number;
-  readyForRetainer: boolean;
   status: BlueprintPortalStatus;
   purchaseEventType: PurchaseEventType;
   createdAt: string;
   updatedAt?: string;
 };
 
-export type BlueprintScoreResult = {
-  score: number;
-  readyForRetainer: boolean;
+export type BlueprintPreviewResult = {
   fixes: FixRecommendation[];
 };
 
@@ -79,7 +75,6 @@ export type ClientBlueprintView = {
   goals: string[];
   status: BlueprintPortalStatus;
   purchaseEventType: PurchaseEventType;
-  score: number;
   diagnosis: string;
   installChecklist: string[];
   tasks: BlueprintTask[];
@@ -116,6 +111,7 @@ export const INDUSTRY_OPTIONS: Option[] = [
 ];
 
 export const REVENUE_OPTIONS: Option[] = [
+  { label: 'N/A', value: 'N/A' },
   { label: 'Under $5k/mo', value: 'Under $5k/mo' },
   { label: '$5k-$10k/mo', value: '$5k-$10k/mo' },
   { label: '$10k-$50k/mo', value: '$10k-$50k/mo' },
@@ -216,52 +212,13 @@ const GOAL_TO_FIX: Record<string, string[]> = {
   'Improve response speed': ['responseLayer', 'missedLead', 'tracking'],
 };
 
-const INDUSTRY_SCORES: Record<string, number> = {
-  'Mechanics / auto repair': 74,
-  HVAC: 78,
-  Plumbing: 78,
-  Electrical: 74,
-  Roofing: 76,
-  Landscaping: 70,
-  Cleaning: 68,
-  'Mobile detailing': 66,
-  'Appliance repair': 72,
-  'Pest control': 72,
-  'Junk removal': 70,
-  'Concrete / flooring / remodeling': 72,
-  Other: 63,
-};
-
-const REVENUE_SCORES: Record<string, number> = {
-  'Under $5k/mo': 30,
-  '$5k-$10k/mo': 45,
-  '$10k-$50k/mo': 60,
-  '$50k-$200k/mo': 75,
-  '$200k+/mo': 90,
-};
-
-const RETAINER_THRESHOLD = 45;
-const RETAINER_REVENUE_OPTIONS = new Set(['$10k-$50k/mo', '$50k-$200k/mo', '$200k+/mo']);
-
 export function getOptionLabel(options: Option[], value: string): string {
   return options.find((option) => option.value === value)?.label ?? value;
 }
 
-export function computeBlueprintPreview(draft: BlueprintDraft): BlueprintScoreResult {
-  const industryBase = INDUSTRY_SCORES[draft.industry] ?? 63;
-  const revenueBase = REVENUE_SCORES[draft.revenueRange] ?? 50;
-  const goalBonus = Math.min(draft.goals.length * 5, 20);
-
-  const raw =
-    (industryBase / 100) * 20 +
-    (revenueBase / 100) * 20 +
-    (goalBonus / 20) * 60;
-
-  const score = Math.min(100, Math.max(1, Math.round(raw)));
-  const readyForRetainer = score <= RETAINER_THRESHOLD && RETAINER_REVENUE_OPTIONS.has(draft.revenueRange);
+export function computeBlueprintPreview(draft: BlueprintDraft): BlueprintPreviewResult {
   const fixes = buildFixes(draft.goals);
-
-  return { score, readyForRetainer, fixes };
+  return { fixes };
 }
 
 export function buildClientBlueprintView(blueprint: Blueprint): ClientBlueprintView {
@@ -296,8 +253,8 @@ export function buildClientBlueprintView(blueprint: Blueprint): ClientBlueprintV
     };
   });
 
-  const bookedJobs7d = Math.max(1, Math.round(blueprint.score / 12));
-  const leads7d = Math.max(6, bookedJobs7d * 5 + blueprint.goals.length * 2);
+  const bookedJobs7d = Math.max(1, Math.min(6, Math.ceil(visibleFixes.length / 2)));
+  const leads7d = Math.max(6, visibleFixes.length * 4 + blueprint.goals.length * 2);
   const conversionRate = `${Math.max(2, Math.min(35, Math.round((bookedJobs7d / leads7d) * 100)))}%`;
   const revenue7d = `$${(bookedJobs7d * 1750).toLocaleString()}`;
 
@@ -309,7 +266,6 @@ export function buildClientBlueprintView(blueprint: Blueprint): ClientBlueprintV
     goals: blueprint.goals,
     status: blueprint.status,
     purchaseEventType: blueprint.purchaseEventType,
-    score: blueprint.score,
     diagnosis: `Your current path is creating interest, but inquiries still need faster follow-up, clearer handoff, and better visibility into what becomes a booked job or paid deposit.`,
     installChecklist: [
       'Service offer and booking path approved',

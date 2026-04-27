@@ -40,14 +40,14 @@ public class BlueprintController {
     }
 
     @PostMapping
-    @Operation(summary = "Create and score a blueprint")
+    @Operation(summary = "Create a blueprint")
     public ResponseEntity<Blueprint> create(@Valid @RequestBody BlueprintRequest request, @AuthenticationPrincipal User user) {
         Blueprint saved = service.computeAndSave(request, user);
         return ResponseEntity.created(URI.create("/api/blueprints/" + saved.getId())).body(saved);
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Update and rescore an existing blueprint")
+    @Operation(summary = "Update an existing blueprint")
     public ResponseEntity<Blueprint> update(@PathVariable Long id, @Valid @RequestBody BlueprintRequest request, @AuthenticationPrincipal User user) {
         return service.findByIdAndUser(id, user)
                 .map(existing -> {
@@ -58,13 +58,10 @@ public class BlueprintController {
                     existing.setGoals(service.copyGoals(request.getGoals()));
                     existing.setStatus(service.resolveStatus(request, existing));
                     existing.setPurchaseEventType(service.resolvePurchaseEventType(request, existing));
-                    int score = service.computeScore(existing.getIndustry(), existing.getRevenueRange(), existing.getGoals());
-                    existing.setScore(score);
-                    existing.setReadyForRetainer(service.isReadyForRetainer(score, existing.getRevenueRange()));
                     existing.setFixes(
                             service.mergeFixes(
                                     request.getFixes() != null ? request.getFixes() : existing.getFixes(),
-                                    service.buildFixes(existing.getGoals(), score)
+                                    service.buildFixes(existing.getGoals())
                             )
                     );
                     service.save(existing);

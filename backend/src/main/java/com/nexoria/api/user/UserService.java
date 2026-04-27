@@ -1,6 +1,10 @@
 package com.nexoria.api.user;
 
 import com.nexoria.api.lead.LeadService;
+import com.nexoria.api.lead.Lead;
+import com.nexoria.api.lead.LeadRepository;
+import com.nexoria.api.support.SupportMessage;
+import com.nexoria.api.support.SupportMessageRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +21,20 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final LeadService leadService;
+    private final LeadRepository leadRepository;
+    private final SupportMessageRepository supportMessageRepository;
     private final SecureRandom secureRandom = new SecureRandom();
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, LeadService leadService) {
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       LeadService leadService,
+                       LeadRepository leadRepository,
+                       SupportMessageRepository supportMessageRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.leadService = leadService;
+        this.leadRepository = leadRepository;
+        this.supportMessageRepository = supportMessageRepository;
     }
 
     public List<UserSummaryResponse> getAllUsers() {
@@ -97,11 +109,22 @@ public class UserService {
             throw new IllegalArgumentException("You cannot delete the current logged-in user.");
         }
 
-        if (!userRepository.existsById(id)) {
-            throw new IllegalArgumentException("User not found");
-        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        userRepository.deleteById(id);
+        List<Lead> linkedLeads = leadRepository.findAllByUserId(id);
+        for (Lead lead : linkedLeads) {
+            lead.setUser(null);
+        }
+        leadRepository.saveAll(linkedLeads);
+
+        List<SupportMessage> linkedMessages = supportMessageRepository.findAllByClientUserId(id);
+        for (SupportMessage message : linkedMessages) {
+            message.setClientUser(null);
+        }
+        supportMessageRepository.saveAll(linkedMessages);
+
+        userRepository.delete(user);
     }
 
     private String generateTemporaryPassword() {

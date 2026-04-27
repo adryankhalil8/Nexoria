@@ -2,6 +2,8 @@ package com.nexoria.api.lead;
 
 import com.nexoria.api.user.Role;
 import com.nexoria.api.user.User;
+import com.nexoria.api.schedule.ScheduledCall;
+import com.nexoria.api.schedule.ScheduledCallRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +18,11 @@ public class LeadService {
     private static final Pattern SEPARATOR_PATTERN = Pattern.compile("[._-]+");
 
     private final LeadRepository leadRepository;
+    private final ScheduledCallRepository scheduledCallRepository;
 
-    public LeadService(LeadRepository leadRepository) {
+    public LeadService(LeadRepository leadRepository, ScheduledCallRepository scheduledCallRepository) {
         this.leadRepository = leadRepository;
+        this.scheduledCallRepository = scheduledCallRepository;
     }
 
     public List<LeadResponse> list(String search, LeadStatus status) {
@@ -95,6 +99,13 @@ public class LeadService {
         if (!leadRepository.existsById(id)) {
             throw new IllegalArgumentException("Lead not found");
         }
+
+        List<ScheduledCall> scheduledCalls = scheduledCallRepository.findAllByLeadId(id);
+        for (ScheduledCall scheduledCall : scheduledCalls) {
+            scheduledCall.setLead(null);
+        }
+        scheduledCallRepository.saveAll(scheduledCalls);
+
         leadRepository.deleteById(id);
     }
 

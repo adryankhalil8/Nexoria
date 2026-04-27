@@ -99,6 +99,18 @@ export default function AdminSupportMessages() {
     }
   }
 
+  async function deleteThread(clientEmail: string) {
+    try {
+      setError(null);
+      await supportApi.deleteThreadAsAdmin(clientEmail);
+      setMessages((current) => current.filter((message) => message.clientEmail !== clientEmail));
+      setReply('');
+      setSelectedEmail((current) => (current === clientEmail ? '' : current));
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, 'Unable to delete support thread'));
+    }
+  }
+
   return (
     <section className="stack">
       <div className="page-intro">
@@ -113,19 +125,28 @@ export default function AdminSupportMessages() {
         <aside className="card stack">
           <h3>Client threads</h3>
           {threads.map((thread) => (
-            <button
-              className={selectedThread?.email === thread.email ? 'support-thread support-thread--active' : 'support-thread'}
-              key={thread.email}
-              onClick={() => setSelectedEmail(thread.email)}
-              type="button"
-            >
-              <span className="support-thread__title">
-                <strong>{thread.businessName}</strong>
-                {thread.needsReply && <span className="pill pill--warning">Needs reply</span>}
-              </span>
-              <span>{thread.email}</span>
-              <small>{thread.latest?.body}</small>
-            </button>
+            <div className="support-thread-row" key={thread.email}>
+              <button
+                className={selectedThread?.email === thread.email ? 'support-thread support-thread--active' : 'support-thread'}
+                onClick={() => setSelectedEmail(thread.email)}
+                type="button"
+              >
+                <span className="support-thread__title">
+                  <strong>{thread.businessName}</strong>
+                  {thread.needsReply && <span className="pill pill--warning">Needs reply</span>}
+                </span>
+                <span>{thread.email}</span>
+                <small>{thread.latest?.body}</small>
+              </button>
+              <button
+                aria-label={`Delete support thread for ${thread.email}`}
+                className="icon-delete-button support-thread-delete"
+                onClick={() => void deleteThread(thread.email)}
+                type="button"
+              >
+                x
+              </button>
+            </div>
           ))}
           {!threads.length && <p className="muted">No support messages yet.</p>}
         </aside>

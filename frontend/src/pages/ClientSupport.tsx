@@ -76,7 +76,7 @@ export default function ClientSupport() {
     <section className="stack">
       <div className="page-intro">
         <p className="eyebrow">Support</p>
-        <h2>Message Nexoria</h2>
+        <h2>Contact</h2>
         <p className="muted">
           Send updates, blockers, approvals, or questions from the portal. Replies from Nexoria stream here in real time.
         </p>

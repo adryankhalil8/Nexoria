@@ -1,9 +1,5 @@
 # Nexoria File Structure
 
-## Purpose
-
-This document gives a quick map of the main repo structure so contributors can find product code, infrastructure assets, and project documentation quickly.
-
 ## Top-Level Structure
 
 ```text
@@ -72,8 +68,11 @@ infra/
 |  |- Audit_Reports/       Incremental project audits
 |  |- postman/             API collection and local environment files
 |  |- api-design.md
+|  |- architecture-diagram.md
+|  |- current-status.md
 |  |- deployment-guide.md
 |  |- erd.dbml
+|  |- erd-diagram.md
 |  |- erd.png
 |  |- file-structure.md
 |  `- project-proposal.md

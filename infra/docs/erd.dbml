@@ -1,6 +1,6 @@
 // Nexoria ERD
 // Source of truth: backend/src/main/resources/db/migration
-// Updated: 2026-04-24
+// Updated: 2026-04-26
 
 Project Nexoria {
   database_type: 'MySQL 8 Flyway schema'
@@ -14,6 +14,7 @@ Project Nexoria {
   - BOOLEAN fields map to MySQL BOOLEAN/TINYINT(1).
   - Temporal fields mirror the Flyway schema's TIMESTAMP usage.
   - Field definitions below are aligned to V1-V7 migration history.
+  - score, ready_for_retainer, and external-signal weather fields remain as legacy compatibility columns but are no longer part of the active product flow.
   '''
 }
 
@@ -99,9 +100,6 @@ Table blueprints {
   ready_for_retainer boolean [not null]
   status blueprint_status [not null, default: 'DRAFT']
   purchase_event_type purchase_event_type [not null, default: 'DEPOSIT']
-  windspeed double
-  weathercode int
-  temperature double
   created_at timestamp [not null]
   updated_at timestamp
 }
@@ -197,3 +195,5 @@ Ref: support_messages.client_user_id > users.id
 // scheduled_calls.email matches users.email for the client portal scheduled-call card.
 // support_messages.client_email groups admin/client support threads.
 // client registration is allowed only when a lead email has BOOKED or CLOSED status.
+// lead deletion clears scheduled_calls.lead_id before removing the lead.
+// user deletion clears leads.user_id and support_messages.client_user_id before removing the user.
