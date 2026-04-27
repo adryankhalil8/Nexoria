@@ -32,8 +32,6 @@ const blueprint: Blueprint = {
   industry: 'HVAC',
   revenueRange: '$10k-$50k/mo',
   clientEmail: 'client@example.com',
-  score: 72,
-  readyForRetainer: false,
   status: 'APPROVED',
   purchaseEventType: 'BOOKED_JOB',
   goals: ['Book more jobs', 'Collect paid deposits'],

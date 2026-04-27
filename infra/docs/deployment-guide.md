@@ -7,6 +7,12 @@
 - `mysql`: MySQL 8.4 database
 - `reverse-proxy`: Nginx entry point for production traffic
 
+Current application surfaces:
+
+- public site: homepage, FAQ, Get Started, scheduling, login, register, booking confirmation
+- admin workspace: dashboard, client tracker, booked calls, schedule settings, support messages, users, blueprints
+- client portal: home, blueprint, next steps, results, support
+
 ## Prerequisites
 
 - Java 21
@@ -53,6 +59,31 @@ Local service URLs:
 - Health check: `http://localhost:8080/actuator/health`
 - MySQL: `localhost:3306`
 
+## Current Verification Commands
+
+Frontend:
+
+```powershell
+cd frontend
+npm run lint
+npm run test -- --run
+npm run build
+```
+
+Backend:
+
+```powershell
+cd backend
+mvn --batch-mode test
+```
+
+Current verification note from April 26, 2026:
+
+- backend tests passed
+- frontend tests passed
+- frontend build passed
+- frontend lint currently fails and should be fixed before relying on CI as green
+
 ## Required Environment Variables
 
 | Variable | Required | Purpose |
@@ -94,6 +125,7 @@ Production entry points:
 `infra/nginx/nexoria.conf` routes traffic like this:
 
 - `/` -> frontend container
+- `/faq` -> frontend SPA route
 - `/api/` -> backend container
 - `/actuator/health` -> backend health endpoint
 - `/swagger-ui/` and `/v3/api-docs` -> backend API docs
@@ -128,3 +160,4 @@ Published image names:
 - Review `APP_SECURITY_CSP` before enabling third-party scripts
 - Monitor `429 Too Many Requests` on auth endpoints for abuse spikes
 - Rotate credentials and redeploy on a regular schedule
+- Rebuild frontend and rerun backend tests after workflow or schema changes before deployment

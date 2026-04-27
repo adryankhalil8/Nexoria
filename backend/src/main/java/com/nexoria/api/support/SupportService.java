@@ -58,6 +58,10 @@ public class SupportService {
         return saved;
     }
 
+    public void deleteThread(String clientEmail) {
+        supportMessageRepository.deleteAllByClientEmailIgnoreCase(clientEmail.trim());
+    }
+
     public SseEmitter streamMine(User user) {
         String email = user.getEmail().trim().toLowerCase();
         SseEmitter emitter = createEmitter();

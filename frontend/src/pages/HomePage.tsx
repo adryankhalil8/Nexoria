@@ -18,13 +18,7 @@ const installPillars = [
   },
 ];
 
-const includedItems = [
-  'Quote/deposit path',
-  'Scheduling',
-  'Follow-up',
-  'AI response layer',
-  'Reporting',
-];
+
 
 const installSections = [
   {
@@ -217,7 +211,6 @@ export default function HomePage() {
           <div className="install-nav__links">
             <a href="#how-it-works">How it works</a>
             <a href="#what-you-get">What you get</a>
-            <a href="#industries">Industries</a>
             <a href="#pricing">Pricing</a>
             <Link to="/faq">FAQ</Link>
           </div>
@@ -235,15 +228,12 @@ export default function HomePage() {
         <div className="install-hero__content">
           <div className="install-hero__copy">
             <p className="eyebrow"></p>
-            <h1>Inquiries In
-                Booked Jobs Out</h1>
+            <h1>Operator Install</h1>
             <p className="install-hero__lede">
-              Nexoria installs the follow-up, lead capture, and booking system that helps service businesses respond faster and close more work
             </p>
             <div className="install-hero__lede install-hero__points">
               <span>Booked jobs</span>
               <span>Paid deposits</span>
-              <span>Quote requests</span>
               <span>Inspections</span>
               <span>Callbacks</span>
             </div>
@@ -266,16 +256,7 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="included-strip">
-              <span className="included-strip__label">Included in the install</span>
-              <div className="included-strip__items">
-                {includedItems.map((item) => (
-                  <span className="chip" key={item}>
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </div>
+            
           </div>
         </div>
       </section>
@@ -283,9 +264,9 @@ export default function HomePage() {
       <section className="home-section" id="what-you-get">
         <div className="section-heading">
           <p className="eyebrow">What you get</p>
-          <h2>One system for the leads you already get.</h2>
+          <h2>Systemized Process</h2>
           <p className="muted">
-            Calls, forms, DMs, and quote requests should not sit in scattered inboxes. Nexoria connects the
+            Calls, views, DMs, and quote requests should not sit in scattered inboxes. Nexoria connects the
             intake, booking, follow-up, and reporting around one measurable outcome.
           </p>
         </div>
@@ -311,7 +292,7 @@ export default function HomePage() {
       <section className="home-section" id="how-it-works">
         <div className="section-heading">
           <p className="eyebrow">How it works</p>
-          <h2>From inquiry to handoff in 14 days.</h2>
+          <h2>Dignostic to Hand-Off</h2>
           <p className="muted">
             Start with a diagnostic. Leave with a client-ready blueprint, installed workflows, and a portal
             that shows what happens next.
@@ -329,38 +310,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="home-section home-section--split" id="industries">
-        <div className="section-heading">
-          <p className="eyebrow">Built for service operators</p>
-          <h2>Built for service businesses that cannot afford slow follow-up.</h2>
-          <p className="muted">
-            Practical workflows for dispatch, diagnostics, service areas, no-shows, stale estimates, and
-            quote follow-up.
-          </p>
-        </div>
-
-        <div className="two-column install-comparison">
-          <div className="card stack">
-            <h3>Target industries</h3>
-            <div className="pill-row">
-              {industries.map((industry) => (
-                <span className="chip" key={industry}>
-                  {industry}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="card stack">
-            <h3>Operating workflow</h3>
-            <ul className="comparison-list">
-              {workflowSteps.map((step) => (
-                <li key={step}>{step}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
+      
 
       <section className="home-section" id="pricing">
         <div className="section-heading">
@@ -395,14 +345,6 @@ export default function HomePage() {
       </section>
 
       <section className="final-cta card" id="contact">
-        <div>
-          <p className="eyebrow">Final CTA</p>
-          <h2>Find the leak in your lead-to-job path.</h2>
-          <p className="muted">
-            Book a 45-minute Operator Diagnostic and see whether a 14-day install makes sense for your
-            business.
-          </p>
-        </div>
         <div className="hero-actions">
           <Link className="primary-button" to="/get-started">
             Start Intake

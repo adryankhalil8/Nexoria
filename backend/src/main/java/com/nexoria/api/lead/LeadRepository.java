@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface LeadRepository extends JpaRepository<Lead, Long> {
     Optional<Lead> findFirstByEmailIgnoreCaseOrderByUpdatedAtDesc(String email);
+    java.util.List<Lead> findAllByUserId(Long userId);
 }

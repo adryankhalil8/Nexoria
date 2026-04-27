@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { authApi } from '../api/auth';
 import { getApiErrorMessage } from '../api/errors';
 import { persistAuthSession } from '../auth/session';
+import PublicHomeLink from '../components/PublicHomeLink';
 
 export default function AdminBootstrap() {
   const [email, setEmail] = useState('');
@@ -42,6 +43,7 @@ export default function AdminBootstrap() {
 
   return (
     <main className="auth-page">
+      <PublicHomeLink />
       <section className="auth-card">
         <p className="eyebrow">Admin setup</p>
         <h1>Bootstrap admin access</h1>

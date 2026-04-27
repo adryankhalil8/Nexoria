@@ -110,8 +110,6 @@ describe('admin workflow handoffs', () => {
         industry: 'Remodeling',
         revenueRange: '$10k-$50k/mo',
         clientEmail: 'assigned@example.com',
-        score: 75,
-        readyForRetainer: false,
         status: 'APPROVED',
         purchaseEventType: 'BOOKED_JOB',
         goals: ['Book more jobs'],

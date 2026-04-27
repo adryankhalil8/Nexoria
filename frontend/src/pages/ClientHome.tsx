@@ -34,7 +34,7 @@ export default function ClientHome() {
         <p className="eyebrow">Client execution portal</p>
         <h2>What to do next</h2>
         <p className="muted">
-          This view keeps the install operational: scheduled diagnostic, approved blueprint, next steps,
+          Scheduled diagnostic, approved blueprint, next steps,
           results state, and support.
         </p>
       </div>
@@ -49,7 +49,6 @@ export default function ClientHome() {
           <div className="pill-row">
             <span className="pill">{portal.status}</span>
             <span className="pill">{portal.purchaseEventType.replace(/_/g, ' ')}</span>
-            <span className="pill pill--success">Score {portal.score}/100</span>
           </div>
         </article>
       )}

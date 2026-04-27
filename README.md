@@ -210,9 +210,12 @@ cd frontend
 npm run test -- --run
 ```
 
-Note:
+Current verification note as of Audit Report 8 on April 26, 2026:
 
-- the backend tests, frontend build, frontend lint, and frontend test suite currently pass as of Audit Report 7
+- backend tests pass: `31` tests
+- frontend tests pass: `16` tests
+- frontend production build passes
+- frontend lint currently fails on unused homepage constants and unescaped apostrophes in the schedule page
 
 ## Deployment Requirements
 
@@ -290,8 +293,10 @@ Additional project docs live under `infra/docs/`, including:
 
 - audit reports
 - architecture diagram
+- ERD diagram and DBML source
 - file structure
 - project proposal
+- current status
 - ADRs
 - API design notes
 - deployment guide

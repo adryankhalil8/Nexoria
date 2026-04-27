@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="footer">
       <div>
         <strong>Nexoria</strong>
-        <p className="muted">Booked-job and deposit systems for blue-collar service businesses.</p>
+        <p className="muted">Booked-job and deposit systems for service based businesses.</p>
       </div>
       <div className="footer__links">
         <a href="/#how-it-works">How it works</a>

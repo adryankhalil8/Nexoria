@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { authApi } from '../api/auth';
 import { getApiErrorMessage } from '../api/errors';
 import { persistAuthSession } from '../auth/session';
+import PublicHomeLink from '../components/PublicHomeLink';
 
 function getRegistrationError(err: unknown): string {
   const maybeError = err as { message?: unknown };
@@ -67,6 +68,7 @@ export default function Register() {
 
   return (
     <main className="auth-page">
+      <PublicHomeLink />
       <section className="auth-card stack">
         <p className="eyebrow">Create account</p>
         <h1>Register</h1>

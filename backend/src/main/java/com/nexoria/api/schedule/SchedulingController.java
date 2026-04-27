@@ -68,4 +68,12 @@ public class SchedulingController {
     public ScheduledCallResponse clearBooking(@PathVariable Long id) {
         return schedulingService.clearCall(id);
     }
+
+    @DeleteMapping("/bookings/{id}")
+    @Operation(summary = "Delete a scheduled call from the admin portal")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<Void> deleteBooking(@PathVariable Long id) {
+        schedulingService.deleteCall(id);
+        return ResponseEntity.noContent().build();
+    }
 }

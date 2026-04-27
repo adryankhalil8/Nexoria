@@ -87,7 +87,8 @@ flowchart LR
 
 ## Notes
 
-- Public traffic flows into the landing page, intake flow, scheduling flow, and authentication pages.
-- Admin traffic uses the admin portal for leads, calls, schedule settings, users, blueprints, and support.
-- Client traffic uses the client portal for approved blueprint views, next steps, results, scheduled calls, and support.
+- Public traffic flows into the homepage, FAQ, intake flow, scheduling flow, booking confirmation, and authentication pages.
+- Admin traffic uses the workspace for leads, booked calls, schedule settings, users, blueprints, support, and independent record deletion flows.
+- Client traffic uses the portal for approved blueprint views, next steps, results, scheduled calls, and support.
+- Support messaging uses Server-Sent Events with polling fallback in the frontend.
 - The backend persists to MySQL and uses Flyway as the schema source of truth.

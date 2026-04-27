@@ -159,7 +159,7 @@ export default function AdminClients() {
     <section className="stack">
       <div className="page-intro">
         <p className="eyebrow">Client Tracker</p>
-        <h2>Track client readiness, account access, and closed accounts in one place.</h2>
+        <h2>Track clients, account access, and close accounts</h2>
       </div>
 
       <div className="stats-grid">
@@ -254,7 +254,7 @@ export default function AdminClients() {
             </select>
           </div>
 
-          <div className="table-wrap">
+          <div className="table-wrap table-wrap--client-tracker">
             <table className="table">
               <thead>
                 <tr>

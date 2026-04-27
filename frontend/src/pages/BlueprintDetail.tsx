@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { blueprintApi } from '../api/blueprint';
 import { getApiErrorMessage } from '../api/errors';
-import ScoreBadge from '../components/ScoreBadge';
+import { leadsApi } from '../api/leads';
+import { usersApi } from '../api/users';
 import {
   getOptionLabel,
   INDUSTRY_OPTIONS,
@@ -13,6 +14,7 @@ import {
   type TaskOwner,
   type TaskStatus,
 } from '../model/blueprint';
+import type { Lead, ManagedUser } from '../model/admin';
 
 const BLUEPRINT_STATUS_OPTIONS: BlueprintPortalStatus[] = ['DRAFT', 'SUBMITTED', 'APPROVED', 'ARCHIVED'];
 const PURCHASE_EVENT_OPTIONS: PurchaseEventType[] = ['PURCHASE', 'DEPOSIT', 'BOOKED_JOB'];
@@ -25,6 +27,8 @@ export default function BlueprintDetail() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [users, setUsers] = useState<ManagedUser[]>([]);
   const successTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -39,12 +43,46 @@ export default function BlueprintDetail() {
   }, [id]);
 
   useEffect(() => {
+    Promise.all([leadsApi.getAll(), usersApi.getAll()])
+      .then(([leadData, userData]) => {
+        setLeads(leadData);
+        setUsers(userData.filter((user) => user.role !== 'ADMIN'));
+      })
+      .catch(() => {
+        // Keep blueprint detail available even if client suggestions cannot load.
+      });
+  }, []);
+
+  useEffect(() => {
     if (!success) return;
     successTimer.current = setTimeout(() => setSuccess(null), 3000);
     return () => {
       if (successTimer.current) clearTimeout(successTimer.current);
     };
   }, [success]);
+
+  const existingClientOptions = useMemo(() => {
+    const entries = new Map<string, { email: string; label: string }>();
+
+    leads.forEach((lead) => {
+      entries.set(lead.email.toLowerCase(), {
+        email: lead.email,
+        label: `${lead.company} (${lead.contactName}) - ${lead.email}`,
+      });
+    });
+
+    users.forEach((user) => {
+      const key = user.email.toLowerCase();
+      if (!entries.has(key)) {
+        entries.set(key, {
+          email: user.email,
+          label: `${user.displayName || user.username || user.email} - ${user.email}`,
+        });
+      }
+    });
+
+    return Array.from(entries.values()).sort((left, right) => left.label.localeCompare(right.label));
+  }, [leads, users]);
 
   async function saveBlueprint() {
     if (!item) {
@@ -111,15 +149,13 @@ export default function BlueprintDetail() {
             <span className="pill">{visibleFixCount} client-visible fixes</span>
           </div>
         </div>
-        <ScoreBadge score={item.score} />
       </section>
 
       <section className="two-column">
         <article className="card stack">
           <div className="pill-row">
-            <span className={item.readyForRetainer ? 'pill pill--success' : 'pill'}>
-              {item.readyForRetainer ? 'Ready for retainer' : 'Not yet retainer ready'}
-            </span>
+            <span className="pill">{item.status}</span>
+            <span className="pill">{item.purchaseEventType.replace(/_/g, ' ')}</span>
             {item.goals.map((goal) => (
               <span className="pill" key={goal}>
                 {goal}
@@ -158,6 +194,23 @@ export default function BlueprintDetail() {
               </select>
             </label>
             <label>
+              Assign to existing client
+              <select
+                onChange={(event) => setItem({ ...item, clientEmail: event.target.value || undefined })}
+                value={item.clientEmail ?? ''}
+              >
+                <option value="">Select an existing client</option>
+                {existingClientOptions.map((option) => (
+                  <option key={option.email} value={option.email}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <div className="two-column">
+            <label>
               Purchase event
               <select
                 onChange={(event) => setItem({ ...item, purchaseEventType: event.target.value as PurchaseEventType })}
@@ -169,6 +222,15 @@ export default function BlueprintDetail() {
                   </option>
                 ))}
               </select>
+            </label>
+            <label>
+              Client email
+              <input
+                onChange={(event) => setItem({ ...item, clientEmail: event.target.value || undefined })}
+                placeholder="client@example.com"
+                type="email"
+                value={item.clientEmail ?? ''}
+              />
             </label>
           </div>
 
