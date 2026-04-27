@@ -18,8 +18,8 @@ export default function ClientResults() {
         <p className="eyebrow">Results</p>
         <h2>Dashboard</h2>
         <p className="muted">
-          Nexoria shows the booked-job and
-          deposit scoreboard structure instead of pretending the metrics are final.
+          *Nexoria shows the booked-job and
+          deposit with mock metrics metrics are final.*
         </p>
       </div>
 
