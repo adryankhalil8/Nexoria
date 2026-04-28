@@ -4,8 +4,7 @@
 
 Small and mid-sized businesses often know they need process automation, AI-assisted operations, and clearer execution systems, but they struggle to turn that need into an actionable delivery plan. Many teams rely on fragmented consultation notes, manual follow-up, disconnected scheduling tools, and ad hoc client communication. This creates delays, weak visibility, inconsistent service delivery, and limited ability to scale consulting or implementation work.
 
-Nexoria addresses this problem by providing a single platform for acquiring leads, qualifying prospects, scheduling discovery calls, managing client access, delivering implementation blueprints, and supporting clients through execution. The business value of the platform is that it standardizes how AI operator installs are sold and delivered, reduces administrative overhead, improves client experience, and creates a repeatable operating model that can scale across more customers without a proportional increase in manual coordination.
-
+Nexoria addresses this problem by providing strategies for acquiring leads, qualifying prospects, delivering implementation blueprints, and supporting clients through execution. The business value of the platform is that it standardizes how AI operator installs are sold and delivered, reduces administrative overhead, improves client experience, and creates a repeatable SOPs.
 ## Target Users and User Stories
 
 ### Target Users
